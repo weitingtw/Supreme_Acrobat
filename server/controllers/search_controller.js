@@ -1,35 +1,35 @@
-var client = require('./../config/EsClient.js');
+var client = require('./../config/esClient.js');
 var order_slop = 120;
 
-module.exports.search = function(searchData, callback) {
+module.exports.search = function (searchData, callback) {
   console.log(searchData, 'elasticsearch')
   var array = searchData.split(" ");
   var clauses = [];
   for (var i = 0; i <= array.length - 1; i++) {
     var ob = {
-              "span_multi": {
-                "match": {
-                  "fuzzy": {
-                    "content": {
-                      "fuzziness": 1,
-                      "value": array[i]
-                    }
-                  }
-                }
-              }
+      "span_multi": {
+        "match": {
+          "fuzzy": {
+            "content": {
+              "fuzziness": 1,
+              "value": array[i]
             }
+          }
+        }
+      }
+    }
     clauses.push(ob);
-    console.log(array[i],'loop里');
+    console.log(array[i], 'loop里');
   }
   console.log(clauses);
-  if(clauses.length == 1){
-      client.search({
+  if (clauses.length == 1) {
+    client.search({
       index: 'casereport',
       type: '_doc',
       body: {
         query: {
           bool: {
-            should: 
+            should:
             {
               match: {
                 "content": {
@@ -45,10 +45,10 @@ module.exports.search = function(searchData, callback) {
     }).then(function (resp) {
       callback(resp.hits.hits);
     }, function (err) {
-        callback(err.message)
-        console.log(err.message);
+      callback(err.message)
+      console.log(err.message);
     });
-  }else{
+  } else {
     console.log("多个单词")
     client.search({
       index: 'casereport',
@@ -56,12 +56,12 @@ module.exports.search = function(searchData, callback) {
       body: {
         "query": {
           "bool": {
-            "should":[
+            "should": [
               {
-                "span_near" : {
-                    "clauses" : clauses,
-                    "slop" : order_slop,
-                    "in_order" : true
+                "span_near": {
+                  "clauses": clauses,
+                  "slop": order_slop,
+                  "in_order": true
                 }
               }
               // ,{
@@ -74,89 +74,89 @@ module.exports.search = function(searchData, callback) {
               //   }
               // }
             ]
-          }  
+          }
         }
       }
     }).then(function (resp) {
       callback(resp.hits.hits);
     }, function (err) {
-        callback(err.message)
-        console.log(err.message);
+      callback(err.message)
+      console.log(err.message);
     });
   }
 }
 
-module.exports.search2 = function(searchData, callback) {
+module.exports.search2 = function (searchData, callback) {
   console.log(searchData, 'elasticsearch')
   client.search({
-      index: 'casereport',
-      type: '_doc',
-      body: {
-        query: {
-          bool: {
-            should: 
-            {
-              match: {
-                "content": {
-                  "query": searchData,
-                  "fuzziness": 1,
-                  "prefix_length": 1
-                }
+    index: 'casereport',
+    type: '_doc',
+    body: {
+      query: {
+        bool: {
+          should:
+          {
+            match: {
+              "content": {
+                "query": searchData,
+                "fuzziness": 1,
+                "prefix_length": 1
               }
             }
           }
         }
       }
-    }).then(function (resp) {
-      callback(resp.hits.hits);
-    }, function (err) {
-        callback(err.message)
-        console.log(err.message);
-    });
-}
-
-module.exports.delete = function(searchData, callback) {
-  client.indices.delete({
-      index: '_all'
-  }, function(err, res) {
-
-      if (err) {
-          console.error(err.message);
-      } else {
-          console.log('Indexes have been deleted!');
-      }
+    }
   }).then(function (resp) {
     callback(resp.hits.hits);
   }, function (err) {
-      callback(err.message)
-      console.log(err.message);
+    callback(err.message)
+    console.log(err.message);
   });
 }
 
-module.exports.create = function(indexName, callback) {
-  client.indices.create({
-        "index": indexName,
-        "body": {
-          "settings": {
-            "analysis": {
-              "analyzer": {
-                  "my_analyzer": {
-                      "type":         "standard",
-                      "tokenizer":    "standard",
-                      "filter":       [ "asciifolding", "lowercase", "snowball", "stop"],
-                      "max_token_length": 128,
-                      "stopwords": "_english_"
-                }
-              }
-            }
-          }
-       }
-    }, function (err, response) {
-      console.log(err);
-    }).then(function (resp) {
+module.exports.delete = function (searchData, callback) {
+  client.indices.delete({
+    index: '_all'
+  }, function (err, res) {
+
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log('Indexes have been deleted!');
+    }
+  }).then(function (resp) {
     callback(resp.hits.hits);
   }, function (err) {
-      callback(err.message)
-      console.log(err.message);
+    callback(err.message)
+    console.log(err.message);
+  });
+}
+
+module.exports.create = function (indexName, callback) {
+  client.indices.create({
+    "index": indexName,
+    "body": {
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "my_analyzer": {
+              "type": "standard",
+              "tokenizer": "standard",
+              "filter": ["asciifolding", "lowercase", "snowball", "stop"],
+              "max_token_length": 128,
+              "stopwords": "_english_"
+            }
+          }
+        }
+      }
+    }
+  }, function (err, response) {
+    console.log(err);
+  }).then(function (resp) {
+    callback(resp.hits.hits);
+  }, function (err) {
+    callback(err.message)
+    console.log(err.message);
   });
 }

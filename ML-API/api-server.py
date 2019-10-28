@@ -58,7 +58,7 @@ class Predict(Resource):
 
 if __name__ == '__main__':
     model = SequenceTagger.load_from_file('best-model.pt')
-
+    
     app = flask.Flask(__name__)
     api = Api(app)
     api.add_resource(Predict, '/', resource_class_kwargs={'model': model})
