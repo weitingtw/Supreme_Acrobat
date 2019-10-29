@@ -8,45 +8,45 @@ import axios from 'axios'
 
 class Result extends Component {
     state = {
-        previewText : ''
+        previewText: ''
     }
 
-    componentWillMount(){
-        const { 
+    componentWillMount() {
+        const {
             displayData: { previewText, id, textEntities, entities }
         } = this.props;
-        axios.post("http://localhost:3001/api/getCaseReportById", {id})
-            .then(res => { 
+        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/getCaseReportById", { id })
+            .then(res => {
                 console.log(res, "res");
                 const text = (res.data.data[0].text).substring(0, 350) + '...';
-                
-                this.setState({ previewText: text }) 
+
+                this.setState({ previewText: text })
             })
             .catch(err => console.log(err));
     }
 
     render() {
         const { previewText } = this.state;
-        const { 
+        const {
             displayData: { id, textEntities, entities }
         } = this.props;
         const displayPath = `search/${id}`;
 
         return (
-        <div className='result' onClick={this.handleClick}>
-            <div>
-                <FontAwesomeIcon icon={['fab', 'bitcoin']} />
-                <span className='search-result-text'>
-                    <Link to={{
-                      pathname: displayPath,
-                      state: {
-                        textEntities,
-                        entities
-                      }
-                    }}>{ previewText }</Link>
-                </span>
-            </div>    
-        </div>);
+            <div className='result' onClick={this.handleClick}>
+                <div>
+                    <FontAwesomeIcon icon={['fab', 'bitcoin']} />
+                    <span className='search-result-text'>
+                        <Link to={{
+                            pathname: displayPath,
+                            state: {
+                                textEntities,
+                                entities
+                            }
+                        }}>{previewText}</Link>
+                    </span>
+                </div>
+            </div>);
     }
 }
 
@@ -57,7 +57,7 @@ Result.propTypes = {
 
 Result.defaultProps = {
     text: 'I do not have text ',
-    id: 12345 
+    id: 12345
 }
 
 export default Result;
