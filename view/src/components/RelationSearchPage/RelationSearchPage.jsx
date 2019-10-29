@@ -37,27 +37,27 @@ class RelationSearchPage extends Component {
 
     handleKeyDown = e => {
         if (e.key === 'Enter') {
-          this.handleRelationSearch();
+            this.handleRelationSearch();
         }
     }
 
     handleRelationSearch = () => {
         const { allQueries } = this.state;
         console.log(allQueries);
-        axios.post("http://localhost:3001/api/searchMultiRelations", allQueries)
-            .then(res => { 
+        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/searchMultiRelations", allQueries)
+            .then(res => {
                 const results = res.data.data.map(info => {
                     console.log(info)
                     return {
-                        id: info.pmID, 
+                        id: info.pmID,
                         entities: info.entities,
                         previewText: "info._source.content info._source.content info._source.content info._source.content info._source.content"
                     }
                 })
                 console.log(results);
-                this.setState({ 
-                    results 
-                }) 
+                this.setState({
+                    results
+                })
             })
             .catch(err => console.log(err));
     }
@@ -84,42 +84,42 @@ class RelationSearchPage extends Component {
         // console.log(allQueriesToTextEntities(allQueries));
         return (
             <div id='relationSearchPage'>
-                { allQueries.map((oneQuery, i) => 
+                {allQueries.map((oneQuery, i) =>
                     <RelationSearch
-                        queries={ oneQuery.queries }
-                        relations={ oneQuery.relations }
-                        handleTyping={ this.handleTyping(i) }
-                        handleSelect={ this.handleSelect(i) }
-                        handleAddColumn={ this.handleAddColumn(i) }
-                        handleKeyDown={ this.handleKeyDown }
+                        queries={oneQuery.queries}
+                        relations={oneQuery.relations}
+                        handleTyping={this.handleTyping(i)}
+                        handleSelect={this.handleSelect(i)}
+                        handleAddColumn={this.handleAddColumn(i)}
+                        handleKeyDown={this.handleKeyDown}
                     />
                 )}
                 <div>
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="button"
-                        onClick={ this.handleRelationSearch }
+                        onClick={this.handleRelationSearch}
                     >
                         <FontAwesomeIcon icon={['fas', 'search']} />
                     </button>
 
-                    <button 
+                    <button
                         className="button"
-                        onClick={ this.handleAddRow }
+                        onClick={this.handleAddRow}
                     >
                         <FontAwesomeIcon icon={['fas', 'plus']} />
-                        { ' Row' }
+                        {' Row'}
                     </button>
                 </div>
 
-                { results.length > 0 &&
+                {results.length > 0 &&
                     <div id='search-result-container'>
-                        <SearchResults 
-                            results={ results } 
-                            textEntities={ allQueriesToTextEntities(allQueries) }
-                        />      
-                    </div>  
-                }  
+                        <SearchResults
+                            results={results}
+                            textEntities={allQueriesToTextEntities(allQueries)}
+                        />
+                    </div>
+                }
             </div>
         );
     }
@@ -132,50 +132,50 @@ class RelationSearch extends Component {
     }
 
     render() {
-        const { 
-            queries, 
-            relations, 
-            handleTyping, 
-            handleSelect, 
-            handleKeyDown 
+        const {
+            queries,
+            relations,
+            handleTyping,
+            handleSelect,
+            handleKeyDown
         } = this.props;
         const allRelations = ['BEFORE', 'AFTER', 'OVERLAP', 'MODIFY', 'IDENTICAL', 'SUBPROCEDURE'];
 
         const inputComponent = queries.map((word, i) => {
             if (i === queries.length - 1) {
-                return  (<div className='one_relation' key={i}>               
-                    <input 
-                        type="text" 
-                        className="searchText" 
-                        onChange={ handleTyping(i) }
-                        onKeyDown={ handleKeyDown }
+                return (<div className='one_relation' key={i}>
+                    <input
+                        type="text"
+                        className="searchText"
+                        onChange={handleTyping(i)}
+                        onKeyDown={handleKeyDown}
                     />
                 </div>)
             } else {
-                return  (<div className='one_relation' key={i}>               
-                    <input 
-                        type="text" 
-                        className="searchText" 
-                        onChange={ handleTyping(i) }
-                        onKeyDown={ handleKeyDown }
+                return (<div className='one_relation' key={i}>
+                    <input
+                        type="text"
+                        className="searchText"
+                        onChange={handleTyping(i)}
+                        onKeyDown={handleKeyDown}
                     />
                     <div className='drop-down-container'>
-                        <DropDown 
-                            handleSelect={ handleSelect(i) }
-                            dropDownData={ allRelations }
-                            current={ relations[i] }
+                        <DropDown
+                            handleSelect={handleSelect(i)}
+                            dropDownData={allRelations}
+                            current={relations[i]}
                         />
                     </div>
                 </div>)
             }
         })
         return (<div className='one_query'>
-            { inputComponent }
-            <button 
+            {inputComponent}
+            <button
                 className="button"
-                onClick={ this.handleAddColumn }
+                onClick={this.handleAddColumn}
             >
-            <FontAwesomeIcon icon={['fas', 'plus']} />
+                <FontAwesomeIcon icon={['fas', 'plus']} />
             </button>
         </div>);
     }

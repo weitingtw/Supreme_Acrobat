@@ -14,10 +14,10 @@ class DisplayPage extends Component {
         docData: null,
     }
 
-    componentDidMount(){
+    componentDidMount() {
         const { id } = this.props.match.params;
 
-        axios.post("http://localhost:3001/api/getCaseReportById", { id })
+        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/getCaseReportById", { id })
             .then(res => {
                 const data = res.data.data[0];
                 this.setState({ docData: data })
@@ -26,7 +26,7 @@ class DisplayPage extends Component {
     }
 
 
-    render () {
+    render() {
         const { id } = this.props.match.params;
         const { docData } = this.state;
         let text,                   // whole plain text of the case report
@@ -36,52 +36,52 @@ class DisplayPage extends Component {
         if (docData) { ({ text } = docData); }
         if (this.props.location.state) {
             // console.log('data:', this.props.location.state);
-            ({ entities, textEntities } = this.props.location.state); 
+            ({ entities, textEntities } = this.props.location.state);
             // console.log(textEntities);
             tokensToHighlight = textEntities.map(e => e.label);
-            console.log('tokensToHighlight:', tokensToHighlight); 
-        }   
+            console.log('tokensToHighlight:', tokensToHighlight);
+        }
 
         return (
             <div className='display-page'>
 
                 <div className='brat-intro'>
-                    <FontAwesomeIcon icon={['fal', 'file-alt']}/>
-                    Details about case report <span className='report-id'>{ id }</span>
+                    <FontAwesomeIcon icon={['fal', 'file-alt']} />
+                    Details about case report <span className='report-id'>{id}</span>
                 </div>
 
-                { docData && 
-                    <div 
+                {docData &&
+                    <div
                         className='report-plain-text'
                         dangerouslySetInnerHTML={{
-                            __html: addHighLight(text, tokensToHighlight) 
-                        }} 
+                            __html: addHighLight(text, tokensToHighlight)
+                        }}
                     />
                 }
 
-                { docData && 
+                {docData &&
                     <div className='brat-container'>
-                        <Brat docData={ docData }/>
-                    </div> 
+                        <Brat docData={docData} />
+                    </div>
                 }
-                { docData && 
+                {docData &&
                     <div className='graph-container'>
-                        <Graph 
-                            graphData={ docData }
-                            entities={ entities }
-                        /> 
+                        <Graph
+                            graphData={docData}
+                            entities={entities}
+                        />
                     </div>
                 }}
 
-                { !docData && 
+                {!docData &&
                     <div className='loading-container'>
-                        {`Loading ......`} 
-                        <PacmanLoader 
-                            sizeUnit={ "px" }
-                            size={ 150 }
-                            color={ 'rgb(1, 136, 203)' }
+                        {`Loading ......`}
+                        <PacmanLoader
+                            sizeUnit={"px"}
+                            size={150}
+                            color={'rgb(1, 136, 203)'}
                         />
-                    </div>  
+                    </div>
                 }
             </div>
         );

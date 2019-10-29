@@ -15,9 +15,9 @@ class ModalContent extends Component {
 
     switchAction = () => {
         this.setState(prevState => {
-            const newAction = 
-                prevState.currentAction === 'signin'? 
-                'signup' : 'signin';
+            const newAction =
+                prevState.currentAction === 'signin' ?
+                    'signup' : 'signin';
 
             return {
                 currentAction: newAction
@@ -46,46 +46,46 @@ class ModalContent extends Component {
         const { currentAction } = this.state;
 
         // confirm button types
-        const _SignInButton = 
-            <button 
-                onClick={ this.handleSignIn }
+        const _SignInButton =
+            <button
+                onClick={this.handleSignIn}
                 className='confirm-button'
             >
                 Sign In
             </button>
 
-        const _SignUpButton = 
-            <button 
-                onClick={ this.handleSignUp }
+        const _SignUpButton =
+            <button
+                onClick={this.handleSignUp}
                 className='confirm-button'
             >
                 Sign Up
             </button>
 
         // action switch button types
-        const _SwitchToSignInButton = 
+        const _SwitchToSignInButton =
             <div>
                 already have an account?
-                <a href='#' onClick={ this.switchAction }>
-                    { ' Sign In' }
+                <a href='#' onClick={this.switchAction}>
+                    {' Sign In'}
                 </a>
             </div>
 
-        const _SwitchToSignUpButton =             
+        const _SwitchToSignUpButton =
             <div>
                 don't have an account?
-                <a href='#' onClick={ this.switchAction }>
-                    { ' Sign Up' }
+                <a href='#' onClick={this.switchAction}>
+                    {' Sign Up'}
                 </a>
             </div>
 
         // button to close modal
-        const CloseModalButton = 
-            <button 
+        const CloseModalButton =
+            <button
                 id='close-button'
-                onClick={ handleCloseModal 
-            }>
-                <FontAwesomeIcon icon={['far', 'times']}/>
+                onClick={handleCloseModal
+                }>
+                <FontAwesomeIcon icon={['far', 'times']} />
             </button>
 
         // select current button types according to current action
@@ -103,36 +103,36 @@ class ModalContent extends Component {
 
         return (
             <div className='modal-inner-content'>
-                <h2>{ titleText }</h2>
+                <h2>{titleText}</h2>
 
                 <Form.Group controlId="formGroupEmail">
                     <Form.Label>
-                        <FontAwesomeIcon icon={['far', 'envelope']}/>
+                        <FontAwesomeIcon icon={['far', 'envelope']} />
                         Email
                     </Form.Label>
-                    <Form.Control 
-                        type="email" 
+                    <Form.Control
+                        type="email"
                         placeholder="Enter email"
-                        onChange={ this.handleEmailInput }
+                        onChange={this.handleEmailInput}
                     />
                 </Form.Group>
                 <Form.Group controlId="formGroupPassword">
                     <Form.Label>
-                        <FontAwesomeIcon icon={['far', 'lock-alt']}/>
+                        <FontAwesomeIcon icon={['far', 'lock-alt']} />
                         Password
                     </Form.Label>
-                    <Form.Control 
-                        type="password" 
-                        placeholder="Enter password" 
-                        onChange={ this.handlePasswordInput }
+                    <Form.Control
+                        type="password"
+                        placeholder="Enter password"
+                        onChange={this.handlePasswordInput}
                     />
                 </Form.Group>
 
-                    { ConfirmButton }
+                {ConfirmButton}
 
-                    { SwitchActionButton }
+                {SwitchActionButton}
 
-                    { CloseModalButton }
+                {CloseModalButton}
             </div>
         );
     }
@@ -141,20 +141,20 @@ class ModalContent extends Component {
 
 class LoginModal extends Component {
     state = {
-        visible : false
+        visible: false
     }
 
     openModal = () => {
-        this.setState({ visible : true });
+        this.setState({ visible: true });
     }
 
     closeModal = () => {
-        this.setState({ visible : false });
+        this.setState({ visible: false });
     }
 
     handleSignIn = data => {
         console.log('signin', data);
-        axios.post("http://localhost:3001/api/login", data)
+        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/login", data)
             .then(res => {
                 // console.log(res.data);
                 if (res.data.success === true) {
@@ -170,7 +170,7 @@ class LoginModal extends Component {
 
     handleSignUp = data => {
         console.log('signup', data);
-        axios.post("http://localhost:3001/api/createUser", data)
+        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/createUser", data)
             .then(res => {
                 console.log(res.data);
                 if (res.data.success === true) {
@@ -198,44 +198,44 @@ class LoginModal extends Component {
 
         let hasUser = false;
         let user = localStorage.getItem('user');
-        if (user) { 
-            user = JSON.parse(user); 
+        if (user) {
+            user = JSON.parse(user);
             hasUser = true;
         }
         console.log(user, hasUser);
 
         const Button = hasUser ?
             <div className='button'>
-                <button onClick={ this.showProfile }>
-                    <FontAwesomeIcon icon={['far', 'user-astronaut']}/>
+                <button onClick={this.showProfile}>
+                    <FontAwesomeIcon icon={['far', 'user-astronaut']} />
                     Profile
                 </button>
                 |
-                <button onClick={ this.handleSignOut }>
+                <button onClick={this.handleSignOut}>
                     Sign Out
                 </button>
             </div>
             :
-            <button onClick={ this.openModal } className='button'>
-                <FontAwesomeIcon icon={['far', 'user-astronaut']}/>
+            <button onClick={this.openModal} className='button'>
+                <FontAwesomeIcon icon={['far', 'user-astronaut']} />
                 Login
             </button>
 
 
         return (
             <div id='login-modal'>
-                { Button }
-                <Modal 
-                    visible={ visible } 
-                    width="600" 
-                    height="500" 
-                    effect="fadeInDown" 
-                    onClickAway={ this.closeModal }
+                {Button}
+                <Modal
+                    visible={visible}
+                    width="600"
+                    height="500"
+                    effect="fadeInDown"
+                    onClickAway={this.closeModal}
                 >
-                    <ModalContent 
-                        handleCloseModal={ this.closeModal }
-                        handleSignIn={ this.handleSignIn }
-                        handleSignUp={ this.handleSignUp }
+                    <ModalContent
+                        handleCloseModal={this.closeModal}
+                        handleSignIn={this.handleSignIn}
+                        handleSignUp={this.handleSignUp}
                     />
                 </Modal>
             </div>

@@ -20,20 +20,20 @@ class SearchPage extends Component {
 
         // if last typing is not alphabet
         // go over crf API to get entities
-        axios.post('http://localhost:3001/api/getPrediction', {
-            data: { query: queryText } 
+        axios.post('http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/getPrediction', {
+            data: { query: queryText }
         })
-        .then(response => {
-            const { data: { entity_types, tokens } } = response;
-            const textEntities = combineMultiWordEntity(entity_types, tokens);
-            
-            // update state to save current entity tokens
-            this.setState({ 
-                textEntities,
-                queryText
-            }); 
-        })
-        .catch(error => { console.log(error); });
+            .then(response => {
+                const { data: { entity_types, tokens } } = response;
+                const textEntities = combineMultiWordEntity(entity_types, tokens);
+
+                // update state to save current entity tokens
+                this.setState({
+                    textEntities,
+                    queryText
+                });
+            })
+            .catch(error => { console.log(error); });
     }
 
     handleSearch = () => {
@@ -44,47 +44,47 @@ class SearchPage extends Component {
         }
         console.log('basic search: ', queryObj);
 
-        axios.post("http://localhost:3001/api/searchNodes", queryObj)
-            .then(res => { 
+        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/searchNodes", queryObj)
+            .then(res => {
                 // search results
                 const results = res.data.data.map(info => {
                     return {
-                        id: info._source.pmID, 
+                        id: info._source.pmID,
                         entities: info._source.entities,
                         previewText: info._source.content
                     }
                 })
 
-                this.setState({ results }) 
+                this.setState({ results })
             })
             .catch(err => console.log(err));
-    }     
+    }
 
     render() {
         const { results, textEntities } = this.state;
 
         return (
-            <div id='searchPage'>  
+            <div id='searchPage'>
                 <LoginModal />
 
                 <div id='top-bar-container'>
-                    <TopBar 
-                        textEntities={ textEntities }
-                        handleSearch={ this.handleSearch } 
-                        handleAdvancedSearch={ this.handleAdvancedSearch } 
-                        handleTyping={ this.handleTyping } 
-                    /> 
+                    <TopBar
+                        textEntities={textEntities}
+                        handleSearch={this.handleSearch}
+                        handleAdvancedSearch={this.handleAdvancedSearch}
+                        handleTyping={this.handleTyping}
+                    />
                 </div>
 
-                { results.length > 0 &&
+                {results.length > 0 &&
                     <div id='search-result-container'>
-                        <SearchResults 
-                            results={ results } 
-                            textEntities={ textEntities }
-                        />      
-                    </div>  
-                }  
-    
+                        <SearchResults
+                            results={results}
+                            textEntities={textEntities}
+                        />
+                    </div>
+                }
+
             </div>
         );
     }
