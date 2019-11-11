@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './Result.css';
 import axios from 'axios'
+import { getHost } from '../../../utils';
 
 
 class Result extends Component {
@@ -15,7 +16,7 @@ class Result extends Component {
         const {
             displayData: { previewText, id, textEntities, entities }
         } = this.props;
-        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/getCaseReportById", { id })
+        axios.post(getHost() + ":3001/api/getCaseReportById", { id })
             .then(res => {
                 console.log(res, "res");
                 const text = (res.data.data[0].text).substring(0, 350) + '...';

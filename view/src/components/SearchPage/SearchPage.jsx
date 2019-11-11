@@ -5,6 +5,7 @@ import LoginModal from '../LoginModal/LoginModal';
 import axios from 'axios';
 import './SearchPage.css';
 import { combineMultiWordEntity } from '../../utils';
+import { getHost } from '../../utils';
 
 
 class SearchPage extends Component {
@@ -20,7 +21,8 @@ class SearchPage extends Component {
 
         // if last typing is not alphabet
         // go over crf API to get entities
-        axios.post('http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/getPrediction', {
+
+        axios.post(getHost() + ":3001/api/getPrediction", {
             data: { query: queryText }
         })
             .then(response => {
@@ -44,7 +46,7 @@ class SearchPage extends Component {
         }
         console.log('basic search: ', queryObj);
 
-        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/searchNodes", queryObj)
+        axios.post(getHost() + ":3001/api/searchNodes", queryObj)
             .then(res => {
                 // search results
                 const results = res.data.data.map(info => {

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Form } from 'react-bootstrap';
 import axios from 'axios';
 import './LoginModal.css';
+import { getHost } from '../../utils';
 
 
 class ModalContent extends Component {
@@ -154,7 +155,7 @@ class LoginModal extends Component {
 
     handleSignIn = data => {
         console.log('signin', data);
-        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/login", data)
+        axios.post(getHost() + ":3001/api/login", data)
             .then(res => {
                 // console.log(res.data);
                 if (res.data.success === true) {
@@ -170,7 +171,7 @@ class LoginModal extends Component {
 
     handleSignUp = data => {
         console.log('signup', data);
-        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/createUser", data)
+        axios.post(getHost() + ":3001/api/createUser", data)
             .then(res => {
                 console.log(res.data);
                 if (res.data.success === true) {

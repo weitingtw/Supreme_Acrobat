@@ -9,15 +9,15 @@ var _manyEntities = function (result) {
     if (result.records.length == 0) {
         return {};
     }
-    res = result.records.map(r => ({ pmID: r.get(result.records[0].keys[0]).properties.pmID, entities: r.keys.map(k => r.get(k).properties.id)}));
+    res = result.records.map(r => ({ pmID: r.get(result.records[0].keys[0]).properties.pmID, entities: r.keys.map(k => r.get(k).properties.id) }));
     var dict = new Object();
     for (var i = 0; i < res.length; i++) {
         var pmID = res[i].pmID;
-        if (!dict.hasOwnProperty(pmID)){
+        if (!dict.hasOwnProperty(pmID)) {
             dict[pmID] = new Object();
             dict[pmID].pmID = pmID;
             dict[pmID].entities = [];
-        } 
+        }
         dict[pmID].entities.push(res[i].entities);
     }
     console.log(dict, 'object');
@@ -62,18 +62,18 @@ var _handlePayloadValidation = function (err) {
 /*
     Private Helper Functions for replacing quries
 */
-var matchQuery = function(queries, relations, row){
+var matchQuery = function (queries, relations, row) {
     var res = ``;
-    var queriesLen = 0 
-    if (queries.length!=0) {
+    var queriesLen = 0
+    if (queries.length != 0) {
         res += _entity(0, queries[0], row);
     }
-    else{
+    else {
         return res;
     }
-    for (var i = 0; i < queries.length-1; i++) {
-        res += ('-'+_relation(relations[i])+'->');
-        res += _entity(i+1, queries[i+1], row)
+    for (var i = 0; i < queries.length - 1; i++) {
+        res += ('-' + _relation(relations[i]) + '->');
+        res += _entity(i + 1, queries[i + 1], row)
     }
     return res;
 }
@@ -81,18 +81,18 @@ var matchQuery = function(queries, relations, row){
 /*
     Private Helper Functions for replacing entity in query
 */
-var _entity = function(i, en, row){
-    var va = 'v'+row+i;
+var _entity = function (i, en, row) {
+    var va = 'v' + row + i;
     return `(${va}:Entity{label:'${en}'})`
 }
 
 /*
     Private Helper Functions for replacing relation in query
 */
-var _relation = function(re){
+var _relation = function (re) {
     if (re == 'optional') {
         return `[:]`;
-    }else{
+    } else {
         return `[:${re}]`
     }
 }
@@ -102,7 +102,8 @@ var _relation = function(re){
 */
 var create = function (session, entity) {
     let query = 'CREATE (c:Entity {id: {id}, entityType: {entityType}, label: {label}, pmID: {pmID}}) RETURN c'
-    // console.log(entity);
+    console.log(query);
+    console.log(entity);
     var writexResultPromise = session.writeTransaction(function (transaction) {
         // used transaction will be committed automatically, no need for explicit commit/rollback
         var result = transaction.run(query, {
@@ -138,50 +139,50 @@ var update = function (session, entity) {
 /*
 	Public Functions for Building relations
 */
-var buildRelation = function(session, relation){
-	// console.log(relation)
-	var relationType = relation.label
-	let query = 'MATCH (u:Entity {id: {source}, pmID: {pmID} }), (r:Entity {id: {target}, pmID: {pmID} }) CREATE (u)-[c:'+relationType+']->(r) RETURN c'
-	// console.log(query)
-	var writexResultPromise = session.writeTransaction(function (transaction) {
+var buildRelation = function (session, relation) {
+    console.log(relation)
+    var relationType = relation.label
+    let query = 'MATCH (u:Entity {id: {source}, pmID: {pmID} }), (r:Entity {id: {target}, pmID: {pmID} }) CREATE (u)-[c:' + relationType + ']->(r) RETURN c'
+    // console.log(query)
+    var writexResultPromise = session.writeTransaction(function (transaction) {
         // used transaction will be committed automatically, no need for explicit commit/rollback
-	   	var result = transaction.run(query, {
-	      source: relation.source,
-	      target: relation.target,
-	      pmID: relation.pmID
-	    })
-	    return result;
-	})
-
-  	return writexResultPromise.then(
-  	response => { console.log("in graph controller"); }).catch(_handlePayloadValidation)
+        var result = transaction.run(query, {
+            source: relation.source,
+            target: relation.target,
+            pmID: relation.pmID
+        })
+        return result;
+    })
+    //return writexResultPromise.then(_returnBySingleId).catch(_handlePayloadValidation)
+    return writexResultPromise.then(
+        response => { console.log("in graph controller"); }).catch(_handlePayloadValidation)
     // return writexResultPromise.then(() => session.readTransaction(findRelationships).then(() => session.close()));
 }
 
 /*
     Public Functions for search single relations
 */
-var searchRelation = function(session, relation){
+var searchRelation = function (session, relation) {
     relationship = relation.label;
     source = relation.source;
     target = relation.target;
     var query = ''
-    if(source == ''){
-    query = `MATCH (a:Entity)-[:${relationship}]-(b:Entity {label: {target}})
+    if (source == '') {
+        query = `MATCH (a:Entity)-[:${relationship}]-(b:Entity {label: {target}})
         RETURN a, b`
-    }else if(target == ''){
-    query = `MATCH (a:Entity {label: {source}})-[:${relationship}]-(b:Entity)
+    } else if (target == '') {
+        query = `MATCH (a:Entity {label: {source}})-[:${relationship}]-(b:Entity)
         RETURN a, b`
-    }else{
-    query = `MATCH (a:Entity {label: {source}})-[:${relationship}]-(b:Entity {label: {target}})
+    } else {
+        query = `MATCH (a:Entity {label: {source}})-[:${relationship}]-(b:Entity {label: {target}})
         RETURN a, b`
     }
     var readTxResultPromise = session.readTransaction(function (transaction) {
-    	var result = transaction.run(query, {
-    	  source: relation.source,
-    	  target: relation.target
-    	})
-    	return result
+        var result = transaction.run(query, {
+            source: relation.source,
+            target: relation.target
+        })
+        return result
     })
 
     return readTxResultPromise.then(_manyEntities).catch(_handlePayloadValidation)
@@ -190,7 +191,7 @@ var searchRelation = function(session, relation){
 /*
     Public Functions for search multiple relations
 */
-var searchMultiRelations = function(session, input){
+var searchMultiRelations = function (session, input) {
     var query = `MATCH `;
     var varList = [];
     for (var i = 0; i < input.length; i++) {
@@ -201,20 +202,20 @@ var searchMultiRelations = function(session, input){
         query += ', '
         console.log(queries);
         for (var j = 0; j < queries.length; j++) {
-            varList.push('v'+i+j);     
+            varList.push('v' + i + j);
         }
     }
     console.log(varList);
     query = query.slice(0, -2);
     query += ' RETURN ';
-    varList.forEach(function(element) {
+    varList.forEach(function (element) {
         query += element;
         query += ',';
     });
     query = query.slice(0, -1);
     console.log(query, 'query');
     var readTxResultPromise = session.readTransaction(function (transaction) {
-    var result = transaction.run(query, {})
+        var result = transaction.run(query, {})
         return result;
     })
 
@@ -224,15 +225,15 @@ var searchMultiRelations = function(session, input){
 /*
   Public Functions for search nodes
 */
-var searchNodes = function(session, object){
+var searchNodes = function (session, object) {
     entities = object.entities;
     label_array = [];
     type_array = [];
-    entities.forEach(function(entity) {
-    if (entity.type != 'O') {
-        label_array.push(entity.label);
-        type_array.push(entity.type);
-    }
+    entities.forEach(function (entity) {
+        if (entity.type != 'O') {
+            label_array.push(entity.label);
+            type_array.push(entity.type);
+        }
     })
     label_s = label_array.map(i => `'${i}'`).join(',');
     type_s = type_array.map(i => `'${i}'`).join(',');

@@ -86,6 +86,7 @@ module.exports = function (app) {
   // this is our create method
   // this method adds new node in our database
   router.post("/putGraphNode", (req, res, next) => {
+    console.log("putgraphNode");
     const { nodes, pmID } = req.body;
     var req2 = {};
     const create = (nodes, i) => {
@@ -93,7 +94,6 @@ module.exports = function (app) {
       req2.label = nodes[i].label;
       req2.entityType = nodes[i].entityType;
       req2.pmID = pmID;
-
       Graph.create(client.getSession(req2), req2)
         .then(response => {
           i++;
@@ -103,10 +103,12 @@ module.exports = function (app) {
             // writeResponse(res, response);
             console.log("putGraphNode");
           }
+          return res.json({ success: true });
         })
         .catch(next);
     };
     create(nodes, 0);
+
   });
 
   // this method adds new relationship in our database
@@ -122,17 +124,21 @@ module.exports = function (app) {
 
       Graph.buildRelation(client.getSession(req2), req2)
         .then(response => {
+          console.log("response");
+          console.log(response);
           i++;
           if (i < edges.length) {
             buildRelation(edges, i);
           } else {
             console.log("buildRelation");
             // writeResponse(res, response);
+            //return res.json({ success: true });
           }
         })
         .catch(next);
     };
     buildRelation(edges, 0);
+    //return res.json({ success: true });
   });
 
   // this method search nodes with a relationship in our database
@@ -162,11 +168,14 @@ module.exports = function (app) {
         var dict = response; // Get Object
         response = Object.values(dict); // Get Values
         response.forEach(item => pmIDSet.add(item.pmID));
+
+        // pmIDSet stores labels
         console.log(pmIDSet, "pmIDSet");
         searchModule.search2(query, function (data) {
           // Get ElasticSearch Data for filtering
           targetData = []; // Target data with priority from neo4j
           restData = []; // Rest search results from ElasticSearch
+
           for (i = 0; i < data.length; i++) {
             data[i]._source.content =
               data[i]._source.content.substring(0, 350) + "..."; // Trim to 350 length
@@ -685,8 +694,8 @@ module.exports = function (app) {
           "@smtp.gmail.com:465"
         );
         var transport = nodemailer.createTransport(
-          "smtps://weitingchen310%40gmail.com:" +
-          encodeURIComponent("weiting-421") +
+          "smtps://acrobatportal%40gmail.com:" +
+          encodeURIComponent("Acrobatportal1") +
           "@smtp.gmail.com:465"
         );
         console.log("hashing email");

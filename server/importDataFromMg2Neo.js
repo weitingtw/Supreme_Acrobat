@@ -17,8 +17,8 @@ fs.readdir(testFolder, (err, files) => {
 					var acrobat_graph = buildGraphFromGraphData(data);
 					nodes = acrobat_graph.Nodes;
 					edges = acrobat_graph.Edges;
-					// console.log(nodes);
-					// console.log(edges);
+					//console.log(nodes);
+					//console.log(edges);
 					nodeParam = { nodes: nodes, pmID: acrobat_graph.pmID };
 					edgeParam = { edges: edges, pmID: acrobat_graph.pmID };
 					if (args[0] == 'putGraphNode') {
@@ -26,14 +26,14 @@ fs.readdir(testFolder, (err, files) => {
 							.then(response => {
 								console.log("response for nodes");
 							})
-							.catch(error => { console.log("error in graphnode"); });
+							.catch(error => { console.log(error); console.log("error in graphnode"); });
 					}
 					if (args[0] == 'putNodeRelationship') {
 						axios.post('http://localhost:3001/api/putNodeRelationship/', edgeParam)
 							.then(response => {
 								console.log("response for edges");
 							})
-							.catch(error => { console.log("error in relation"); });
+							.catch(error => { console.log(error); console.log("error in relation"); });
 					}
 				})
 				.catch(error => { console.log("error"); });
@@ -60,7 +60,7 @@ function axiosForEdges(edgeParam, callback) {
 }
 
 var buildGraphFromGraphData = function (graphData) {
-	console.log(graphData);
+	//console.log(graphData);
 	var nodes = [];
 	var edges = [];
 	var pmID = graphData.pmID;
@@ -124,6 +124,7 @@ var buildGraphFromGraphData = function (graphData) {
 			addEdge(graphData, nodes, edges, sourceID, targetID, event_label, nodeSet, nID2index, nID2nType);
 		}
 	}
+
 	return { Nodes: nodes, Edges: edges, pmID: pmID };
 }
 

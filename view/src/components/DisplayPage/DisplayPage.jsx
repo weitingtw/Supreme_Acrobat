@@ -7,6 +7,7 @@ import { PacmanLoader } from 'react-spinners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { addHighLight } from '../../utils';
 import './DisplayPage.css';
+import { getHost } from '../../utils';
 
 
 class DisplayPage extends Component {
@@ -17,7 +18,7 @@ class DisplayPage extends Component {
     componentDidMount() {
         const { id } = this.props.match.params;
 
-        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/getCaseReportById", { id })
+        axios.post(getHost() + ":3001/api/getCaseReportById", { id })
             .then(res => {
                 const data = res.data.data[0];
                 this.setState({ docData: data })

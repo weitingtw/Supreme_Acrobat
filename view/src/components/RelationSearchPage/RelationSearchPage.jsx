@@ -5,6 +5,7 @@ import DropDown from "../DropDown/DropDown";
 import SearchResults from '../SearchResults/SearchResults';
 import { allQueriesToTextEntities } from '../../utils';
 import './RelationSearchPage.css';
+import { getHost } from '../../utils';
 
 
 /*
@@ -44,7 +45,7 @@ class RelationSearchPage extends Component {
     handleRelationSearch = () => {
         const { allQueries } = this.state;
         console.log(allQueries);
-        axios.post("http://ec2-54-189-53-248.us-west-2.compute.amazonaws.com:3001/api/searchMultiRelations", allQueries)
+        axios.post(getHost() + ":3001/api/searchMultiRelations", allQueries)
             .then(res => {
                 const results = res.data.data.map(info => {
                     console.log(info)
@@ -81,7 +82,8 @@ class RelationSearchPage extends Component {
 
     render() {
         const { allQueries, results } = this.state;
-        // console.log(allQueriesToTextEntities(allQueries));
+        console.log(allQueries);
+        console.log(allQueriesToTextEntities(allQueries));
         return (
             <div id='relationSearchPage'>
                 {allQueries.map((oneQuery, i) =>
