@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './SearchBar.css';
 
 
+
 class SearchBar extends Component {
     state = {
         query: ''
@@ -45,6 +46,7 @@ class SearchBar extends Component {
                         <FontAwesomeIcon icon={['fas', 'search']} />
                     </button>
                 </div>
+
             </div>);
     }
 }

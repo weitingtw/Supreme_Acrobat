@@ -38,7 +38,7 @@ class DisplayPage extends Component {
         if (this.props.location.state) {
             // console.log('data:', this.props.location.state);
             ({ entities, textEntities } = this.props.location.state);
-            // console.log(textEntities);
+            console.log(textEntities);
             tokensToHighlight = textEntities.map(e => e.label);
             console.log('tokensToHighlight:', tokensToHighlight);
         }

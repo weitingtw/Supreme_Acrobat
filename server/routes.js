@@ -151,9 +151,9 @@ module.exports = function (app) {
   // this method search nodes with multiple relationships in our database
   router.post("/searchMultiRelations", (req, res, next) => {
     Graph.searchMultiRelations(client.getSession(req), req.body)
-      .then(response =>
-        res.json({ success: true, data: Object.values(response) })
-      )
+      .then(response => {
+        return res.json({ success: true, data: Object.values(response) });
+      })
       .catch(next);
   });
 
@@ -191,6 +191,59 @@ module.exports = function (app) {
           console.log(data);
           return res.json({ success: true, data: data });
         });
+      })
+      .catch(next);
+  });
+
+  // this method search nodes with their properties in our database
+  router.post("/searchNodesWithRelations", (req, res, next) => {
+    var entities = req.body.entities;
+    var query = req.body.query;
+    var relationQuery = req.body.relationQuery;
+    console.log(query);
+    const pmIDSet = new Set();
+    Graph.searchMultiRelations(client.getSession(req), relationQuery)
+      .then(response2 => {
+        Graph.searchNodes(client.getSession(req), req.body)
+          .then(response => {
+            var dict = response; // Get Object
+            response = Object.values(dict); // Get Values
+            response.forEach(item => pmIDSet.add(item.pmID));
+
+            // pmIDSet stores labels
+            console.log(pmIDSet, "pmIDSet");
+            searchModule.search2(query, function (data) {
+              // Get ElasticSearch Data for filtering
+              targetData = []; // Target data with priority from neo4j
+              restData = []; // Rest search results from ElasticSearch
+
+              for (i = 0; i < data.length; i++) {
+                data[i].type = "searchNode";
+                data[i]._source.content =
+                  data[i]._source.content.substring(0, 350) + "..."; // Trim to 350 length
+                if (pmIDSet.has(data[i]._source.pmID)) {
+                  data[i]._source.entities =
+                    dict[data[i]._source.pmID.toString()].entities;
+                  targetData.push(data[i]);
+                } else {
+                  restData.push(data[i]);
+                }
+              }
+              data = targetData.concat(restData);
+              console.log("response2");
+              console.log(Object.values(response2))
+              console.log("data");
+              console.log(data);
+              response2 = Object.values(response2);
+              for (i = 0; i < response2.length; i++) {
+                response2[i].type = "relation";
+              }
+              data = response2.concat(data);
+              console.log(data);
+              return res.json({ success: true, data: data });
+            });
+          })
+          .catch(next);
       })
       .catch(next);
   });
