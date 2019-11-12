@@ -97,14 +97,10 @@ class SearchPage extends Component {
                         }
                     }
                 })
-                for (var i = 0; i < results.length; i++) {
-                    console.log(results[i].textEntities);
-                }
                 this.setState({ results })
             })
             .catch(err => console.log(err));
     }
-
 
     handleTyping2 = row => index => e => {
         const query = e.target.value;
@@ -127,27 +123,6 @@ class SearchPage extends Component {
         }
     }
 
-    handleRelationSearch2 = () => {
-        const { allQueries } = this.state;
-        console.log(allQueries);
-        axios.post(getHost() + ":3001/api/searchMultiRelations", allQueries)
-            .then(res => {
-                const results = res.data.data.map(info => {
-                    console.log(info)
-                    return {
-                        id: info.pmID,
-                        entities: info.entities,
-                        previewText: "info._source.content info._source.content info._source.content info._source.content info._source.content"
-                    }
-                })
-                console.log(results);
-                this.setState({
-                    results
-                })
-            })
-            .catch(err => console.log(err));
-    }
-
     handleAddColumn2 = row => () => {
         const { allQueries } = { ...this.state };
         const { queries, relations } = allQueries[row];
@@ -165,9 +140,15 @@ class SearchPage extends Component {
         this.setState({ allQueries });
     }
 
+    handleDeleteRow2 = () => {
+        const { allQueries } = { ...this.state };
+        allQueries.pop();
+        this.setState({ allQueries });
+    }
+
     render() {
         const { results, textEntities, allQueries } = this.state;
-        console.log(textEntities);
+        console.log(textEntities.concat(allQueriesToTextEntities(allQueries)));
         return (
             <div id='searchPage'>
                 <LoginModal />
@@ -184,9 +165,9 @@ class SearchPage extends Component {
                         handleTyping={this.handleTyping2}
                         handleSelect={this.handleSelect2}
                         handleKeyDown={this.handleKeyDown2}
-                        handleRelationSearch={this.handleRelationSearch2}
                         handleAddColumn={this.handleAddColumn2}
                         handleAddRow={this.handleAddRow2}
+                        handleDeleteRow={this.handleDeleteRow2}
                     />
                 </div>
 
@@ -195,7 +176,7 @@ class SearchPage extends Component {
                     <div id='search-result-container'>
                         <SearchResults
                             results={results}
-                            textEntities={textEntities}
+                            textEntities={textEntities.concat(allQueriesToTextEntities(allQueries))}
                         />
                     </div>
                 }

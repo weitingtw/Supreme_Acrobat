@@ -713,8 +713,9 @@ export const addHighLight = (text, tokens, className = 'highLight') => {
 	if (tokens == null) { return text; }
 
 	for (let t of tokens) {
-		let highlight = '<span class=' + className + '>' + t + '</span>';
+		let highlight = " " + '<span class=' + className + '>' + t + '</span>' + " ";
 		text = text.replace(" " + t + " ", highlight);
+		console.log(text);
 	}
 
 	return text;

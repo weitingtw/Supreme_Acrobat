@@ -31,26 +31,26 @@ class QueryBuilder extends Component {
 
                 show type O
                 <Switch
-                    checked={ this.state.showO }
-                    onChange={ this.handleToggle }
+                    checked={this.state.showO}
+                    onChange={this.handleToggle}
                 />
 
-            {   
-                entities.map((token, index) => {
-                    const { label, type } = token;
-                    const handleEntitySelect = this.handleEntitySelect(index);
-                    if (type !== 'O' || showO) {
-                        return <QueryItem 
-                                    word={ label } 
-                                    key={ index }
-                                    type={ type }
-                                    handleEntitySelect={ handleEntitySelect }
-                                />
-                    } else {
-                        return null;
-                    }
-                })
-            }
+                {
+                    entities.map((token, index) => {
+                        const { label, type } = token;
+                        const handleEntitySelect = this.handleEntitySelect(index);
+                        if (type !== 'O' || showO) {
+                            return <QueryItem
+                                word={label}
+                                key={index}
+                                type={type}
+                                handleEntitySelect={handleEntitySelect}
+                            />
+                        } else {
+                            return null;
+                        }
+                    })
+                }
 
             </div>
         );

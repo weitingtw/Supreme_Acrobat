@@ -18,35 +18,35 @@ class TopBar extends Component {
         this.props.handleSearch();
     }
 
-    // handleEntitySelect = (index, type) => {
-    //     const newState = { ...this.state };
-    //     newState.textEntities[index].type = type;
-    //     this.setState(newState);
-    // }
+    handleEntitySelect = (index, type) => {
+        const newState = { ...this.state };
+        this.props.textEntities[index].type = type;
+        this.setState(newState);
+    }
 
     render() {
         const { textEntities, queries } = this.props;
         console.log('textEntities: ', textEntities);
         return (
-            <div id='topBar'>  
+            <div id='topBar'>
                 <Link to="/" id='title'>
                     CREAT<span id='E'>e</span>
                 </Link>
 
                 <div id='search-bar-container'>
-                    <SearchBar 
-                        handleSearch={ this.handleSearch } 
-                        handleTyping={ this.handleTyping } 
+                    <SearchBar
+                        handleSearch={this.handleSearch}
+                        handleTyping={this.handleTyping}
                     />
-                </div>  
+                </div>
 
                 <div id='query-builder-container'>
-                    <QueryBuilder 
-                        queries={ queries } 
-                        entities={ textEntities }
-                        handleEntitySelect={ this.handleEntitySelect }
-                    /> 
-                </div>         
+                    <QueryBuilder
+                        queries={queries}
+                        entities={textEntities}
+                        handleEntitySelect={this.handleEntitySelect}
+                    />
+                </div>
             </div>
         );
     }
