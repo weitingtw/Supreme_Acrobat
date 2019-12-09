@@ -226,6 +226,7 @@ var searchMultiRelations = function (session, input) {
   Public Functions for search nodes
 */
 var searchNodes = function (session, object) {
+    console.log("start search Nodes");
     entities = object.entities;
     label_array = [];
     type_array = [];

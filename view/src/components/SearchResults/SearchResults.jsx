@@ -9,20 +9,20 @@ class SearchResults extends Component {
 
     render() {
         const { results, textEntities } = this.props;
-
+        console.log(results)
         return (
-        <div id='searchResults'>
-            {
-                results.length <= 0 ? '': results.map(eachData => {
-                    eachData.textEntities = textEntities;
-                    return <Result 
-                        displayData={ eachData }
-                        key={ eachData.id }
-                    />
-                })
-            }
+            <div id='searchResults'>
+                {
+                    results.length <= 0 ? '' : results.map(eachData => {
+                        eachData.textEntities = textEntities;
+                        return <Result
+                            displayData={eachData}
+                            key={eachData.id}
+                        />
+                    })
+                }
 
-        </div>);
+            </div>);
     }
 }
 

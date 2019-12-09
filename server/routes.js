@@ -201,9 +201,11 @@ module.exports = function (app) {
     var query = req.body.query;
     var relationQuery = req.body.relationQuery;
     console.log(query);
+    console.log(relationQuery)
     const pmIDSet = new Set();
     Graph.searchMultiRelations(client.getSession(req), relationQuery)
       .then(response2 => {
+        console.log(response2)
         Graph.searchNodes(client.getSession(req), req.body)
           .then(response => {
             var dict = response; // Get Object
@@ -286,6 +288,21 @@ module.exports = function (app) {
       .then(response => {
         data = response.data;
         // console.log(data);
+        return res.json(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  });
+
+  router.post("/getRelationPrediction", (req, res) => {
+    const params = req.body.data;
+    // console.log(params);
+    axios
+      .get("http://127.0.0.1:5001/", { params })
+      .then(response => {
+        data = response.data;
+        console.log(data);
         return res.json(data);
       })
       .catch(error => {

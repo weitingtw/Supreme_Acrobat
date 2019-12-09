@@ -7,12 +7,13 @@ var getSession = function (context) {
   if (context.neo4jSession) {
     return context.neo4jSession;
   } else {
+    console.log("GET NEO4j Session")
     context.neo4jSession = driver.session();
     return context.neo4jSession;
   }
 };
 
 module.exports = {
-	driver: driver,
-	getSession: getSession
+  driver: driver,
+  getSession: getSession
 }

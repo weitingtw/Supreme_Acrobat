@@ -15,13 +15,15 @@ class SearchPage extends Component {
         results: [],                // search results
         textEntities: [],           // predicted entities
         queryText: '',               // query plain text
-        allQueries: [{
-            queries: ['', ''],
-            relations: ['BEFORE']
-        }],
+        allQueries: [
+            //{
+            //queries: ['', ''],
+            //relations: ['BEFORE']
+            //}
+        ],
     }
 
-    handleTyping = queryText => {
+    handleTyping = async (queryText) => {
         const _isLetter = c => /^[a-zA-Z()]$/.test(c);
         if (_isLetter(queryText.charAt(queryText.length - 1))) { return }
 
@@ -42,6 +44,46 @@ class SearchPage extends Component {
                 });
             })
             .catch(error => { console.log(error); });
+
+
+        const type_list = ["Sign_symptom"]
+        const { textEntities } = this.state;
+        console.log(textEntities);
+        var newQueries = [];
+        for (var i = 0; i < textEntities.length; i++) {
+            for (var j = i + 1; j < textEntities.length; j++) {
+                if (type_list.indexOf(textEntities[i].type) > -1 && type_list.indexOf(textEntities[j].type) > -1) {
+
+                    var query_object = {
+                        queries: [textEntities[i].label, textEntities[j].label],
+                        relations: ['BEFORE']
+                    }
+                    var relations = []
+                    await axios.post(getHost() + ":3001/api/getRelationPrediction", {
+                        data: { query: queryText, query1: query_object.queries[0], query2: query_object.queries[1] }
+                    })
+                        .then(response => {
+                            const { data: { relation } } = response;
+                            console.log(relation)
+                            relations.push(relation)
+
+
+                        })
+                        .catch(error => { console.log(error); });
+                    console.log(query_object.queries[0])
+                    console.log(query_object.queries[1])
+                    console.log(relations)
+                    query_object.relations = relations
+                    newQueries.push(query_object)
+                }
+            }
+        }
+        console.log(newQueries)
+        this.setState({
+            allQueries: newQueries
+        })
+        console.log(this.state.allQueries)
+
     }
 
     handleSearch = () => {
@@ -80,7 +122,7 @@ class SearchPage extends Component {
         axios.post(getHost() + ":3001/api/searchNodesWithRelations", queryObj)
             .then(res => {
                 // search results
-                console.log(res);
+                //console.log(res);
                 const results = res.data.data.map(info => {
                     console.log(info.type);
                     if (info.type == "searchNode") {
@@ -108,6 +150,7 @@ class SearchPage extends Component {
         const { queries } = allQueries[row];
         queries[index] = query;
         this.setState({ allQueries });
+        console.log(this.state)
     }
 
     handleSelect2 = row => index => key => {
@@ -146,9 +189,12 @@ class SearchPage extends Component {
         this.setState({ allQueries });
     }
 
+
     render() {
         const { results, textEntities, allQueries } = this.state;
         console.log(textEntities.concat(allQueriesToTextEntities(allQueries)));
+        console.log(results)
+        console.log(allQueries)
         return (
             <div id='searchPage'>
                 <LoginModal />
@@ -161,6 +207,7 @@ class SearchPage extends Component {
                         handleTyping={this.handleTyping}
                     />
                     <RelationSearchBar
+                        textEntities={textEntities}
                         allQueries={this.state.allQueries}
                         handleTyping={this.handleTyping2}
                         handleSelect={this.handleSelect2}

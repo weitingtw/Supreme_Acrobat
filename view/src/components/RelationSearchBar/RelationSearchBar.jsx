@@ -13,9 +13,10 @@ import { getHost } from '../../utils';
     no UI polish since it is for inner test
                                                 */
 class RelationSearchBar extends Component {
-    state = {
-        allQueries: this.props.allQueries
-    }
+    /*state = {
+        allQueries: this.props.allQueries,
+    }*/
+
 
     /*handleTyping = row => index => e => {
         const query = e.target.value;
@@ -77,9 +78,34 @@ class RelationSearchBar extends Component {
     }*/
 
     render() {
-        const { allQueries, results } = this.state;
+
+        const { allQueries, textEntities } = this.props;
         console.log(allQueries);
-        console.log(allQueriesToTextEntities(allQueries));
+        //console.log(allQueriesToTextEntities(allQueries));
+
+        /*const type_list = ["Sign_symptom"]
+        var predict_relation = [];
+        for (var i = 0; i < textEntities.length; i++) {
+            for (var j = i + 1; j < textEntities.length; j++) {
+                if (type_list.indexOf(textEntities[i].type) > -1 && type_list.indexOf(textEntities[j].type) > -1) {
+                    const queries = [textEntities[i].label, textEntities[j].label]
+                    const relations = ["BEFORE"]
+                    const base = (
+                        <RelationSearch
+                            queries={queries}
+                            relations={relations}
+                            handleTyping={this.props.handleTyping(i)}
+                            handleSelect={this.props.handleSelect(i)}
+                            handleAddColumn={this.props.handleAddColumn(i)}
+                            handleKeyDown={this.props.handleKeyDown}
+                        />
+                    )
+                    predict_relation.push(base);
+                }
+            }
+        }
+        {predict_relation.map((element, i) => (element))}
+        */
         return (
             <div id='relationSearchBar'>
                 {allQueries.map((oneQuery, i) =>
@@ -129,11 +155,11 @@ class RelationSearch extends Component {
             handleKeyDown
         } = this.props;
         const allRelations = ['BEFORE', 'AFTER', 'OVERLAP', 'MODIFY', 'IDENTICAL', 'SUBPROCEDURE'];
-
         const inputComponent = queries.map((word, i) => {
             if (i === queries.length - 1) {
                 return (<div className='one_relation' key={i}>
                     <input
+                        value={word}
                         type="text"
                         className="searchText"
                         onChange={handleTyping(i)}
@@ -143,6 +169,7 @@ class RelationSearch extends Component {
             } else {
                 return (<div className='one_relation' key={i}>
                     <input
+                        value={word}
                         type="text"
                         className="searchText"
                         onChange={handleTyping(i)}

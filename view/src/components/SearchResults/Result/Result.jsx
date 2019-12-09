@@ -20,7 +20,7 @@ class Result extends Component {
             .then(res => {
                 console.log(res, "res");
                 const text = (res.data.data[0].text).substring(0, 350) + '...';
-
+                console.log(text)
                 this.setState({ previewText: text })
             })
             .catch(err => console.log(err));
@@ -28,6 +28,7 @@ class Result extends Component {
 
     render() {
         const { previewText } = this.state;
+        console.log(previewText)
         const {
             displayData: { id, textEntities, entities }
         } = this.props;
