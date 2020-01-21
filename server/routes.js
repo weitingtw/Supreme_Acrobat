@@ -716,25 +716,39 @@ module.exports = function (app) {
 
     UploadedReport.create(report, function (err, data) {
       if (!err) {
-
-        body = []
-        body.push({ index: { _index: 'casereport', _type: '_doc', _id: 201 } });
-        body.push({ id: data._id, pmID: 1, content: data.text });
-
-        esclient.bulk({
-          body: body
+        count = 0
+        esclient.cat.count({
+          index: 'casereport'
         }, function (err, resp) {
-          if (err) {
-            return res.json({
-              success: false
-            });
-          }
-          else {
-            return res.json({
-              success: true
-            });
-          }
-        });
+          response = resp.trim().split(" ")
+
+          // third element is the count
+          count = parseInt(response[2])
+          body = []
+          body.push({ index: { _index: 'casereport', _type: '_doc', _id: count } });
+          body.push({ id: data._id, pmID: 1, content: data.text });
+
+          console.log("count")
+          console.log(count)
+
+          esclient.bulk({
+            body: body
+          }, function (err, resp) {
+            console.log(resp)
+            if (err) {
+              return res.json({
+                success: false
+              });
+            }
+            else {
+              return res.json({
+                success: true
+              });
+            }
+          });
+        })
+
+
       }
     });
   })
