@@ -21,7 +21,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 CaseReport.find((err, data) => {
   if (err) return res.json({ success: false, error: err });
-  console.log(data)
+  //console.log(data)
   var body = [];
   data.forEach(function (row, id) {
     body.push({ index: { _index: 'casereport', _type: '_doc', _id: (id + 1) } });
@@ -75,6 +75,7 @@ CaseReport.find((err, data) => {
   });
   console.log("create index");
 
+  console.log(body);
   client.bulk({
     body: body
   }, function (err, resp) {

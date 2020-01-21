@@ -5,6 +5,7 @@ const CaseReport = require("./models/mongo/case_report");
 const searchModule = require("./controllers/search_controller.js");
 const mongo = require("mongodb");
 const CaseReport2 = require("./models/mongo/case_report2");
+const UploadedReport = require("./models/mongo/uploaded_reports");
 const User = require("./models/mongo/user");
 const VeriInfo = require("./models/mongo/verification_info");
 const crypto = require("crypto");
@@ -15,6 +16,7 @@ const client = require("./config/neoClient.js");
 var writeResponse = require("./helpers/response").writeResponse;
 var Graph = require("./controllers/graph_controller");
 var uuidv1 = require("uuid/v1");
+const esclient = require("./config/esClient");
 
 // var HomeController = require('./controllers/home_controller.js');
 var fs = require("fs");
@@ -205,6 +207,7 @@ module.exports = function (app) {
     const pmIDSet = new Set();
     Graph.searchMultiRelations(client.getSession(req), relationQuery)
       .then(response2 => {
+        console.log("response 2")
         console.log(response2)
         Graph.searchNodes(client.getSession(req), req.body)
           .then(response => {
@@ -697,6 +700,45 @@ module.exports = function (app) {
     });
   });
 
+  /* --------------------------------Upload Report --------------------- */
+
+  router.post("/uploadReport", function (req, res) {
+    console.log("uploadReport");
+    console.log(req.body);
+    if (!req.body.text || req.body.text.length < 100) {
+      return res.json({
+        success: false,
+        error: "INVALID INPUTS"
+      });
+    }
+    let report = {};
+    report.text = req.body.text;
+
+    UploadedReport.create(report, function (err, data) {
+      if (!err) {
+
+        body = []
+        body.push({ index: { _index: 'casereport', _type: '_doc', _id: 201 } });
+        body.push({ id: data._id, pmID: 1, content: data.text });
+
+        esclient.bulk({
+          body: body
+        }, function (err, resp) {
+          if (err) {
+            return res.json({
+              success: false
+            });
+          }
+          else {
+            return res.json({
+              success: true
+            });
+          }
+        });
+      }
+    });
+  })
+
   /* --------------------------------------- SIGNUP --------------------------------------- */
   app.use((req, res, next) => {
     if (req.cookies.user_sid && !req.session.user) {
@@ -752,17 +794,16 @@ module.exports = function (app) {
     user.email = req.body.email;
     user.password = req.body.password;
     user.activation = false;
-    console.log("here");
     User.create(user, function (err, user) {
       console.log(err);
       if (err) {
         return res.json({ success: false, error: err });
       } else {
-        var transport = nodemailer.createTransport(
+        /*var transport = nodemailer.createTransport(
           "smtps://donleeldb%40gmail.com:" +
           encodeURIComponent("jklabcdefg") +
           "@smtp.gmail.com:465"
-        );
+        );*/
         var transport = nodemailer.createTransport(
           "smtps://acrobatportal%40gmail.com:" +
           encodeURIComponent("Acrobatportal1") +

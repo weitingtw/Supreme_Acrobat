@@ -711,8 +711,17 @@ export const combineMultiWordEntity = (entity_types, tokens) => {
 export const addHighLight = (text, tokens, className = 'highLight') => {
 	// basically wrap these [tokens] in [text] with span that has [className]
 	if (tokens == null) { return text; }
+	const stopwords = ["a", "about", "after", "all", "also", "always", "am", "an", "and", "any", "are", "at", "be", "been", "being",
+		"but", "by", "came", "can", "cant", "come", "could", "did", "didnt", "do", "does", "doesnt", "doing", "dont", "else", "for", "from", "get", "give", "goes",
+		"going", "had", "happen", "has", "have", "having", "how", "i", "if", "ill", "im", "in", "into", "is", "isnt", "it", "its", "ive", "just", "keep", "let",
+		"like", "made", "make", "many", "may", "me", "mean", "more", "most", "much", "no", "not", "now", "of", "only", "or", "our", "really", "say", "see", "some",
+		"something", "take", "tell", "than", "that", "the", "their", "them", "then", "there", "they", "thing", "this", "to", "try", "up", "us", "use", "used", "uses",
+		"very", "want", "was", "way", "we", "what", "when", "where", "which", "who", "why", "will", "with", "without", "wont", "you", "your"]
 
 	for (let t of tokens) {
+		if (stopwords.indexOf(t) !== -1) {
+			continue;
+		}
 		let highlight = " " + '<span class=' + className + '>' + t + '</span>' + " ";
 		text = text.replace(" " + t + " ", highlight);
 		console.log(text);

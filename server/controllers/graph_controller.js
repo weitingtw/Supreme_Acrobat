@@ -192,8 +192,9 @@ var searchRelation = function (session, relation) {
     Public Functions for search multiple relations
 */
 var searchMultiRelations = function (session, input) {
-    var query = `MATCH `;
+    var query = "MATCH  ";
     var varList = [];
+    var empty = {};
     for (var i = 0; i < input.length; i++) {
         row = input[i];
         queries = row.queries;

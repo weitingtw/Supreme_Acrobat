@@ -140,17 +140,70 @@ class ModalContent extends Component {
 }
 
 
+class SubmitModalContent extends Component {
+    state = {
+        text: ""
+    }
+
+    handleSubmitInput = e => {
+        this.setState({ text: e.target.value });
+    }
+
+    handleSubmit = () => {
+        this.props.handleSubmit(this.state);
+    }
+
+    render() {
+        const { handleCloseModal } = this.props;
+
+        const CloseModalButton =
+            <button
+                id='close-button'
+                onClick={handleCloseModal}>
+                <FontAwesomeIcon icon={['far', 'times']} />
+            </button>
+
+        const _submitButton =
+            <button
+                onClick={this.handleSubmit}
+                className='confirm-button'
+            >
+                Submit
+            </button>
+
+
+        return <div className='modal-inner-content'>
+            <span>Submit your Report</span>
+            <div>
+                <textarea value={this.state.value} onChange={this.handleSubmitInput} rows={10} cols={30} />
+            </div>
+            {CloseModalButton}
+            {_submitButton}
+
+        </div >
+    }
+}
+
 class LoginModal extends Component {
     state = {
-        visible: false
+        login_visible: false,
+        submit_visible: false
+    }
+
+    openSubmitModal = () => {
+        this.setState({ submit_visible: true });
+    }
+
+    closeSubmitModal = () => {
+        this.setState({ submit_visible: false })
     }
 
     openModal = () => {
-        this.setState({ visible: true });
+        this.setState({ login_visible: true });
     }
 
     closeModal = () => {
-        this.setState({ visible: false });
+        this.setState({ login_visible: false });
     }
 
     handleSignIn = data => {
@@ -188,6 +241,19 @@ class LoginModal extends Component {
         this.forceUpdate();
     }
 
+    handleSubmit = text => {
+        axios.post(getHost() + ":3001/api/uploadReport", text)
+            .then(res => {
+                console.log(res.data);
+                if (res.data.success === false) {
+                    alert('upload failed')
+                } else {
+                    alert('upload succeeded')
+                }
+                this.closeSubmitModal();
+            })
+    }
+
     showProfile = () => {
         let user = JSON.parse(localStorage.getItem('user'));
         const { email, createdAt } = user;
@@ -195,7 +261,7 @@ class LoginModal extends Component {
     }
 
     render() {
-        const { visible } = this.state;
+        const { login_visible, submit_visible } = this.state;
 
         let hasUser = false;
         let user = localStorage.getItem('user');
@@ -211,6 +277,23 @@ class LoginModal extends Component {
                     <FontAwesomeIcon icon={['far', 'user-astronaut']} />
                     Profile
                 </button>
+
+                <button onClick={this.openSubmitModal}>
+                    <FontAwesomeIcon icon={['far', 'arrow-alt-circle-up']} />
+                    Submit
+                </button>
+                <Modal
+                    visible={submit_visible}
+                    width="600"
+                    height="500"
+                    effect="fadeInDown"
+                    onClickAway={this.closeSubmitModal}
+                >
+                    <SubmitModalContent
+                        handleCloseModal={this.closeSubmitModal}
+                        handleSubmit={this.handleSubmit}
+                    />
+                </Modal>
                 |
                 <button onClick={this.handleSignOut}>
                     Sign Out
@@ -227,7 +310,7 @@ class LoginModal extends Component {
             <div id='login-modal'>
                 {Button}
                 <Modal
-                    visible={visible}
+                    visible={login_visible}
                     width="600"
                     height="500"
                     effect="fadeInDown"
