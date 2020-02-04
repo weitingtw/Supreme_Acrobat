@@ -282,22 +282,12 @@ class LoginModal extends Component {
                     <FontAwesomeIcon icon={['far', 'arrow-alt-circle-up']} />
                     Submit
                 </button>
-                <Modal
-                    visible={submit_visible}
-                    width="600"
-                    height="500"
-                    effect="fadeInDown"
-                    onClickAway={this.closeSubmitModal}
-                >
-                    <SubmitModalContent
-                        handleCloseModal={this.closeSubmitModal}
-                        handleSubmit={this.handleSubmit}
-                    />
-                </Modal>
+
                 |
                 <button onClick={this.handleSignOut}>
                     Sign Out
                 </button>
+
             </div>
             :
             <button onClick={this.openModal} className='button'>
@@ -320,6 +310,18 @@ class LoginModal extends Component {
                         handleCloseModal={this.closeModal}
                         handleSignIn={this.handleSignIn}
                         handleSignUp={this.handleSignUp}
+                    />
+                </Modal>
+                <Modal
+                    visible={submit_visible}
+                    width="600"
+                    height="500"
+                    effect="fadeInDown"
+                    onClickAway={this.closeSubmitModal}
+                >
+                    <SubmitModalContent
+                        handleCloseModal={this.closeSubmitModal}
+                        handleSubmit={this.handleSubmit}
                     />
                 </Modal>
             </div>
