@@ -11,24 +11,30 @@ const Schema = mongoose.Schema;
 */
 const CaseReportSchema = new Schema(
   {
-  	pmID		: 0,
-    messages	: [],
-    source_files	: [],
-    modifications 	: [],
-    normalizations 	: [],
+    pmID: 0,
+    messages: [],
+    source_files: [],
+    modifications: [],
+    normalizations: [],
     // ctime 			: 1351154734.5055847,
-    text 			: String,
-    entities 		: [],
-    attributes 		: [],
+    text: String,
+    entities: [],
+    attributes: [],
     // date : { type: Date, default: Date.now }
-    relations 		: [],
-    triggers 		: [],
-    events 			: [],
-    equivs			: [],
-    comments 		: [],
+    relations: [],
+    triggers: [],
+    events: [],
+    equivs: [],
+    comments: [],
     // sentence_offsets 	: [],
     // token_offsets 	: [],
-    action 			: String
+    action: String,
+    abstract: String,
+    authors: [],
+    keywords: [],
+    introduction: String,
+    discussion: String,
+    references: []
   },
   { timestamps: true }
 );
