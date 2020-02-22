@@ -51,7 +51,17 @@ class EntityGraph extends Component {
         style={{ border: "2px solid #bcbcbc" }}
         viewBox={`0 0 ${this.state.width} ${this.state.height}`}
       >
-        <g id="nodes"></g>
+        <g id="nodes">
+          {this.state.currNodes.map(n => (
+            <circle
+              className="node"
+              cx={n.cx}
+              cy={n.cy}
+              r={n.radius}
+              style={{ strokeWidth: 1.0 }}
+            ></circle>
+          ))}
+        </g>
         <g id="edges"></g>
       </svg>
     );
