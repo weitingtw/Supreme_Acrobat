@@ -18,8 +18,8 @@ class EntityGraph extends Component {
 
     this.state = {
       allData: graph,
-      currNodes: [],
-      currEdges: [],
+      currNodes: graph.nodes,
+      currEdges: graph.edges,
       filter: null,
       layout: "force"
     };
@@ -27,7 +27,11 @@ class EntityGraph extends Component {
 
   initializeData(data) {
     data.nodes.forEach(node => {
-      node.radius = 4;
+      if (node.type == "OVERLAP") {
+        node.radius = 10;
+      } else {
+        node.radius = 4;
+      }
     });
 
     let nodesMap = this.mapNodes(data.nodes);
@@ -49,17 +53,17 @@ class EntityGraph extends Component {
   }
 
   componentDidMount() {
-    const currNodes = this.state.allData.nodes;
-    const currEdges = this.state.allData.edges;
+    const nodes = this.state.currNodes;
+    const edges = this.state.currEdges;
 
-    const simulation = forceSimulation(currNodes)
+    const simulation = forceSimulation(nodes)
       .force("charge", forceManyBody().strength(-10))
-      .force("link", forceLink(currEdges))
+      .force("link", forceLink(edges))
       .force("center", forceCenter());
 
     simulation.on("tick", () => {
-      this.setState({ currNodes: currNodes });
-      this.setState({ currEdges: currEdges });
+      this.setState({ currNodes: nodes });
+      this.setState({ currEdges: edges });
     });
   }
 

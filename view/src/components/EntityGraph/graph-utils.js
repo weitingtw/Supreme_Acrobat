@@ -87,7 +87,7 @@ export const formatData = graphData => {
 
     let nodeText;
     let nodeOverlap;
-    if (!nodeSet[sourceID]) {
+    if (!nodeSet.has(sourceID)) {
       // get text
       nodeText = graphData.text.substring(
         nodeIDToTextIndex[sourceID][0],
@@ -104,11 +104,30 @@ export const formatData = graphData => {
         type: nodeIDToNodeType[sourceID],
         overlap: nodeOverlap
       });
+      //   add overlap edge and node
+      if (nodeOverlap) {
+        edges.push({
+          source: sourceID,
+          target: nodeOverlap,
+          type: "OVERLAP"
+        });
+
+        // if not already have node created, create a node of the overlap
+        if (!nodeSet.has(nodeOverlap)) {
+          nodes.push({
+            id: nodeOverlap,
+            text: undefined,
+            type: "OVERLAP",
+            overlap: undefined
+          });
+          nodeSet.add(nodeOverlap);
+        }
+      }
 
       nodeSet.add(sourceID);
     }
 
-    if (!nodeSet[targetID]) {
+    if (!nodeSet.has(targetID)) {
       // get text
       nodeText = graphData.text.substring(
         nodeIDToTextIndex[targetID][0],
@@ -123,6 +142,23 @@ export const formatData = graphData => {
         type: nodeIDToNodeType[targetID],
         overlap: nodeOverlap
       });
+
+      if (nodeOverlap) {
+        edges.push({
+          source: targetID,
+          target: nodeOverlap,
+          type: "OVERLAP"
+        });
+        if (!nodeSet.has(nodeOverlap)) {
+          nodes.push({
+            id: nodeOverlap,
+            text: undefined,
+            type: "OVERLAP",
+            overlap: undefined
+          });
+          nodeSet.add(nodeOverlap);
+        }
+      }
 
       nodeSet.add(targetID);
     }
