@@ -67,12 +67,7 @@ class DisplayPage extends Component {
         {docData && (
           <div className="graph-container">
             <Graph graphData={docData} entities={entities} />
-            <EntityGraph
-              graphData={docData}
-              entities={entities}
-              width={975}
-              height={610}
-            />
+            <EntityGraph graphData={docData} entities={entities} />
           </div>
         )}
         }

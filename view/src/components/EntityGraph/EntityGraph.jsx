@@ -6,6 +6,8 @@ import {
   forceCenter
 } from "d3-force";
 
+import { extent } from "d3-array";
+
 import { formatData } from "./graph-utils";
 
 class EntityGraph extends Component {
@@ -19,9 +21,7 @@ class EntityGraph extends Component {
       currNodes: [],
       currEdges: [],
       filter: null,
-      layout: "force",
-      width: 975,
-      height: 610
+      layout: "force"
     };
   }
 
@@ -56,6 +56,7 @@ class EntityGraph extends Component {
       .force("charge", forceManyBody().strength(-10))
       .force("link", forceLink(currEdges))
       .force("center", forceCenter());
+
     simulation.on("tick", () => {
       this.setState({ currNodes: currNodes });
       this.setState({ currEdges: currEdges });
@@ -63,13 +64,17 @@ class EntityGraph extends Component {
   }
 
   render() {
+    const xDomain = extent(this.state.currNodes, node => node.x);
+    const yDomain = extent(this.state.currNodes, node => node.y);
+
+    const width = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
+    const height = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
+
     return (
       <svg
         className="graph"
         style={{ border: "2px solid #bcbcbc" }}
-        viewBox={`${-this.state.width / 2} ${-this.state.height / 2} ${
-          this.state.width
-        } ${this.state.height}`}
+        viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
       >
         <g id="edges">
           {this.state.currEdges.map(e => (
