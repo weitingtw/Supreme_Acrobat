@@ -136,3 +136,9 @@ export const formatData = graphData => {
 
   return { nodes: nodes, edges: edges, pmid: graphData.pmID };
 };
+
+export const getOverlaps = graphData => {
+  return graphData.equivs.map((equiv, i) => {
+    return "OV" + i;
+  });
+};

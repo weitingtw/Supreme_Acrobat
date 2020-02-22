@@ -8,7 +8,7 @@ import {
 
 import { extent } from "d3-array";
 
-import { formatData } from "./graph-utils";
+import { formatData, getOverlaps } from "./graph-utils";
 
 class EntityGraph extends Component {
   constructor(props) {
