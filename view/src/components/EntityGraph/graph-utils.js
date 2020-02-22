@@ -1,3 +1,7 @@
+/**
+ * Converts raw data into an object of nodes and edges
+ * @param {Object} graphData
+ */
 export const formatData = graphData => {
   const nodes = [];
   const edges = [];
