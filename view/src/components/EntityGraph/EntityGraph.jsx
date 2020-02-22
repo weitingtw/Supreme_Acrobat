@@ -51,6 +51,19 @@ class EntityGraph extends Component {
         style={{ border: "2px solid #bcbcbc" }}
         viewBox={`0 0 ${this.state.width} ${this.state.height}`}
       >
+        <g id="edges">
+          {this.state.currEdges.map(e => (
+            <line
+              className="edge"
+              x1={e.source.cx}
+              y1={e.source.cy}
+              x2={e.target.cx}
+              y2={e.target.cy}
+              stroke="#ccc"
+              strokeOpacity={0.8}
+            ></line>
+          ))}
+        </g>
         <g id="nodes">
           {this.state.currNodes.map(n => (
             <circle
@@ -62,7 +75,6 @@ class EntityGraph extends Component {
             ></circle>
           ))}
         </g>
-        <g id="edges"></g>
       </svg>
     );
   }
