@@ -3,7 +3,8 @@ import {
   forceSimulation,
   forceManyBody,
   forceLink,
-  forceCenter
+  forceCenter,
+  forceCollide
 } from "d3-force";
 
 import { extent } from "d3-array";
@@ -57,9 +58,15 @@ class EntityGraph extends Component {
     const edges = this.state.currEdges;
 
     const simulation = forceSimulation(nodes)
-      .force("charge", forceManyBody().strength(-10))
-      .force("link", forceLink(edges))
-      .force("center", forceCenter());
+      .force("charge", forceManyBody().strength(-50))
+      .force(
+        "link",
+        forceLink(edges)
+          .distance(1)
+          .strength(1)
+      )
+      .force("center", forceCenter())
+      .force("collision", forceCollide(8));
 
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
