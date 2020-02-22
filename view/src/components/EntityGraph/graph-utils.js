@@ -99,9 +99,9 @@ export const formatData = graphData => {
         : undefined;
 
       nodes.push({
-        nodeID: sourceID,
-        label: nodeText,
-        entityType: nodeIDToNodeType[sourceID],
+        id: sourceID,
+        text: nodeText,
+        type: nodeIDToNodeType[sourceID],
         overlap: nodeOverlap
       });
 
@@ -118,9 +118,9 @@ export const formatData = graphData => {
       nodeOverlap = nodeIDToOverLapID[targetID];
 
       nodes.push({
-        nodeID: targetID,
-        label: nodeText,
-        entityType: nodeIDToNodeType[targetID],
+        id: targetID,
+        text: nodeText,
+        type: nodeIDToNodeType[targetID],
         overlap: nodeOverlap
       });
 
