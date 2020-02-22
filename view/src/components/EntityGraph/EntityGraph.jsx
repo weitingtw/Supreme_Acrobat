@@ -21,8 +21,11 @@ class EntityGraph extends Component {
       <svg
         className="graph"
         style={{ border: "2px solid #bcbcbc" }}
-        viewBox="0 0 500 500"
-      ></svg>
+        viewBox="0 0 500 250"
+      >
+        <g id="nodes"></g>
+        <g id="edges"></g>
+      </svg>
     );
   }
 }
