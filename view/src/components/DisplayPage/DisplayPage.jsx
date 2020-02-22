@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
+import EntityGraph from "../EntityGraph/EntityGraph";
 
 class DisplayPage extends Component {
   state = {
@@ -66,6 +67,7 @@ class DisplayPage extends Component {
         {docData && (
           <div className="graph-container">
             <Graph graphData={docData} entities={entities} />
+            <EntityGraph graphData={docData} entities={entities} />
           </div>
         )}
         }
