@@ -82,9 +82,9 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
-        node.radius = 5;
+        node.radius = 15;
       } else {
-        node.radius = 4;
+        node.radius = 10;
       }
     });
 
@@ -115,11 +115,11 @@ class EntityGraph extends Component {
       .force(
         "link",
         forceLink(edges)
-          .distance(1)
+          .distance(10)
           .strength(1)
       )
       .force("center", forceCenter())
-      .force("collision", forceCollide(8));
+      .force("collision", forceCollide(15));
 
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
@@ -134,6 +134,30 @@ class EntityGraph extends Component {
     const width = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
     const height = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
 
+    const nodes = this.state.currNodes.map(n => (
+      <circle
+        className="node"
+        cx={n.x}
+        cy={n.y}
+        r={n.radius}
+        strokeWidth={1.5}
+        stroke="#000"
+        fill={this.state.colors[n.type]}
+      ></circle>
+    ));
+
+    const edges = this.state.currEdges.map(e => (
+      <line
+        className="edge"
+        marker-end="url(#arrow)"
+        x1={e.source.x}
+        y1={e.source.y}
+        x2={e.target.x}
+        y2={e.target.y}
+        stroke="#343434"
+        strokeOpacity={0.8}
+      ></line>
+    ));
     return (
       <svg
         className="graph"
@@ -144,43 +168,18 @@ class EntityGraph extends Component {
           <marker
             id="arrow"
             viewBox="0 -5 10 10"
-            refX="8"
+            refX="12"
             refY="0"
-            markerWidth="10"
-            markerHeight="10"
+            markerWidth="15"
+            markerHeight="15"
             orient="auto"
-            fill="#aaa"
+            fill="#343434"
           >
-            <path d="M0,-5L10,0L0,5" class="arrow-head" />
+            <path d="M-3,-3L6,0L-3,3L" />
           </marker>
         </defs>
-        <g id="edges">
-          {this.state.currEdges.map(e => (
-            <line
-              className="edge"
-              marker-end="url(#arrow)"
-              x1={e.source.x}
-              y1={e.source.y}
-              x2={e.target.x}
-              y2={e.target.y}
-              stroke="#aaa"
-              strokeOpacity={0.8}
-            ></line>
-          ))}
-        </g>
-        <g id="arrowheads"></g>
-        <g id="nodes">
-          {this.state.currNodes.map(n => (
-            <circle
-              className="node"
-              cx={n.x}
-              cy={n.y}
-              r={n.radius}
-              style={{ strokeWidth: 1.0 }}
-              fill={this.state.colors[n.type]}
-            ></circle>
-          ))}
-        </g>
+        <g id="edges">{edges}</g>
+        <g id="nodes">{nodes}</g>
       </svg>
     );
   }
