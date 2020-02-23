@@ -4,7 +4,8 @@ import {
   forceManyBody,
   forceLink,
   forceCenter,
-  forceCollide
+  forceCollide,
+  forceX
 } from "d3-force";
 
 import { extent } from "d3-array";
@@ -66,7 +67,10 @@ class EntityGraph extends Component {
       Color: "#ffd700",
       Shape: "#ffd700",
       Texture: "#ffd700",
-      Coreference: "#808000"
+      Coreference: "#808000",
+      Date: "lightgreen",
+      Duration: "lightgreen",
+      OVERLAP: "#fff"
     };
 
     this.state = {
@@ -82,6 +86,7 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
+        node.fy = 0;
         node.radius = 15;
       } else {
         node.radius = 10;
@@ -118,8 +123,8 @@ class EntityGraph extends Component {
           .distance(10)
           .strength(1)
       )
-      .force("center", forceCenter())
-      .force("collision", forceCollide(15));
+      .force("collision", forceCollide(30))
+      .force("center", forceCenter());
 
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
@@ -137,10 +142,11 @@ class EntityGraph extends Component {
     const nodes = this.state.currNodes.map(n => (
       <circle
         className="node"
+        id={n.id}
         cx={n.x}
         cy={n.y}
         r={n.radius}
-        strokeWidth={1.5}
+        strokeWidth={2}
         stroke="#000"
         fill={this.state.colors[n.type]}
       ></circle>
