@@ -86,10 +86,9 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
-        node.fy = 0;
-        node.radius = 15;
+        node.radius = 28;
       } else {
-        node.radius = 10;
+        node.radius = 12;
       }
     });
 
@@ -116,7 +115,7 @@ class EntityGraph extends Component {
     const edges = this.state.currEdges;
 
     const simulation = forceSimulation(nodes)
-      .force("charge", forceManyBody().strength(-50))
+      .force("charge", forceManyBody().strength(-100))
       .force(
         "link",
         forceLink(edges)
@@ -174,14 +173,14 @@ class EntityGraph extends Component {
           <marker
             id="arrow"
             viewBox="0 -5 10 10"
-            refX="12"
+            refX="16"
             refY="0"
             markerWidth="15"
             markerHeight="15"
             orient="auto"
             fill="#343434"
           >
-            <path d="M-3,-3L6,0L-3,3L" />
+            <path d="M-4,-4L8,0L-4,4L" />
           </marker>
         </defs>
         <g id="edges">{edges}</g>
