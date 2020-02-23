@@ -69,8 +69,8 @@ export const formatData = graphData => {
   /**
    * Create edges and nodes
    */
-
   const nodeSet = new Set();
+  let nodeText;
   // create edges
   for (let i = 0; i < graphData.relations.length; i++) {
     let eventID1 = graphData.relations[i][2][0][1];
@@ -85,8 +85,7 @@ export const formatData = graphData => {
       ? eventIDToNodeID[eventID2]
       : eventID2;
 
-    let nodeText;
-    let nodeOverlap;
+    let overlapID;
     if (!nodeSet.has(sourceID)) {
       // get text
       nodeText = graphData.text.substring(
@@ -94,7 +93,7 @@ export const formatData = graphData => {
         nodeIDToTextIndex[sourceID][1]
       );
       //   get overlap
-      nodeOverlap = nodeIDToOverLapID[sourceID]
+      overlapID = nodeIDToOverLapID[sourceID]
         ? nodeIDToOverLapID[sourceID]
         : undefined;
 
@@ -102,25 +101,25 @@ export const formatData = graphData => {
         id: sourceID,
         text: nodeText,
         type: nodeIDToNodeType[sourceID],
-        overlap: nodeOverlap
+        overlap: overlapID
       });
       //   add overlap edge and node
-      if (nodeOverlap) {
+      if (overlapID) {
         edges.push({
           source: sourceID,
-          target: nodeOverlap,
+          target: overlapID,
           type: "OVERLAP"
         });
 
         // if not already have node created, create a node of the overlap
-        if (!nodeSet.has(nodeOverlap)) {
+        if (!nodeSet.has(overlapID)) {
           nodes.push({
-            id: nodeOverlap,
+            id: overlapID,
             text: undefined,
             type: "OVERLAP",
             overlap: undefined
           });
-          nodeSet.add(nodeOverlap);
+          nodeSet.add(overlapID);
         }
       }
 
@@ -134,29 +133,29 @@ export const formatData = graphData => {
         nodeIDToTextIndex[targetID][1]
       );
       //   get overlap
-      nodeOverlap = nodeIDToOverLapID[targetID];
+      overlapID = nodeIDToOverLapID[targetID];
 
       nodes.push({
         id: targetID,
         text: nodeText,
         type: nodeIDToNodeType[targetID],
-        overlap: nodeOverlap
+        overlap: overlapID
       });
 
-      if (nodeOverlap) {
+      if (overlapID) {
         edges.push({
           source: targetID,
-          target: nodeOverlap,
+          target: overlapID,
           type: "OVERLAP"
         });
-        if (!nodeSet.has(nodeOverlap)) {
+        if (!nodeSet.has(overlapID)) {
           nodes.push({
-            id: nodeOverlap,
+            id: overlapID,
             text: undefined,
             type: "OVERLAP",
             overlap: undefined
           });
-          nodeSet.add(nodeOverlap);
+          nodeSet.add(overlapID);
         }
       }
 
@@ -170,11 +169,42 @@ export const formatData = graphData => {
     });
   }
 
+  // Add remaining nodes
+  for (let i = 0; i < graphData.equivs.length; i++) {
+    let overlapID = "OV" + i;
+    for (let j = 2; j < graphData.equivs[i].length; j++) {
+      let eventID = graphData.equivs[i][j];
+      let sourceID = eventIDToNodeID[eventID]
+        ? eventIDToNodeID[eventID]
+        : eventID;
+
+      if (!nodeSet.has(sourceID)) {
+        // get text
+        nodeText = graphData.text.substring(
+          nodeIDToTextIndex[sourceID][0],
+          nodeIDToTextIndex[sourceID][1]
+        );
+
+        nodes.push({
+          id: sourceID,
+          text: nodeText,
+          type: nodeIDToNodeType[sourceID],
+          overlap: overlapID
+        });
+      }
+      edges.push({
+        source: sourceID,
+        target: overlapID,
+        label: "OVERLAP"
+      });
+    }
+  }
+
   return { nodes: nodes, edges: edges, pmid: graphData.pmID };
 };
 
-export const getOverlaps = graphData => {
-  return graphData.equivs.map((equiv, i) => {
-    return "OV" + i;
-  });
-};
+// export const getOverlaps = graphData => {
+//   return graphData.equivs.map((equiv, i) => {
+//     return "OV" + i;
+//   });
+// };
