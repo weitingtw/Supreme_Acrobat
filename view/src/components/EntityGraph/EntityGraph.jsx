@@ -29,7 +29,7 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
-        node.radius = 10;
+        node.radius = 5;
       } else {
         node.radius = 4;
       }
@@ -87,19 +87,35 @@ class EntityGraph extends Component {
         style={{ border: "2px solid #bcbcbc" }}
         viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
       >
+        <defs>
+          <marker
+            id="arrow"
+            viewBox="0 -5 10 10"
+            refX="8"
+            refY="0"
+            markerWidth="10"
+            markerHeight="10"
+            orient="auto"
+            fill="#aaa"
+          >
+            <path d="M0,-5L10,0L0,5" class="arrow-head" />
+          </marker>
+        </defs>
         <g id="edges">
           {this.state.currEdges.map(e => (
             <line
               className="edge"
+              marker-end="url(#arrow)"
               x1={e.source.x}
               y1={e.source.y}
               x2={e.target.x}
               y2={e.target.y}
-              stroke="#ccc"
+              stroke="#aaa"
               strokeOpacity={0.8}
             ></line>
           ))}
         </g>
+        <g id="arrowheads"></g>
         <g id="nodes">
           {this.state.currNodes.map(n => (
             <circle
