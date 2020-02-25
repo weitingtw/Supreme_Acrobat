@@ -1,0 +1,9 @@
+version: 0.2
+phases:
+  install:
+    commands:
+       - echo Running install.sh
+       - install.sh
+artifacts:
+  files:
+     - '**/*' #copy all build files to S3 location
