@@ -3,6 +3,8 @@ phases:
   install:
     commands:
        - echo Running install.sh
+       - ls
+       - pwd
        - pre_install.sh
        - install.sh
 artifacts:
