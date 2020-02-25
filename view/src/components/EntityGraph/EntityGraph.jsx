@@ -79,8 +79,11 @@ class EntityGraph extends Component {
       currEdges: graph.edges,
       filter: null,
       layout: "force",
-      colors: nodeColors
+      colors: nodeColors,
+      adjList: this.getAdjacencyList(graph.edges)
     };
+
+    this.handleMousover = this.handleMousover.bind();
   }
 
   initializeData(data) {
@@ -129,6 +132,31 @@ class EntityGraph extends Component {
       this.setState({ currNodes: nodes });
       this.setState({ currEdges: edges });
     });
+
+    document.querySelectorAll(".node").forEach(node => {
+      node.addEventListener("mouseover", event => {
+        this.handleMousover();
+      });
+    });
+  }
+
+  handleMousover() {
+    console.log("hovered");
+  }
+
+  getAdjacencyList(edges) {
+    const res = {};
+    edges.forEach(edge => {
+      if (!res[edge.source]) {
+        res[edge.source.id] = new Set();
+      }
+      if (!res[edge.target.id]) {
+        res[edge.target.id] = new Set();
+      }
+      res[edge.source.id].add(edge.target.id);
+      res[edge.target.id].add(edge.source.id);
+    });
+    return res;
   }
 
   render() {
