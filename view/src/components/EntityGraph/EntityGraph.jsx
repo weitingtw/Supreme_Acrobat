@@ -8,7 +8,7 @@ import {
   forceX
 } from "d3-force";
 
-import { extent } from "d3-array";
+import { extent, thresholdFreedmanDiaconis } from "d3-array";
 
 import { formatData, getOverlaps } from "./graph-utils";
 
@@ -80,10 +80,12 @@ class EntityGraph extends Component {
       filter: null,
       layout: "force",
       colors: nodeColors,
-      adjList: this.getAdjacencyList(graph.edges)
+      adjList: this.getAdjacencyList(graph.edges),
+      activeNode: null
     };
 
-    this.handleMousover = this.handleMousover.bind();
+    // this.handleMouseEnter = this.handleMouseEnter.bind();
+    // this.handleMouseLeave = this.handleMouseLeave.bind();
   }
 
   initializeData(data) {
@@ -134,20 +136,29 @@ class EntityGraph extends Component {
     });
 
     document.querySelectorAll(".node").forEach(node => {
-      node.addEventListener("mouseover", event => {
-        this.handleMousover();
+      node.addEventListener("mouseenter", event => {
+        this.handleMouseEnter(event);
+      });
+      node.addEventListener("mouseleave", event => {
+        this.handleMouseLeave(event);
       });
     });
   }
 
-  handleMousover() {
-    console.log("hovered");
-  }
+  handleMouseEnter = event => {
+    console.log(event.srcElement.id);
+    const id = event.srcElement.id;
+    this.setState({ activeNode: id });
+  };
+
+  handleMouseLeave = event => {
+    this.setState({ activeNode: null });
+  };
 
   getAdjacencyList(edges) {
     const res = {};
     edges.forEach(edge => {
-      if (!res[edge.source]) {
+      if (!res[edge.source.id]) {
         res[edge.source.id] = new Set();
       }
       if (!res[edge.target.id]) {
@@ -159,6 +170,17 @@ class EntityGraph extends Component {
     return res;
   }
 
+  getClassList = (id, base) => {
+    if (
+      (this.state.activeNode &&
+        this.state.adjList[this.state.activeNode].has(id)) ||
+      this.state.activeNode == id
+    ) {
+      return base + " active";
+    }
+    return base;
+  };
+
   render() {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
@@ -168,7 +190,7 @@ class EntityGraph extends Component {
 
     const nodes = this.state.currNodes.map(n => (
       <circle
-        className="node"
+        className={this.getClassList(n.id, "node")}
         id={n.id}
         cx={n.x}
         cy={n.y}
