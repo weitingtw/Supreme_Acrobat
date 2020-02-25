@@ -8,6 +8,8 @@ import {
   forceX
 } from "d3-force";
 
+import "./EntityGraph.css";
+
 import { extent, thresholdFreedmanDiaconis } from "d3-array";
 
 import { formatData, getOverlaps } from "./graph-utils";
@@ -195,8 +197,8 @@ class EntityGraph extends Component {
         cx={n.x}
         cy={n.y}
         r={n.radius}
-        strokeWidth={2}
         stroke="#000"
+        strokeWidth={1.5}
         fill={this.state.colors[n.type]}
       ></circle>
     ));
