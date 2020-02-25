@@ -183,6 +183,8 @@ class EntityGraph extends Component {
     return base;
   };
 
+  midpoint = (x1, y1, x2, y2) => {};
+
   render() {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
@@ -191,29 +193,44 @@ class EntityGraph extends Component {
     const height = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
 
     const nodes = this.state.currNodes.map(n => (
-      <circle
-        className={this.getClassList(n.id, "node")}
-        id={n.id}
-        cx={n.x}
-        cy={n.y}
-        r={n.radius}
-        stroke="#000"
-        strokeWidth={1.5}
-        fill={this.state.colors[n.type]}
-      ></circle>
+      <React.Fragment>
+        <circle
+          className={this.getClassList(n.id, "node")}
+          id={n.id}
+          cx={n.x}
+          cy={n.y}
+          r={n.radius}
+          stroke="#000"
+          strokeWidth={1.5}
+          fill={this.state.colors[n.type]}
+        ></circle>
+        <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+          {n.text}
+        </text>
+      </React.Fragment>
     ));
 
     const edges = this.state.currEdges.map(e => (
-      <line
-        className="edge"
-        marker-end="url(#arrow)"
-        x1={e.source.x}
-        y1={e.source.y}
-        x2={e.target.x}
-        y2={e.target.y}
-        stroke="#343434"
-        strokeOpacity={0.8}
-      ></line>
+      <React.Fragment>
+        <line
+          className="edge"
+          marker-end="url(#arrow)"
+          x1={e.source.x}
+          y1={e.source.y}
+          x2={e.target.x}
+          y2={e.target.y}
+          stroke="#343434"
+          strokeOpacity={0.8}
+        ></line>
+        <text
+          x={(e.source.x + e.target.x) / 2}
+          y={(e.source.y + e.target.y) / 2}
+          textAnchor="middle"
+          fontSize={8}
+        >
+          {e.label == "OVERLAP" ? "" : e.label}
+        </text>
+      </React.Fragment>
     ));
     return (
       <svg
