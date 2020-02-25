@@ -3,8 +3,10 @@ phases:
   install:
     commands:
        - echo Running install.sh and pre_install.sh
-       - sudo ./pre_install.sh
-       - sudo ./install.sh
+       - chmod +x pre_install.sh
+       - chmod +x install.sh
+       - ./pre_install.sh
+       - ./install.sh
 artifacts:
   files:
      - '**/*' #copy all build files to S3 location
