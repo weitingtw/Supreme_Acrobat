@@ -10,9 +10,9 @@ import {
 
 import "./EntityGraph.css";
 
-import { extent, thresholdFreedmanDiaconis } from "d3-array";
+import { extent } from "d3-array";
 
-import { formatData, getOverlaps } from "./graph-utils";
+import { formatData } from "./graph-utils";
 
 class EntityGraph extends Component {
   constructor(props) {
