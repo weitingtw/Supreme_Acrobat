@@ -5,7 +5,7 @@
   "mongoPassword": "z132465798",
   "mongoHost": "ds123050.mlab.com",
   "mongoPort": "23050",
-  "neo4jUrl": "bolt://ec2-35-165-92-2.us-west-2.compute.amazonaws.com:7687",
+  "neo4jUrl": "bolt://ec2-54-187-99-76.us-west-2.compute.amazonaws.com:7687",
   "neo4jUsername": "neo4j",
   "neo4jPassword": "i-0a821b813afc4f355",
   "elasticSearchHost": "https://search-acrobat-smsvp2rqdw7jhssq3selgvrqyi.us-west-2.es.amazonaws.com"
