@@ -93,7 +93,7 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
-        node.radius = 28;
+        node.radius = 12;
       } else {
         node.radius = 12;
       }
@@ -183,8 +183,6 @@ class EntityGraph extends Component {
     return base;
   };
 
-  midpoint = (x1, y1, x2, y2) => {};
-
   render() {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
@@ -214,12 +212,12 @@ class EntityGraph extends Component {
       <React.Fragment>
         <line
           className="edge"
-          marker-end="url(#arrow)"
+          marker-end={e.target.type == "OVERLAP" ? "" : "url(#arrow)"}
           x1={e.source.x}
           y1={e.source.y}
           x2={e.target.x}
           y2={e.target.y}
-          stroke="#343434"
+          stroke={e.target.type == "OVERLAP" ? "#86c5da" : "#343434"}
           strokeOpacity={0.8}
         ></line>
         <text
