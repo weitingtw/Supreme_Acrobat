@@ -70,8 +70,8 @@ class EntityGraph extends Component {
       Shape: "#ffd700",
       Texture: "#ffd700",
       Coreference: "#808000",
-      Date: "lightgreen",
-      Duration: "lightgreen",
+      Date: "#8fee90",
+      Duration: "#8fee90",
       OVERLAP: "#fff"
     };
 
@@ -200,6 +200,28 @@ class EntityGraph extends Component {
     return textSegments;
   };
 
+  // Source: https://www.sitepoint.com/javascript-generate-lighter-darker-color/
+  colorLuminance = (hex, lum) => {
+    // validate hex string
+    hex = String(hex).replace(/[^0-9a-f]/gi, "");
+    if (hex.length < 6) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    lum = lum || 0;
+
+    // convert to decimal and change luminosity
+    var rgb = "#",
+      c,
+      i;
+    for (i = 0; i < 3; i++) {
+      c = parseInt(hex.substr(i * 2, 2), 16);
+      c = Math.round(Math.min(Math.max(0, c + c * lum), 255)).toString(16);
+      rgb += ("00" + c).substr(c.length);
+    }
+
+    return rgb;
+  };
+
   render() {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
@@ -219,7 +241,7 @@ class EntityGraph extends Component {
               rx={n.radius / 4}
               width={2 * n.radius}
               height={2 * n.radius}
-              stroke="#000"
+              stroke="#343434"
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></rect>
@@ -237,7 +259,7 @@ class EntityGraph extends Component {
               cx={n.x}
               cy={n.y}
               r={n.radius}
-              stroke="#000"
+              stroke={this.colorLuminance(this.state.colors[n.type], -0.6)}
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></circle>
