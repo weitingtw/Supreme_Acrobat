@@ -207,23 +207,47 @@ class EntityGraph extends Component {
     const width = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
     const height = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
 
-    const nodes = this.state.currNodes.map(n => (
-      <React.Fragment>
-        <circle
-          className={this.getClassList(n.id, "node")}
-          id={n.id}
-          cx={n.x}
-          cy={n.y}
-          r={n.radius}
-          stroke="#000"
-          strokeWidth={1.5}
-          fill={this.state.colors[n.type]}
-        ></circle>
-        <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
-          {n.text ? this.wordWrap(n.text, n.x) : ""}
-        </text>
-      </React.Fragment>
-    ));
+    const nodes = this.state.currNodes.map(n => {
+      if (n.type == "OVERLAP") {
+        return (
+          <React.Fragment>
+            <rect
+              className={this.getClassList(n.id, "node")}
+              id={n.id}
+              x={n.x - n.radius}
+              y={n.y - n.radius}
+              rx={n.radius / 4}
+              width={2 * n.radius}
+              height={2 * n.radius}
+              stroke="#000"
+              strokeWidth={1.5}
+              fill={this.state.colors[n.type]}
+            ></rect>
+            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+              {n.id}
+            </text>
+          </React.Fragment>
+        );
+      } else {
+        return (
+          <React.Fragment>
+            <circle
+              className={this.getClassList(n.id, "node")}
+              id={n.id}
+              cx={n.x}
+              cy={n.y}
+              r={n.radius}
+              stroke="#000"
+              strokeWidth={1.5}
+              fill={this.state.colors[n.type]}
+            ></circle>
+            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+              {n.text ? this.wordWrap(n.text, n.x) : ""}
+            </text>
+          </React.Fragment>
+        );
+      }
+    });
 
     const edges = this.state.currEdges.map(e => (
       <React.Fragment>
