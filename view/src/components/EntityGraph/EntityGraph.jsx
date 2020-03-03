@@ -95,7 +95,7 @@ class EntityGraph extends Component {
       if (node.type == "OVERLAP") {
         node.radius = 12;
       } else {
-        node.radius = 12;
+        node.radius = 20;
       }
     });
 
@@ -122,12 +122,12 @@ class EntityGraph extends Component {
     const edges = this.state.currEdges;
 
     const simulation = forceSimulation(nodes)
-      .force("charge", forceManyBody().strength(-100))
+      .force("charge", forceManyBody().strength(-200))
       .force(
         "link",
         forceLink(edges)
           .distance(10)
-          .strength(1)
+          .strength(2)
       )
       .force("collision", forceCollide(30))
       .force("center", forceCenter());
@@ -209,16 +209,19 @@ class EntityGraph extends Component {
 
     const nodes = this.state.currNodes.map(n => (
       <React.Fragment>
-        <circle
+        <rect
           className={this.getClassList(n.id, "node")}
           id={n.id}
-          cx={n.x}
-          cy={n.y}
-          r={n.radius}
+          x={n.x - n.radius}
+          y={n.y - n.radius}
+          rx={n.radius / 5}
+          width={2 * n.radius}
+          height={2 * n.radius}
           stroke="#000"
           strokeWidth={1.5}
           fill={this.state.colors[n.type]}
-        ></circle>
+          fill-opacity={0.9}
+        ></rect>
         <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
           {n.text ? this.wordWrap(n.text, n.x) : ""}
         </text>
@@ -258,7 +261,7 @@ class EntityGraph extends Component {
           <marker
             id="arrow"
             viewBox="0 -5 10 10"
-            refX="16"
+            refX="22"
             refY="0"
             markerWidth="15"
             markerHeight="15"
