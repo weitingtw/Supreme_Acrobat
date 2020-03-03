@@ -172,15 +172,23 @@ class EntityGraph extends Component {
     return res;
   }
 
-  getClassList = (id, base) => {
+  getNodeClassList = id => {
     if (
       (this.state.activeNode &&
         this.state.adjList[this.state.activeNode].has(id)) ||
       this.state.activeNode == id
     ) {
-      return base + " active";
+      return "node active";
     }
-    return base;
+    return "node";
+  };
+
+  getEdgeClassList = (source, target) => {
+    const activeNode = this.state.activeNode;
+    if (activeNode && (activeNode == source || activeNode == target)) {
+      return "edge active";
+    }
+    return "edge";
   };
 
   wordWrap = (text, anchor) => {
@@ -234,7 +242,7 @@ class EntityGraph extends Component {
         return (
           <React.Fragment>
             <rect
-              className={this.getClassList(n.id, "node")}
+              className={this.getNodeClassList(n.id)}
               id={n.id}
               x={n.x - n.radius}
               y={n.y - n.radius}
@@ -254,13 +262,13 @@ class EntityGraph extends Component {
         return (
           <React.Fragment>
             <circle
-              className={this.getClassList(n.id, "node")}
+              className={this.getNodeClassList(n.id, "node")}
               id={n.id}
               cx={n.x}
               cy={n.y}
               r={n.radius}
               stroke={this.colorLuminance(this.state.colors[n.type], -0.6)}
-              strokeWidth={1.5}
+              strokeWidth={1.3}
               fill={this.state.colors[n.type]}
             ></circle>
             <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
@@ -274,7 +282,7 @@ class EntityGraph extends Component {
     const edges = this.state.currEdges.map(e => (
       <React.Fragment>
         <line
-          className="edge"
+          className={this.getEdgeClassList(e.source.id, e.target.id)}
           marker-end={e.target.type == "OVERLAP" ? "" : "url(#arrow)"}
           x1={e.source.x}
           y1={e.source.y}
@@ -308,6 +316,7 @@ class EntityGraph extends Component {
             refY="0"
             markerWidth="15"
             markerHeight="15"
+            markerUnits="userSpaceOnUse"
             orient="auto"
             fill="#343434"
           >
