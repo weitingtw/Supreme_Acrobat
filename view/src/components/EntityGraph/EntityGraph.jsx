@@ -83,11 +83,10 @@ class EntityGraph extends Component {
       layout: "force",
       colors: nodeColors,
       adjList: this.getAdjacencyList(graph.edges),
-      activeNode: null
-    };
+      activeNode: null,
 
-    // this.handleMouseEnter = this.handleMouseEnter.bind();
-    // this.handleMouseLeave = this.handleMouseLeave.bind();
+      queriedData: null
+    };
   }
 
   initializeData(data) {
@@ -109,6 +108,27 @@ class EntityGraph extends Component {
     return data;
   }
 
+  getSubGraph(graph, query) {
+    // get set of all nodes that belong depending on the query
+    const subGraphNodeIDs = new Set();
+    query.forEach(nodeID => {
+      subGraphNodeIDs.add(nodeID);
+      this.state.adjList[nodeID].forEach(neighborID => {
+        subGraphNodeIDs.add(neighborID);
+      });
+    });
+
+    // then filter: if the node has id that is in the set, then it belongs
+    const nodes = graph.nodes;
+    let subGraphNodes = nodes.filter(node => subGraphNodeIDs.has(node.id));
+    let subGraphEdges = graph.edges.filter(
+      edge =>
+        subGraphNodeIDs.has(edge.source.id) &&
+        subGraphNodeIDs.has(edge.target.id)
+    );
+    return { nodes: subGraphNodes, edges: subGraphEdges };
+  }
+
   mapNodes(nodes) {
     let nodesMap = {};
     nodes.forEach(node => {
@@ -118,6 +138,12 @@ class EntityGraph extends Component {
   }
 
   componentDidMount() {
+    // const queriedData = this.getSubGraph(
+    //   this.state.allData,
+    //   this.props.entities
+    // );
+    // const nodes = queriedData.nodes;
+    // const edges = queriedData.edges;
     const nodes = this.state.currNodes;
     const edges = this.state.currEdges;
 
@@ -144,6 +170,10 @@ class EntityGraph extends Component {
       node.addEventListener("mouseleave", event => {
         this.handleMouseLeave(event);
       });
+    });
+
+    this.setState({
+      queriedData: this.getSubGraph(this.state.allData, this.props.entities)
     });
   }
 
