@@ -183,6 +183,23 @@ class EntityGraph extends Component {
     return base;
   };
 
+  wordWrap = (text, anchor) => {
+    const words = text.split(" ");
+    const textSegments = (
+      <React.Fragment>
+        <tspan x={anchor} dy="0em">
+          {words[0]}
+        </tspan>
+        {words.slice(1).map(word => (
+          <tspan x={anchor} dy="1em">
+            {word}
+          </tspan>
+        ))}
+      </React.Fragment>
+    );
+    return textSegments;
+  };
+
   render() {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
@@ -203,7 +220,7 @@ class EntityGraph extends Component {
           fill={this.state.colors[n.type]}
         ></circle>
         <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
-          {n.text}
+          {n.text ? this.wordWrap(n.text, n.x) : ""}
         </text>
       </React.Fragment>
     ));
@@ -230,6 +247,7 @@ class EntityGraph extends Component {
         </text>
       </React.Fragment>
     ));
+
     return (
       <svg
         className="graph"
