@@ -80,8 +80,8 @@ class EntityGraph extends Component {
     this.state = {
       allData: graph,
       queryData: subGraph,
-      currNodes: graph.nodes,
-      currEdges: graph.edges,
+      currNodes: subGraph.nodes,
+      currEdges: subGraph.edges,
       layout: "force",
       colors: nodeColors,
       adjList: adjList,
@@ -178,6 +178,8 @@ class EntityGraph extends Component {
       )
       .force("collision", forceCollide(30))
       .force("center", forceCenter());
+
+    simulation.tick(100);
 
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
@@ -283,6 +285,7 @@ class EntityGraph extends Component {
 
     const width = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
     const height = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
+    const maxDim = Math.max(width, height);
 
     const nodes = this.state.currNodes.map(n => {
       if (n.type == "OVERLAP") {
@@ -350,7 +353,7 @@ class EntityGraph extends Component {
       <svg
         className="graph"
         style={{ border: "2px solid #bcbcbc" }}
-        viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
+        viewBox={`${-maxDim / 2} ${-maxDim / 2} ${maxDim} ${maxDim}`}
       >
         <defs>
           <marker
