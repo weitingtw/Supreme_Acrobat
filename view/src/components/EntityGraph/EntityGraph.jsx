@@ -20,10 +20,9 @@ class EntityGraph extends Component {
 
     const graph = this.initializeData(formatData(this.props.graphData));
     const adjList = this.getAdjacencyList(graph.edges);
-    let subGraph;
-    if (this.props.entities) {
-      subGraph = this.getSubGraph(graph, adjList, this.props.entities);
-    }
+    const subGraph = this.props.entities
+      ? this.getSubGraph(graph, adjList, this.props.entities)
+      : null;
 
     const nodeColors = {
       Age: "#EDC1F0", // Entities
@@ -168,9 +167,12 @@ class EntityGraph extends Component {
   componentDidMount() {
     const nodes = this.state.currNodes;
     const edges = this.state.currEdges;
+    const chargeForce = this.props.entities
+      ? forceManyBody().strength(-50)
+      : forceManyBody().strength(-100);
 
-    const simulation = forceSimulation(nodes)
-      .force("charge", forceManyBody().strength(-100))
+    let simulation = forceSimulation(nodes)
+      .force("charge", chargeForce)
       .force(
         "link",
         forceLink(edges)
@@ -179,7 +181,6 @@ class EntityGraph extends Component {
       )
       .force("collision", forceCollide(30))
       .force("center", forceCenter());
-
     simulation.tick(100);
 
     simulation.on("tick", () => {
