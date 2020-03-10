@@ -92,7 +92,7 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
-        node.radius = 12;
+        node.radius = 4;
       } else {
         node.radius = 12;
       }
@@ -108,10 +108,37 @@ class EntityGraph extends Component {
     return data;
   }
 
+  getOverlaps(nodesIDs) {
+    const overlaps = [];
+    nodesIDs.forEach(id => {
+      if (id.includes("OV")) {
+        overlaps.push(id);
+      }
+      this.state.adjList[id].forEach(neighborID => {
+        if (neighborID.includes("OV")) {
+          overlaps.push(neighborID);
+        }
+      });
+    });
+    return overlaps;
+  }
+
   getSubGraph(graph, query) {
     // get set of all nodes that belong depending on the query
     const subGraphNodeIDs = new Set();
-    query.forEach(nodeID => {
+    const overlaps = this.getOverlaps(query);
+
+    const overlappingNodes = [];
+
+    // get all nodes in the overlap
+    overlaps.forEach(ovID => {
+      this.state.adjList[ovID].forEach(neighborID => {
+        overlappingNodes.push(neighborID);
+      });
+    });
+
+    // get neighbors of all overlapping nodes and add to the set.
+    overlappingNodes.forEach(nodeID => {
       subGraphNodeIDs.add(nodeID);
       this.state.adjList[nodeID].forEach(neighborID => {
         subGraphNodeIDs.add(neighborID);
@@ -138,14 +165,14 @@ class EntityGraph extends Component {
   }
 
   componentDidMount() {
-    // const queriedData = this.getSubGraph(
-    //   this.state.allData,
-    //   this.props.entities
-    // );
-    // const nodes = queriedData.nodes;
-    // const edges = queriedData.edges;
-    const nodes = this.state.currNodes;
-    const edges = this.state.currEdges;
+    const queriedData = this.getSubGraph(
+      this.state.allData,
+      this.props.entities
+    );
+    const nodes = queriedData.nodes;
+    const edges = queriedData.edges;
+    // const nodes = this.state.currNodes;
+    // const edges = this.state.currEdges;
 
     const simulation = forceSimulation(nodes)
       .force("charge", forceManyBody().strength(-100))
@@ -283,9 +310,9 @@ class EntityGraph extends Component {
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></rect>
-            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+            {/* <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
               {n.id}
-            </text>
+            </text> */}
           </React.Fragment>
         );
       } else {
