@@ -20,7 +20,10 @@ class EntityGraph extends Component {
 
     const graph = this.initializeData(formatData(this.props.graphData));
     const adjList = this.getAdjacencyList(graph.edges);
-    const subGraph = this.getSubGraph(graph, adjList, this.props.entities);
+    let subGraph;
+    if (this.props.entities) {
+      subGraph = this.getSubGraph(graph, adjList, this.props.entities);
+    }
 
     const nodeColors = {
       Age: "#EDC1F0", // Entities
@@ -78,10 +81,8 @@ class EntityGraph extends Component {
     };
 
     this.state = {
-      allData: graph,
-      queryData: subGraph,
-      currNodes: subGraph.nodes,
-      currEdges: subGraph.edges,
+      currNodes: this.props.entities ? subGraph.nodes : graph.nodes,
+      currEdges: this.props.entities ? subGraph.edges : graph.edges,
       layout: "force",
       colors: nodeColors,
       adjList: adjList,
@@ -92,7 +93,7 @@ class EntityGraph extends Component {
   initializeData(data) {
     data.nodes.forEach(node => {
       if (node.type == "OVERLAP") {
-        node.radius = 4;
+        node.radius = 5;
       } else {
         node.radius = 12;
       }
@@ -197,8 +198,7 @@ class EntityGraph extends Component {
   }
 
   handleMouseEnter = event => {
-    console.log(event.srcElement.id);
-    const id = event.srcElement.id;
+    const id = event.srcElement.classList[0];
     this.setState({ activeNode: id });
   };
 
@@ -227,9 +227,9 @@ class EntityGraph extends Component {
         this.state.adjList[this.state.activeNode].has(id)) ||
       this.state.activeNode == id
     ) {
-      return "node active";
+      return `${id} node active`;
     }
-    return "node";
+    return `${id} node`;
   };
 
   getEdgeClassList = (source, target) => {
@@ -310,7 +310,6 @@ class EntityGraph extends Component {
           <React.Fragment>
             <circle
               className={this.getNodeClassList(n.id, "node")}
-              id={n.id}
               cx={n.x}
               cy={n.y}
               r={n.radius}
