@@ -65,11 +65,15 @@ class DisplayPage extends Component {
           </div>
         )}
         {docData && (
-          <div className="graph-container">
-            {/* <Graph graphData={docData} entities={entities} /> */}
-            <EntityGraph graphData={docData} entities={["T17", "T16"]} />
-            <EntityGraph graphData={docData} />
-          </div>
+          <React.Fragment>
+            <div className="subgraph-container">
+              <EntityGraph graphData={docData} entities={["T17", "T16"]} />
+            </div>
+            <div className="graph-container">
+              {/* <Graph graphData={docData} entities={entities} /> */}
+              <EntityGraph graphData={docData} />
+            </div>
+          </React.Fragment>
         )}
         }
         {!docData && (

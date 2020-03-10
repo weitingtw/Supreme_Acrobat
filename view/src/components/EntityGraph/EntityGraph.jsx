@@ -283,9 +283,9 @@ class EntityGraph extends Component {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
 
-    const width = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
-    const height = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
-    const maxDim = Math.max(width, height);
+    const viewBoxWidth = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
+    const viewBoxHeight = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
+    const viewBoxDim = Math.max(viewBoxWidth, viewBoxHeight);
 
     const nodes = this.state.currNodes.map(n => {
       if (n.type == "OVERLAP") {
@@ -352,7 +352,8 @@ class EntityGraph extends Component {
       <svg
         className="graph"
         style={{ border: "2px solid #bcbcbc" }}
-        viewBox={`${-maxDim / 2} ${-maxDim / 2} ${maxDim} ${maxDim}`}
+        viewBox={`${-viewBoxDim / 2} ${-viewBoxDim /
+          2} ${viewBoxDim} ${viewBoxDim}`}
       >
         <defs>
           <marker
