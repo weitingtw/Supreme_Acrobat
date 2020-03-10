@@ -19,6 +19,8 @@ class EntityGraph extends Component {
     super(props);
 
     const graph = this.initializeData(formatData(this.props.graphData));
+    const adjList = this.getAdjacencyList(graph.edges);
+    const subGraph = this.getSubGraph(graph, adjList, this.props.entities);
 
     const nodeColors = {
       Age: "#EDC1F0", // Entities
@@ -77,15 +79,13 @@ class EntityGraph extends Component {
 
     this.state = {
       allData: graph,
+      queryData: subGraph,
       currNodes: graph.nodes,
       currEdges: graph.edges,
-      filter: null,
       layout: "force",
       colors: nodeColors,
-      adjList: this.getAdjacencyList(graph.edges),
-      activeNode: null,
-
-      queriedData: null
+      adjList: adjList,
+      activeNode: null
     };
   }
 
@@ -108,13 +108,13 @@ class EntityGraph extends Component {
     return data;
   }
 
-  getOverlaps(nodesIDs) {
+  getOverlaps(nodesIDs, adjList) {
     const overlaps = [];
     nodesIDs.forEach(id => {
       if (id.includes("OV")) {
         overlaps.push(id);
       }
-      this.state.adjList[id].forEach(neighborID => {
+      adjList[id].forEach(neighborID => {
         if (neighborID.includes("OV")) {
           overlaps.push(neighborID);
         }
@@ -123,16 +123,16 @@ class EntityGraph extends Component {
     return overlaps;
   }
 
-  getSubGraph(graph, query) {
+  getSubGraph(graph, adjList, query) {
     // get set of all nodes that belong depending on the query
     const subGraphNodeIDs = new Set();
-    const overlaps = this.getOverlaps(query);
+    const overlaps = this.getOverlaps(query, adjList);
 
     const overlappingNodes = [];
 
     // get all nodes in the overlap
     overlaps.forEach(ovID => {
-      this.state.adjList[ovID].forEach(neighborID => {
+      adjList[ovID].forEach(neighborID => {
         overlappingNodes.push(neighborID);
       });
     });
@@ -140,7 +140,7 @@ class EntityGraph extends Component {
     // get neighbors of all overlapping nodes and add to the set.
     overlappingNodes.forEach(nodeID => {
       subGraphNodeIDs.add(nodeID);
-      this.state.adjList[nodeID].forEach(neighborID => {
+      adjList[nodeID].forEach(neighborID => {
         subGraphNodeIDs.add(neighborID);
       });
     });
@@ -165,14 +165,8 @@ class EntityGraph extends Component {
   }
 
   componentDidMount() {
-    const queriedData = this.getSubGraph(
-      this.state.allData,
-      this.props.entities
-    );
-    const nodes = queriedData.nodes;
-    const edges = queriedData.edges;
-    // const nodes = this.state.currNodes;
-    // const edges = this.state.currEdges;
+    const nodes = this.state.currNodes;
+    const edges = this.state.currEdges;
 
     const simulation = forceSimulation(nodes)
       .force("charge", forceManyBody().strength(-100))
@@ -197,10 +191,6 @@ class EntityGraph extends Component {
       node.addEventListener("mouseleave", event => {
         this.handleMouseLeave(event);
       });
-    });
-
-    this.setState({
-      queriedData: this.getSubGraph(this.state.allData, this.props.entities)
     });
   }
 
@@ -310,9 +300,6 @@ class EntityGraph extends Component {
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></rect>
-            {/* <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
-              {n.id}
-            </text> */}
           </React.Fragment>
         );
       } else {
