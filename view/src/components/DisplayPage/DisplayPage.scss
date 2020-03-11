@@ -50,12 +50,14 @@ $display-section-border: 2px solid rgba($blue, 0.8);
   }
   .graph-container {
     position: relative;
-    left: 10%;
     width: 80%;
+    max-width: 500px;
+    margin: auto;
   }
   .subgraph-container {
     position: relative;
-    left: 10%;
     width: 80%;
+    max-width: 500px;
+    margin: auto;
   }
 }
