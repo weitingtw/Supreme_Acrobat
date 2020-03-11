@@ -1,50 +1,63 @@
 @import "../shared";
 
-
 $display-section-border: 2px solid rgba($blue, 0.8);
 .display-page {
+  position: relative;
+
+  .brat-intro,
+  .report-plain-text,
+  .brat-container {
     position: relative;
+    width: 80%;
+    left: 10%;
+  }
 
-    .brat-intro,
-    .report-plain-text,
-    .brat-container {
-        position: relative;
-        width: 80%;
-        left: 10%;
+  .brat-intro {
+    font-size: 200%;
+    padding-right: 30px;
+    border-bottom: $display-section-border;
+    padding: 10px 0;
+
+    svg {
+      margin-right: 15px;
+      font-size: 90%;
     }
 
-    .brat-intro {
-        font-size: 200%;
-        padding-right: 30px;
-        border-bottom: $display-section-border;
-        padding: 10px 0;
-
-        svg {
-            margin-right: 15px;
-            font-size: 90%;
-        }
-
-        .report-id { color: $orange; }
+    .report-id {
+      color: $orange;
     }
+  }
 
-    .report-plain-text {
-        padding: 20px 0;
-        margin-bottom: 20px;
-        border-bottom: $display-section-border;
+  .report-plain-text {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: $display-section-border;
 
-        .highLight {
-            background-color: rgba($orange, 0.7);
-            padding: 1px 5px;
-            border-radius: 2px;
-        }
+    .highLight {
+      background-color: rgba($orange, 0.7);
+      padding: 1px 5px;
+      border-radius: 2px;
     }
+  }
 
-    .loading-container {
-        overflow: show;
-        position: relative;
-        top: 100px;
-        left: 30%;
-        font-size: 150px;
-        color: $orange;
-    }
+  .loading-container {
+    overflow: show;
+    position: relative;
+    top: 100px;
+    left: 30%;
+    font-size: 150px;
+    color: $orange;
+  }
+  .graph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+  }
+  .subgraph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+  }
 }
