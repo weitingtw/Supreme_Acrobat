@@ -304,6 +304,9 @@ class EntityGraph extends Component {
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></rect>
+            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+              {"OVERLAP"}
+            </text>
           </React.Fragment>
         );
       } else {
