@@ -60,11 +60,6 @@ class DisplayPage extends Component {
           />
         )}
         {docData && (
-          <div className="brat-container">
-            <Brat docData={docData} />
-          </div>
-        )}
-        {docData && (
           <React.Fragment>
             <div className="subgraph-container">
               <EntityGraph graphData={docData} entities={["T17", "T16"]} />
@@ -74,6 +69,11 @@ class DisplayPage extends Component {
               <EntityGraph graphData={docData} />
             </div>
           </React.Fragment>
+        )}
+        {docData && (
+          <div className="brat-container">
+            <Brat docData={docData} />
+          </div>
         )}
         }
         {!docData && (
