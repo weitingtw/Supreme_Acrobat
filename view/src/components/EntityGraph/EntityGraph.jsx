@@ -13,6 +13,7 @@ import "./EntityGraph.css";
 import { extent } from "d3-array";
 
 import { formatData } from "./graph-utils";
+import EntityGraphViewport from "../EntityGraphViewport/EntityGraphViewport";
 
 class EntityGraph extends Component {
   constructor(props) {
@@ -381,4 +382,4 @@ class EntityGraph extends Component {
   }
 }
 
-export default EntityGraph;
+export default EntityGraphViewport(EntityGraph);
