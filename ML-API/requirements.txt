@@ -3,3 +3,5 @@ flask_restful
 flair==0.4.0
 nltk
 joblib
+torch
+transformers==2.4.1

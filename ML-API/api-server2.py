@@ -10,12 +10,13 @@ from flair.models import SequenceTagger
 from pprint import pprint
 from joblib import dump, load
 import numpy as np
+from transformers import BertTokenizer, BertForSequenceClassification
+import torch
 
 
 class Predict(Resource):
-    def __init__(self, model, prediction_model):
+    def __init__(self, model):
         self.model = model
-        self.prediction_model = prediction_model
 
     def get(self):
         # prepare the query
@@ -36,20 +37,15 @@ class Predict(Resource):
 
         line = line.replace(",", " ")
         line = line.replace(".", " ")
-        line = line.split()
-        h_result = np.empty([1,0])
-        for j in range(len(line)):
-            word = None
-            if line[j].lower() in model.keys():
-                word = model[line[j].lower()]
-            else:
-                word = np.zeros((50,1),dtype='float64')
-            data = word.reshape(1,50)
-            h_result = np.hstack((h_result, data))
-        for j in range(len(line), 100):
-            h_result = np.hstack((h_result, np.full((1,50),0)))
         
-        result = self.prediction_model.predict(h_result)[0]
+        input_ids = torch.tensor(tokenizer.encode(line, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+        labels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
+        outputs = model(input_ids, labels=labels)
+        loss, logits = outputs[:2]
+        logits = logits.detach().cpu().numpy()
+        
+        result = int(np.argmax(logits, axis=1).flatten()[0])
+
         relation = ""
         if result == 0:
             relation = "BEFORE"
@@ -67,10 +63,14 @@ class Predict(Resource):
 
 
 if __name__ == '__main__':
-    prediction_model = load('relation_model.joblib') 
-    model = load('glove_model.joblib')
+    device = torch.device("cpu")
+    output_dir = './model_save/'
+    tokenizer = BertTokenizer.from_pretrained(output_dir)
+    model = BertForSequenceClassification.from_pretrained(output_dir)
+    model.to(device)
+
     app = flask.Flask(__name__)
     api = Api(app)
-    api.add_resource(Predict, '/', resource_class_kwargs={'model': model, 'prediction_model': prediction_model})
+    api.add_resource(Predict, '/', resource_class_kwargs={'model': model})
     app.run(debug=True, port=5001)
 
