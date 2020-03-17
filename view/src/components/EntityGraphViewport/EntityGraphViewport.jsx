@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default (ComposedComponent) => {
     class EntityGraphViewport extends Component {
@@ -11,10 +12,19 @@ export default (ComposedComponent) => {
             this.onDragStart = this.onDragStart.bind(this);
             this.onDragMove = this.onDragMove.bind(this);
             this.onDragEnd = this.onDragEnd.bind(this);
-            this.onWheel = this.onWheel.bind(this);
-            this.changeScrollOnEnter = this.changeScrollOnEnter.bind(this);
-            this.changeScrollOnLeave = this.changeScrollOnLeave.bind(this);
         }
+
+        componentRef = React.createRef();
+        componentDidMount() {
+            if (this.componentRef.current) {
+              this.componentRef.current.addEventListener('wheel', this.handleWheelEvent);
+            }
+          }
+          componentWillUnmount() {
+            if (this.componentRef.current) {
+              this.componentRef.current.removeEventListener('wheel', this.handleWheelEvent);
+            }
+          }
 
         pan(dx, dy) {
             const m = this.state.matrix;
@@ -26,16 +36,13 @@ export default (ComposedComponent) => {
         zoom(scale) {
             const m = this.state.matrix;
             const len = m.length;
-
-            m[4] += this.props.width / 2;
-            m[5] += this.props.height / 2;
+     
+            m[4] += (1 - scale) * this.props.width / 2;
+            m[5] += (1 - scale) * this.props.height / 2;
 
             for (let i = 0; i < len-2; i++) {
                 m[i] *= scale;
             }
-
-            m[4] -= this.props.width / 2;
-            m[5] -= this.props.height / 2;
 
             this.setState({ matrix: m });
         }
@@ -83,32 +90,25 @@ export default (ComposedComponent) => {
             this.setState({ dragging: false });
         }
 
-        onWheel(e) {
+        handleWheelEvent = (e) => {
+            
+            if (!e.ctrlKey) {
+                return;
+            }
+            e.preventDefault();
             if (e.deltaY < 0) {
-              this.zoom(1.05);
+                this.zoom(1.05);
             } else {
-              this.zoom(0.95);
+                this.zoom(0.95);
             }
         }
-
-        changeScrollOnEnter() {
-            let style = document.body.style.overflow 
-            document.body.style.overflow = (style === 'hidden') ? 'auto':'hidden';
-        }
-
-        changeScrollOnLeave() {
-            let style = document.body.style.overflow 
-            document.body.style.overflow = (style === 'hidden') ? 'auto':'hidden';
-            if (this.state.dragging) {this.state.dragging = false}; 
-        }
-
+          
 
         render() {
             const { height, width, ...other } = this.props;
             return (
                 <svg
-                    height={height}
-                    width={width}
+
                     style={{ border: "2px solid #bcbcbc" , height: "50vh", width: "100%"}}
                     onMouseDown={this.onDragStart}
                     onTouchStart={this.onDragStart}
@@ -116,16 +116,24 @@ export default (ComposedComponent) => {
                     onTouchMove={this.onDragMove}
                     onMouseUp={this.onDragEnd}
                     onTouchEnd={this.onDragEnd}
-                    onWheel={this.onWheel}
-                    onMouseEnter={this.changeScrollOnEnter}
-                    onMouseLeave={this.changeScrollOnLeave}
+                    handleWheelEvent={this.handleWheelEvent}
+                    ref={this.componentRef}
                 >
+                    <button
+                        id="plusButton"
+                        // onClick={this.handleSearch}
+                    >
+                        <FontAwesomeIcon icon={['fas', 'search']} />
+                    </button>
                     <g transform={`matrix(${this.state.matrix.join(' ')})`}>
                          <ComposedComponent
                             {...other}
+                            height={height}
+                            width={width}
                             pan={this.pan}
                             zoom={this.zoom}
-                         ></ComposedComponent>
+                         >                    
+                        </ComposedComponent>
                     </g>
                 </svg>
             );
