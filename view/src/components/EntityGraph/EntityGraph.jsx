@@ -108,33 +108,69 @@ class EntityGraph extends Component {
     return data;
   }
 
-  getOverlaps(nodesIDs, adjList) {
-    const overlaps = [];
-    nodesIDs.forEach(id => {
-      if (id.includes("OV")) {
-        overlaps.push(id);
+  isOverlapNode(nodeID) {
+    return nodeID.includes("OV");
+  }
+
+  findNearestOverlap(startNode, adjList) {
+    const pathTo = {};
+    pathTo[startNode] = null;
+    const marked = new Set();
+    marked.add(startNode);
+    const queue = [startNode];
+
+    let overlapNode = null;
+
+    while (Array.isArray(queue) && !overlapNode && queue.length) {
+      let node = queue.shift();
+      if (this.isOverlapNode(node)) {
+        overlapNode = node;
+      } else {
+        adjList[node].forEach(neighbor => {
+          if (!(neighbor in pathTo)) {
+            pathTo[neighbor] = node;
+          }
+          if (!marked.has(neighbor)) {
+            marked.add(neighbor);
+            queue.push(neighbor);
+          }
+        });
       }
-      adjList[id].forEach(neighborID => {
-        if (neighborID.includes("OV")) {
-          overlaps.push(neighborID);
-        }
-      });
-    });
-    return overlaps;
+    }
+
+    if (overlapNode) {
+      const path = [];
+      let currNode = overlapNode;
+      while (currNode) {
+        path.unshift(currNode);
+        currNode = pathTo[currNode];
+      }
+
+      return {
+        ID: overlapNode,
+        path: path
+      };
+    } else {
+      return {
+        ID: startNode,
+        path: [startNode]
+      };
+    }
   }
 
   getSubGraph(graph, adjList, query) {
     // get set of all nodes that belong depending on the query
     const subGraphNodeIDs = new Set();
-    const overlaps = this.getOverlaps(query, adjList);
-
+    const overlaps = query.map(node => this.findNearestOverlap(node, adjList));
     const overlappingNodes = [];
 
     // get all nodes in the overlap
-    overlaps.forEach(ovID => {
-      adjList[ovID].forEach(neighborID => {
+    overlaps.forEach(ov => {
+      adjList[ov.ID].forEach(neighborID => {
         overlappingNodes.push(neighborID);
       });
+      // add all nodes from paths to set of subgraph nodes.
+      ov.path.forEach(node => subGraphNodeIDs.add(node));
     });
 
     // get neighbors of all overlapping nodes and add to the set.
