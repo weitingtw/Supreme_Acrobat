@@ -45,6 +45,15 @@ class DisplayPage extends Component {
       console.log("tokensToHighlight:", tokensToHighlight);
     }
 
+    // Entities
+    entities = []
+    for (var i = 0; i < this.props.location.state.entities.length; i++) {
+      for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+        entities.push(this.props.location.state.entities[i][j]);
+      }
+    }
+    entities = [...new Set(entities)];
+
     return (
       <div className="display-page">
         <div className="brat-intro">
@@ -62,7 +71,7 @@ class DisplayPage extends Component {
         {docData && (
           <React.Fragment>
             <div className="subgraph-container">
-              <EntityGraph graphData={docData} entities={["T17", "T16"]} />
+              <EntityGraph graphData={docData} entities={entities} />
             </div>
             <div className="graph-container">
               {/* <Graph graphData={docData} entities={entities} /> */}
