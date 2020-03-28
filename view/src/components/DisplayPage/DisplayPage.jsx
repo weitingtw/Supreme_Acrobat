@@ -37,22 +37,20 @@ class DisplayPage extends Component {
     if (docData) {
       ({ text } = docData);
     }
-    if (this.props.location.state) {
-      // console.log('data:', this.props.location.state);
-      ({ entities, textEntities } = this.props.location.state);
-      console.log(textEntities);
-      tokensToHighlight = textEntities.map(e => e.label);
-      console.log("tokensToHighlight:", tokensToHighlight);
-    }
+    entities = [];
 
-    // Entities
-    entities = []
-    for (var i = 0; i < this.props.location.state.entities.length; i++) {
-      for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
-        entities.push(this.props.location.state.entities[i][j]);
+    if (this.props.location.state) {
+      ({ textEntities } = this.props.location.state);
+      tokensToHighlight = textEntities.map(e => e.label);
+
+      // Entities
+      for (var i = 0; i < this.props.location.state.entities.length; i++) {
+        for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+          entities.push(this.props.location.state.entities[i][j]);
+        }
       }
+      entities = [...new Set(entities)];
     }
-    entities = [...new Set(entities)];
 
     return (
       <div className="display-page">
