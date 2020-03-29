@@ -9,10 +9,10 @@ text {
   pointer-events: none;
 }
 
-// .text {
-//   visibility: hidden;
-// }
+.text.secondary {
+  visibility: hidden;
+}
 
-// .text.active {
-//   visibility: initial;
-// }
+.text.secondary.active {
+  visibility: initial;
+}
