@@ -19,7 +19,7 @@ class DisplayPage extends Component {
     const { id } = this.props.match.params;
 
     axios
-      .post(getHost() + ":3001/api/getCaseReportById", { id })
+      .post(getHost() + "/api/getCaseReportById", { id })
       .then(res => {
         const data = res.data.data[0];
         this.setState({ docData: data });

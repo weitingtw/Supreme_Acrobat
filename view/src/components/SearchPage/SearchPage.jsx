@@ -30,7 +30,7 @@ class SearchPage extends Component {
         // if last typing is not alphabet
         // go over crf API to get entities
 
-        axios.post(getHost() + ":3001/api/getPrediction", {
+        axios.post(getHost() + "/api/getPrediction", {
             data: { query: queryText }
         })
             .then(response => {
@@ -59,7 +59,7 @@ class SearchPage extends Component {
                         relations: ['BEFORE']
                     }
                     var relations = []
-                    await axios.post(getHost() + ":3001/api/getRelationPrediction", {
+                    await axios.post(getHost() + "/api/getRelationPrediction", {
                         data: { query: queryText, query1: query_object.queries[0], query2: query_object.queries[1] }
                     })
                         .then(response => {
@@ -94,7 +94,7 @@ class SearchPage extends Component {
         }
         console.log('basic search: ', queryObj);
 
-        axios.post(getHost() + ":3001/api/searchNodes", queryObj)
+        axios.post(getHost() + "/api/searchNodes", queryObj)
             .then(res => {
                 // search results
                 const results = res.data.data.map(info => {
@@ -119,7 +119,7 @@ class SearchPage extends Component {
         }
         console.log('basic search: ', queryObj);
 
-        axios.post(getHost() + ":3001/api/searchNodesWithRelations", queryObj)
+        axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
             .then(res => {
                 // search results
                 //console.log(res);

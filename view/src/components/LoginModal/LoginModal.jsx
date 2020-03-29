@@ -208,7 +208,7 @@ class LoginModal extends Component {
 
     handleSignIn = data => {
         console.log('signin', data);
-        axios.post(getHost() + ":3001/api/login", data)
+        axios.post(getHost() + "/api/login", data)
             .then(res => {
                 // console.log(res.data);
                 if (res.data.success === true) {
@@ -224,7 +224,7 @@ class LoginModal extends Component {
 
     handleSignUp = data => {
         console.log('signup', data);
-        axios.post(getHost() + ":3001/api/createUser", data)
+        axios.post(getHost() + "/api/createUser", data)
             .then(res => {
                 console.log(res.data);
                 if (res.data.success === true) {
@@ -242,7 +242,7 @@ class LoginModal extends Component {
     }
 
     handleSubmit = text => {
-        axios.post(getHost() + ":3001/api/uploadReport", text)
+        axios.post(getHost() + "/api/uploadReport", text)
             .then(res => {
                 console.log(res.data);
                 if (res.data.success === false) {
