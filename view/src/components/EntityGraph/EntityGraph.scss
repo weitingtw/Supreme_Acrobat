@@ -2,6 +2,7 @@
 
 .node.active {
   stroke-width: 2;
+  stroke: #000;
 }
 
 text {
@@ -12,6 +13,6 @@ text {
 //   visibility: hidden;
 // }
 
-.text.active {
-  visibility: initial;
-}
+// .text.active {
+//   visibility: initial;
+// }
