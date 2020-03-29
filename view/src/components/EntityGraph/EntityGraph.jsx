@@ -349,7 +349,13 @@ class EntityGraph extends Component {
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></rect>
-            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+            <text
+              x={n.x}
+              y={n.y}
+              textAnchor="middle"
+              fontSize={8}
+              fontWeight={700}
+            >
               {"OVERLAP"}
             </text>
           </React.Fragment>
@@ -397,6 +403,7 @@ class EntityGraph extends Component {
           y={(e.source.y + e.target.y) / 2}
           textAnchor="middle"
           fontSize={8}
+          fontWeight={700}
         >
           {e.label === "OVERLAP" ? "" : e.label}
         </text>
