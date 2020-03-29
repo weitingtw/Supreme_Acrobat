@@ -19,9 +19,8 @@ class EntityGraph extends Component {
     super(props);
 
     const graph = this.initializeData(formatData(this.props.graphData));
-    const adjList = this.getAdjacencyList(graph.edges);
     const subGraph = this.props.entities
-      ? this.getSubGraph(graph, adjList, this.props.entities)
+      ? this.getSubGraph(graph, this.props.entities)
       : null;
 
     const nodeColors = {
@@ -80,11 +79,11 @@ class EntityGraph extends Component {
     };
 
     this.state = {
+      fullGraph: graph,
       currNodes: this.props.entities ? subGraph.nodes : graph.nodes,
       currEdges: this.props.entities ? subGraph.edges : graph.edges,
       layout: "force",
       colors: nodeColors,
-      adjList: adjList,
       activeNode: null
     };
   }
@@ -105,6 +104,8 @@ class EntityGraph extends Component {
       edge.target = nodesMap[edge.target];
     });
 
+    data.adjList = this.getAdjacencyList(data.edges);
+
     return data;
   }
 
@@ -112,7 +113,8 @@ class EntityGraph extends Component {
     return nodeID.includes("OV");
   }
 
-  findNearestOverlap(startNode, adjList) {
+  findNearestOverlap(startNode, graph) {
+    const { adjList } = graph;
     const pathTo = {};
     pathTo[startNode] = null;
     const marked = new Set();
@@ -158,10 +160,11 @@ class EntityGraph extends Component {
     }
   }
 
-  getSubGraph(graph, adjList, query) {
+  getSubGraph(graph, query) {
     // get set of all nodes that belong depending on the query
+    const { adjList } = graph;
     const subGraphNodeIDs = new Set();
-    const overlaps = query.map(node => this.findNearestOverlap(node, adjList));
+    const overlaps = query.map(node => this.findNearestOverlap(node, graph));
     const overlappingNodes = [];
 
     // get all nodes in the overlap
@@ -259,9 +262,9 @@ class EntityGraph extends Component {
   }
 
   getNodeClassList = id => {
+    const { adjList } = this.state.fullGraph;
     if (
-      (this.state.activeNode &&
-        this.state.adjList[this.state.activeNode].has(id)) ||
+      (this.state.activeNode && adjList[this.state.activeNode].has(id)) ||
       this.state.activeNode == id
     ) {
       return `${id} node active`;
