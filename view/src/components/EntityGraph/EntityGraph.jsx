@@ -261,15 +261,15 @@ class EntityGraph extends Component {
     return res;
   }
 
-  getNodeClassList = id => {
+  getNodeClassList = (id, type) => {
     const { adjList } = this.state.fullGraph;
     if (
       (this.state.activeNode && adjList[this.state.activeNode].has(id)) ||
       this.state.activeNode == id
     ) {
-      return `${id} node active`;
+      return `${id} ${type} active`;
     }
-    return `${id} node`;
+    return `${id} ${type}`;
   };
 
   getEdgeClassList = (source, target) => {
@@ -332,8 +332,7 @@ class EntityGraph extends Component {
         return (
           <React.Fragment>
             <rect
-              className={this.getNodeClassList(n.id)}
-              id={n.id}
+              className={this.getNodeClassList(n.id, "node")}
               x={n.x - n.radius}
               y={n.y - n.radius}
               rx={n.radius / 4}
@@ -356,11 +355,17 @@ class EntityGraph extends Component {
               cx={n.x}
               cy={n.y}
               r={n.radius}
-              stroke={this.colorLuminance(this.state.colors[n.type], -0.6)}
+              stroke={this.colorLuminance(this.state.colors[n.type], -0.3)}
               strokeWidth={1.3}
               fill={this.state.colors[n.type]}
             ></circle>
-            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+            <text
+              className={this.getNodeClassList(n.id, "text")}
+              x={n.x}
+              y={n.y}
+              textAnchor="middle"
+              fontSize={8}
+            >
               {n.text ? this.wordWrap(n.text, n.x) : ""}
             </text>
           </React.Fragment>

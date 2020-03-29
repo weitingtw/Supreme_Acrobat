@@ -1,5 +1,17 @@
 @import "../shared";
 
-.active {
+.node.active {
   stroke-width: 2;
+}
+
+text {
+  pointer-events: none;
+}
+
+.text {
+  visibility: hidden;
+}
+
+.text.active {
+  visibility: initial;
 }
