@@ -220,11 +220,12 @@ class EntityGraph extends Component {
       )
       .force("collision", forceCollide(30))
       .force("center", forceCenter());
-    simulation.tick(100);
+    simulation.tick(50);
 
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
       this.setState({ currEdges: edges });
+      simulation.tick(10);
     });
 
     document.querySelectorAll(".node").forEach(node => {
