@@ -3,7 +3,8 @@
 
 $display-section-border: 2px solid rgba($blue, 0.8);
 .display-page {
-    position: relative;
+    padding-left: 50px;
+
 
     .brat-intro,
     .report-plain-text,
@@ -47,4 +48,23 @@ $display-section-border: 2px solid rgba($blue, 0.8);
         font-size: 150px;
         color: $orange;
     }
+
+    .report-title {
+      font-size: 50px;
+    }
+    .report-info{
+      width: auto;
+
+
+      .report-info-row {
+        height: 50%;
+        width: 100%;
+      }
+
+      .report-info-item {
+        display: inline-block;
+        width: 50%;
+      }
+    }
+
 }
