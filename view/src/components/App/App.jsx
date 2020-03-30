@@ -17,7 +17,7 @@ class App extends Component {
         <div id='app'>
           {/*<TitlePanel />*/}
           <Switch>
-            <Route exact path="/" component={SearchPage} />
+            <Route exact path="/" component={MainPage} />
             <Route exact path="/search" component={SearchPage} />
             <Route path="/search/:id" component={DisplayPage} />
             <Route exact path="/relationSearch" component={RelationSearchPage} />
