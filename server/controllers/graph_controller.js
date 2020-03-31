@@ -214,6 +214,9 @@ var searchMultiRelations = function (session, input) {
         query += ',';
     });
     query = query.slice(0, -1);
+    if(!input.length){
+        query = "MATCH (n:Entity) WHERE n.label = 'a' RETURN n"
+    }
     console.log(query, 'query');
     var readTxResultPromise = session.readTransaction(function (transaction) {
         var result = transaction.run(query, {})
