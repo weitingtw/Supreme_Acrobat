@@ -1,0 +1,50 @@
+{
+    "cluster": "acrobat-cluster",
+    "serviceName": "acrobat-nginx-service",
+    "taskDefinition": "acrobat-nginx-task",
+    "loadBalancers": [
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:757859084253:targetgroup/acrobat-80/f9ef3b3053c36330",
+            "containerName": "acrobat-nginx-container",
+            "containerPort": 80
+        },
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:757859084253:targetgroup/acrobat-3001/8963b5a544be5ef7",
+            "containerName": "acrobat-nginx-container",
+            "containerPort": 3001
+        },
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:757859084253:targetgroup/acrobat-5000/23e620732e09f93a",
+            "containerName": "acrobat-nginx-container",
+            "containerPort": 5000
+        },
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:757859084253:targetgroup/acrobat-5001/171e7e269b80e348",
+            "containerName": "acrobat-nginx-container",
+            "containerPort": 5001
+        }
+    ],
+    "desiredCount": 1,
+    "launchType": "FARGATE",
+    "deploymentConfiguration": {
+        "maximumPercent": 200,
+        "minimumHealthyPercent": 100
+    },
+    "networkConfiguration": {
+        "awsvpcConfiguration": {
+            "subnets": [
+                "subnet-0d89f8045c5a1bf74",
+                "subnet-09d93825a84fba597"
+            ],
+            "securityGroups": [
+                "sg-090c34487f0c141d8"
+            ],
+            "assignPublicIp": "ENABLED"
+        }
+    },
+    "healthCheckGracePeriodSeconds": 2147483647,
+    "schedulingStrategy": "REPLICA",
+    "deploymentController": {
+        "type": "ECS"
+    }
+}
