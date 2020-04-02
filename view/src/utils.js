@@ -989,6 +989,7 @@ export const allQueriesToTextEntities = allQueries => {
 };
 
 export const getHost = () => {
+  return "";
   if (process.env.NODE_ENV == "production") {
     return "http://localhost:3001"
   } else {
