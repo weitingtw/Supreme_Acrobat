@@ -990,7 +990,7 @@ export const allQueriesToTextEntities = allQueries => {
 
 export const getHost = () => {
   if (process.env.NODE_ENV == "production") {
-    return "http://" + "window.location.hostname" + ":3001"
+    return "http://" + window.location.hostname + ":3001"
   } else {
     return "";
   }
