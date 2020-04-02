@@ -67,5 +67,5 @@ if __name__ == '__main__':
     app = flask.Flask(__name__)
     api = Api(app)
     api.add_resource(Predict, '/', resource_class_kwargs={'model': model})
-    app.run(debug=True, port=5001)
+    app.run(host="0.0.0.0",debug=True, port=5001)
 

@@ -1,0 +1,26 @@
+version: '2'
+services:
+  python-backend1:
+    image: "python-backend1"
+    ports:
+     - "5000:5000"
+  python-backend2:
+    image: "python-backend2"
+    ports:
+     - "5001:5001"
+  node-back:
+    image: "node-backend"
+    environment:
+      - BACKEND_SERVER1=http://python-backend1
+      - BACKEND_SERVER2=http://python-backend2
+    ports:
+      - "3001:3001"
+    depends_on:
+      - python-backend1
+      - python-backend2
+  frontend:
+    image: "frontend"
+    ports:
+      - "3000:80"
+    depends_on:
+      - node-back
