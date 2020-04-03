@@ -27,7 +27,7 @@
     "desiredCount": 1,
     "launchType": "FARGATE",
     "deploymentConfiguration": {
-        "maximumPercent": 200,
+        "maximumPercent": 133,
         "minimumHealthyPercent": 100
     },
     "networkConfiguration": {
