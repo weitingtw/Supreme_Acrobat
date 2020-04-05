@@ -415,7 +415,6 @@ class EntityGraph extends Component {
     return (
       <svg
         className="graph"
-        style={{ border: "2px solid #bcbcbc" }}
         viewBox={`${-viewBoxDim / 2} ${-viewBoxDim /
           2} ${viewBoxDim} ${viewBoxDim}`}
       >
