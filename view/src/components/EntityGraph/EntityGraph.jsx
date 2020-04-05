@@ -224,7 +224,7 @@ class EntityGraph extends Component {
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
       this.setState({ currEdges: edges });
-      simulation.tick(10);
+      simulation.tick(5);
     });
 
     document.querySelectorAll(".node").forEach(node => {
