@@ -10,6 +10,7 @@ import './DisplayPage.css';
 import { getHost } from '../../utils';
 
 import Sidebar from "react-sidebar";
+import LoginModal from '../LoginModal/LoginModal';
 
 
 class DisplayPage extends Component {
@@ -95,7 +96,7 @@ class DisplayPage extends Component {
             backgroundColor: "#03a9f4",
             color: "white",
             padding: "16px",
-            fontSize: "1.5em"
+            fontSize: "24px",
           }
         };
 
@@ -120,76 +121,78 @@ class DisplayPage extends Component {
 
         return (
             <div>
-
-                <div className="banner">
-                banner
-                </div>
-
-                <div className="content">
-                  <div styles={styles.diaplay}>
-                    <Sidebar
-                      sidebar={sidebar_content}
-                      styles={{ sidebar: { background: "white" } }}
-                      docked={true}
-                      shadow={true}
-                    >
-                    <div className='display-page'>
-                      <div className='brat-intro' id="title">
-                          <FontAwesomeIcon icon={['fal', 'file-alt']} />
-                          {title}
-                      </div>
-                      <div className="report-info">
-                        <div className="report-info-row">
-                          <div className="report-info-item"><b>Authors: </b>{author}</div>
-                          <div className="report-info-item"><b>Date Published: </b>{pub_date}</div>
+                {docData && <div>
+                  <div >
+                    <div styles={styles.diaplay}>
+                      <Sidebar
+                        sidebar={sidebar_content}
+                        styles={{ sidebar: { background: "white" } }}
+                        docked={true}
+                        shadow={true}
+                      >
+                      <div className='display-page'>
+                        <div className="banner">
+                          <a className="banner-title" href="/">
+                            CREAT
+                            <span className='E'>e</span>
+                          </a>
+                          <LoginModal />
                         </div>
-                        <div className="report-info-row">
-                          <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
-                          <div className="report-info-item"><b>DOI: </b>{doi}</div>
+                        <div className='brat-intro' id="title">
+                            <FontAwesomeIcon icon={['fal', 'file-alt']} />
+                            {title}
                         </div>
-                        <div className="report-info-row"><b>Keywords: </b>{kwlink}</div>
-                      </div>
-
-                      <div className="report-section" id="case_report">
-                        <div calssName="report-section-title"><b>Case Presentation</b></div>
-                        <div className="report-content">{text}</div>
-                      </div>
-                      {docData &&
-                        <div className="report-section" id="brat">
-                            <div calssName="report-section-title"><b>Brat Graph</b></div>
-                            <div className='brat-container'>
-                                <Brat docData={docData} />
-                            </div>
+                        <div className="report-info">
+                          <div className="report-info-row">
+                            <div className="report-info-item"><b>Authors: </b>{author}</div>
+                            <div className="report-info-item"><b>Date Published: </b>{pub_date}</div>
+                          </div>
+                          <div className="report-info-row">
+                            <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
+                            <div className="report-info-item"><b>DOI: </b>{doi}</div>
+                          </div>
+                          <div className="report-info-row"><b>Keywords: </b>{kwlink}</div>
                         </div>
-                      }
 
+                        <div className="report-section" id="case_report">
+                          <div className="report-section-title"><b>Case Presentation</b></div>
+                          <div className="report-content">{text}</div>
+                        </div>
                         {docData &&
-                          <div className="report-section" id='relation'>
-                            <div calssName="report-section-title"><b>Relation Graph</b></div>
-                            <div className='graph-container'>
-                                <Graph
-                                    graphData={docData}
-                                    entities={entities}
-                                />
-                            </div>
+                          <div className="report-section" id="brat">
+                              <div calssName="report-section-title"><b>Brat Graph</b></div>
+                              <div className='brat-container'>
+                                  <Brat docData={docData} />
+                              </div>
                           </div>
                         }
+
+                          {docData &&
+                            <div className="report-section" id='relation'>
+                              <div calssName="report-section-title"><b>Relation Graph</b></div>
+                              <div className='graph-container'>
+                                  <Graph
+                                      graphData={docData}
+                                      entities={entities}
+                                  />
+                              </div>
+                            </div>
+                          }
+                      </div>
+                      </Sidebar>
                     </div>
-                    </Sidebar>
                   </div>
-
-                  {!docData &&
-                        <div className='loading-container'>
-                            {`Loading ......`}
-                            <PacmanLoader
-                                sizeUnit={"px"}
-                                size={150}
-                                color={'rgb(1, 136, 203)'}
-                            />
-                        </div>
-                    }
-
-                </div>
+                </div>}
+                {!docData &&
+                      <div className='loading-container'>
+                          <span className="loading-text">Loading ......</span>
+                          <PacmanLoader
+                              sizeUnit={"px"}
+                              size={150}
+                              color={'rgb(1, 136, 203)'}
+                          />
+                      </div>
+                  }
             </div>
         );
     }
