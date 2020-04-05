@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
-import EntityGraph from "../EntityGraph/EntityGraph";
+import EntityGraphViewport from "../EntityGraphViewport/EntityGraphViewport";
 
 class DisplayPage extends Component {
   state = {
@@ -69,11 +69,11 @@ class DisplayPage extends Component {
         {docData && (
           <React.Fragment>
             <div className="subgraph-container">
-              <EntityGraph graphData={docData} entities={entities} />
+              <EntityGraphViewport graphData={docData} entities={entities} />
             </div>
             <div className="graph-container">
               {/* <Graph graphData={docData} entities={entities} /> */}
-              <EntityGraph graphData={docData} />
+              <EntityGraphViewport graphData={docData} />
             </div>
           </React.Fragment>
         )}
