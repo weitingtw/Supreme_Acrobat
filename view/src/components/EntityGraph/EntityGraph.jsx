@@ -330,8 +330,10 @@ class EntityGraph extends Component {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
 
-    const viewBoxWidth = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
-    const viewBoxHeight = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
+    let scaler = this.props.entities ? 2 : 1.25;
+
+    const viewBoxWidth = scaler * Math.abs(xDomain[1] - xDomain[0]);
+    const viewBoxHeight = scaler * Math.abs(yDomain[1] - yDomain[0]);
     const viewBoxDim = Math.max(viewBoxWidth, viewBoxHeight);
 
     const nodes = this.state.currNodes.map(n => {
