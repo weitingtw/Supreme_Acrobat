@@ -4,8 +4,7 @@ import {
   forceManyBody,
   forceLink,
   forceCenter,
-  forceCollide,
-  forceX
+  forceCollide
 } from "d3-force";
 
 import "./EntityGraph.css";
@@ -19,9 +18,8 @@ class EntityGraph extends Component {
     super(props);
 
     const graph = this.initializeData(formatData(this.props.graphData));
-    const adjList = this.getAdjacencyList(graph.edges);
     const subGraph = this.props.entities
-      ? this.getSubGraph(graph, adjList, this.props.entities)
+      ? this.getSubGraph(graph, this.props.entities)
       : null;
 
     const nodeColors = {
@@ -80,18 +78,18 @@ class EntityGraph extends Component {
     };
 
     this.state = {
+      fullGraph: graph,
       currNodes: this.props.entities ? subGraph.nodes : graph.nodes,
       currEdges: this.props.entities ? subGraph.edges : graph.edges,
       layout: "force",
       colors: nodeColors,
-      adjList: adjList,
       activeNode: null
     };
   }
 
   initializeData(data) {
     data.nodes.forEach(node => {
-      if (node.type == "OVERLAP") {
+      if (node.type === "OVERLAP") {
         node.radius = 5;
       } else {
         node.radius = 12;
@@ -105,6 +103,8 @@ class EntityGraph extends Component {
       edge.target = nodesMap[edge.target];
     });
 
+    data.adjList = this.getAdjacencyList(data.edges);
+
     return data;
   }
 
@@ -112,7 +112,8 @@ class EntityGraph extends Component {
     return nodeID.includes("OV");
   }
 
-  findNearestOverlap(startNode, adjList) {
+  findNearestOverlap(startNode, graph) {
+    const { adjList } = graph;
     const pathTo = {};
     pathTo[startNode] = null;
     const marked = new Set();
@@ -158,10 +159,11 @@ class EntityGraph extends Component {
     }
   }
 
-  getSubGraph(graph, adjList, query) {
+  getSubGraph(graph, query) {
     // get set of all nodes that belong depending on the query
+    const { adjList } = graph;
     const subGraphNodeIDs = new Set();
-    const overlaps = query.map(node => this.findNearestOverlap(node, adjList));
+    const overlaps = query.map(node => this.findNearestOverlap(node, graph));
     const overlappingNodes = [];
 
     // get all nodes in the overlap
@@ -217,11 +219,12 @@ class EntityGraph extends Component {
       )
       .force("collision", forceCollide(30))
       .force("center", forceCenter());
-    simulation.tick(100);
+    simulation.tick(50);
 
     simulation.on("tick", () => {
       this.setState({ currNodes: nodes });
       this.setState({ currEdges: edges });
+      simulation.tick(5);
     });
 
     document.querySelectorAll(".node").forEach(node => {
@@ -258,20 +261,27 @@ class EntityGraph extends Component {
     return res;
   }
 
-  getNodeClassList = id => {
-    if (
-      (this.state.activeNode &&
-        this.state.adjList[this.state.activeNode].has(id)) ||
-      this.state.activeNode == id
-    ) {
-      return `${id} node active`;
+  getNodeClassList = (node, type) => {
+    const { id, overlap } = node;
+    const { adjList } = this.state.fullGraph;
+    const classList = [];
+    classList.push(id);
+    classList.push(type);
+    if (!overlap) {
+      classList.push("secondary");
     }
-    return `${id} node`;
+    if (
+      (this.state.activeNode && adjList[this.state.activeNode].has(id)) ||
+      this.state.activeNode === id
+    ) {
+      classList.push("active");
+    }
+    return classList.join(" ");
   };
 
   getEdgeClassList = (source, target) => {
     const activeNode = this.state.activeNode;
-    if (activeNode && (activeNode == source || activeNode == target)) {
+    if (activeNode && (activeNode === source || activeNode === target)) {
       return "edge active";
     }
     return "edge";
@@ -320,17 +330,18 @@ class EntityGraph extends Component {
     const xDomain = extent(this.state.currNodes, node => node.x);
     const yDomain = extent(this.state.currNodes, node => node.y);
 
-    const viewBoxWidth = 1.25 * Math.abs(xDomain[1] - xDomain[0]);
-    const viewBoxHeight = 1.25 * Math.abs(yDomain[1] - yDomain[0]);
+    let scaler = this.props.entities ? 2 : 1.25;
+
+    const viewBoxWidth = scaler * Math.abs(xDomain[1] - xDomain[0]);
+    const viewBoxHeight = scaler * Math.abs(yDomain[1] - yDomain[0]);
     const viewBoxDim = Math.max(viewBoxWidth, viewBoxHeight);
 
     const nodes = this.state.currNodes.map(n => {
-      if (n.type == "OVERLAP") {
+      if (n.type === "OVERLAP") {
         return (
           <React.Fragment>
             <rect
-              className={this.getNodeClassList(n.id)}
-              id={n.id}
+              className={this.getNodeClassList(n, "node")}
               x={n.x - n.radius}
               y={n.y - n.radius}
               rx={n.radius / 4}
@@ -340,7 +351,13 @@ class EntityGraph extends Component {
               strokeWidth={1.5}
               fill={this.state.colors[n.type]}
             ></rect>
-            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+            <text
+              x={n.x}
+              y={n.y}
+              textAnchor="middle"
+              fontSize={8}
+              fontWeight={700}
+            >
               {"OVERLAP"}
             </text>
           </React.Fragment>
@@ -349,15 +366,21 @@ class EntityGraph extends Component {
         return (
           <React.Fragment>
             <circle
-              className={this.getNodeClassList(n.id, "node")}
+              className={this.getNodeClassList(n, "node")}
               cx={n.x}
               cy={n.y}
               r={n.radius}
-              stroke={this.colorLuminance(this.state.colors[n.type], -0.6)}
+              stroke={this.colorLuminance(this.state.colors[n.type], -0.3)}
               strokeWidth={1.3}
-              fill={this.state.colors[n.type]}
+              fill={this.colorLuminance(this.state.colors[n.type], 0.3)}
             ></circle>
-            <text x={n.x} y={n.y} textAnchor="middle" fontSize={8}>
+            <text
+              className={this.getNodeClassList(n, "text")}
+              x={n.x}
+              y={n.y}
+              textAnchor="middle"
+              fontSize={8}
+            >
               {n.text ? this.wordWrap(n.text, n.x) : ""}
             </text>
           </React.Fragment>
@@ -369,12 +392,12 @@ class EntityGraph extends Component {
       <React.Fragment>
         <line
           className={this.getEdgeClassList(e.source.id, e.target.id)}
-          marker-end={e.target.type == "OVERLAP" ? "" : "url(#arrow)"}
+          marker-end={e.target.type === "OVERLAP" ? "" : "url(#arrow)"}
           x1={e.source.x}
           y1={e.source.y}
           x2={e.target.x}
           y2={e.target.y}
-          stroke={e.target.type == "OVERLAP" ? "#86c5da" : "#343434"}
+          stroke={e.target.type === "OVERLAP" ? "#86c5da" : "#343434"}
           strokeOpacity={0.8}
         ></line>
         <text
@@ -382,8 +405,9 @@ class EntityGraph extends Component {
           y={(e.source.y + e.target.y) / 2}
           textAnchor="middle"
           fontSize={8}
+          fontWeight={700}
         >
-          {e.label == "OVERLAP" ? "" : e.label}
+          {e.label === "OVERLAP" ? "" : e.label}
         </text>
       </React.Fragment>
     ));
@@ -391,7 +415,6 @@ class EntityGraph extends Component {
     return (
       <svg
         className="graph"
-        style={{ border: "2px solid #bcbcbc" }}
         viewBox={`${-viewBoxDim / 2} ${-viewBoxDim /
           2} ${viewBoxDim} ${viewBoxDim}`}
       >
