@@ -9,17 +9,22 @@ import { addHighLight } from '../../utils';
 import './DisplayPage.css';
 import { getHost } from '../../utils';
 
+import Sidebar from "react-sidebar";
+
 
 class DisplayPage extends Component {
     state = {
         docData: null,
     }
 
+
     componentDidMount() {
         const { id } = this.props.match.params;
+        console.log("in did mount");
 
         axios.post(getHost() + ":3001/api/getCaseReportById", { id })
             .then(res => {
+              console.log(res.data);
                 const data = res.data.data[0];
                 this.setState({ docData: data })
             })
@@ -34,7 +39,12 @@ class DisplayPage extends Component {
         let pub_date = "2019-03-24";
         let doi = "10.1159/000330840";
         let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
-        let keywords = "Cough, Fever, Cold Sympotom";
+        let keywords = ["Cough", "Fever", "Cold Sympotom"];
+        const kwlink = [];
+        for (const [index, value] of keywords.entries()) {
+          kwlink.push(<a href="/search">{value}</a>);
+          kwlink.push(", ");
+        }
 
         let text,                   // whole plain text of the case report
             entities,               // entities for graph
@@ -54,6 +64,7 @@ class DisplayPage extends Component {
             height: "100%"
           },
           sidebarLink: {
+            width: "inherit",
             display: "block",
             padding: "16px 0px",
             color: "#757575",
@@ -62,19 +73,23 @@ class DisplayPage extends Component {
           divider: {
             margin: "8px 0",
             height: 1,
-            backgroundColor: "#757575"
+            backgroundColor: "#757575",
           },
           content: {
             padding: "16px",
             height: "100%",
             backgroundColor: "white",
-            display: "inline-block"
+            display: "inline-block",
+            textAlign: "center",
+            width: "-webkit-fill-available",
           },
           display: "inline-block",
           root: {
             fontFamily:
               '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
-            fontWeight: 300
+            fontWeight: 300,
+            width: 200,
+            height: "100%"
           },
           header: {
             backgroundColor: "#03a9f4",
@@ -96,7 +111,7 @@ class DisplayPage extends Component {
               </a>
               <div style={styles.divider} />
                 <a key="title" href="#title" style={styles.sidebarLink}>Title</a>
-                <a key="case_report" href="#case_report" style={styles.sidebarLink}>Case Report</a>
+                <a key="case_report" href="#case_report" style={styles.sidebarLink}>Case Presentation</a>
                 <a key="brat" href="#brat" style={styles.sidebarLink}>Brat Graph</a>
                 <a key="relation" href="#relation" style={styles.sidebarLink}>Relation Graph</a>
             </div>
@@ -119,36 +134,45 @@ class DisplayPage extends Component {
                       shadow={true}
                     >
                     <div className='display-page'>
-                      <div className='brat-intro'>
+                      <div className='brat-intro' id="title">
                           <FontAwesomeIcon icon={['fal', 'file-alt']} />
-                          Case Report Details
+                          {title}
                       </div>
-                      <div className="report-title" id="title">{title}</div>
                       <div className="report-info">
                         <div className="report-info-row">
-                          <div className="report-info-item">Authors: {author}</div>
-                          <div className="report-info-item">Date Published: {pub_date}</div>
+                          <div className="report-info-item"><b>Authors: </b>{author}</div>
+                          <div className="report-info-item"><b>Date Published: </b>{pub_date}</div>
                         </div>
                         <div className="report-info-row">
-                          <div className="report-info-item">Case Report ID: {id}</div>
-                          <div className="report-info-item">DOI: {doi}</div>
+                          <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
+                          <div className="report-info-item"><b>DOI: </b>{doi}</div>
                         </div>
-                        <div>Keywords: {keywords}</div>
+                        <div className="report-info-row"><b>Keywords: </b>{kwlink}</div>
                       </div>
-                      <div className="report-content" id="case_report">{text}</div>
+
+                      <div className="report-section" id="case_report">
+                        <div calssName="report-section-title"><b>Case Presentation</b></div>
+                        <div className="report-content">{text}</div>
+                      </div>
                       {docData &&
-                            <div className='brat-container' id="brat">
+                        <div className="report-section" id="brat">
+                            <div calssName="report-section-title"><b>Brat Graph</b></div>
+                            <div className='brat-container'>
                                 <Brat docData={docData} />
                             </div>
-                        }
+                        </div>
+                      }
 
                         {docData &&
-                            <div className='graph-container' id='relation'>
+                          <div className="report-section" id='relation'>
+                            <div calssName="report-section-title"><b>Relation Graph</b></div>
+                            <div className='graph-container'>
                                 <Graph
                                     graphData={docData}
                                     entities={entities}
                                 />
                             </div>
+                          </div>
                         }
                     </div>
                     </Sidebar>
@@ -174,5 +198,37 @@ class DisplayPage extends Component {
 // DisplayPage.propTypes = {
 //     id: PropTypes.number.isRequired
 // };
+// <div className="report" styles={styles.content}>
+//
+//
+//
+//   {docData &&
+//       <div
+//           className='report-plain-text'
+//           dangerouslySetInnerHTML={{
+//               __html: addHighLight(text, tokensToHighlight)
+//           }}
+//       />
+//   }
+//
+//   {docData &&
+//       <div className='brat-container'>
+//           <Brat docData={docData} />
+//       </div>
+//   }
+//
+//   {docData &&
+//       <div className='graph-container'>
+//           <Graph
+//               graphData={docData}
+//               entities={entities}
+//           />
+//       </div>
+//   }
+//
+//
+//
+// </div>
+
 
 export default DisplayPage;

@@ -3,19 +3,20 @@
 
 $display-section-border: 2px solid rgba($blue, 0.8);
 .display-page {
-    padding-left: 50px;
-
+    position: relative;
 
     .brat-intro,
-    .report-plain-text,
+    .report-info,
+    .report-keywords,
+    .report-section,
     .brat-container {
         position: relative;
-        width: 80%;
-        left: 10%;
+        width: 90%;
+        left: 5%;
     }
 
     .brat-intro {
-        font-size: 200%;
+        font-size: 170%;
         padding-right: 30px;
         border-bottom: $display-section-border;
         padding: 10px 0;
@@ -48,16 +49,15 @@ $display-section-border: 2px solid rgba($blue, 0.8);
         font-size: 150px;
         color: $orange;
     }
-
-    .report-title {
-      font-size: 50px;
-    }
     .report-info{
       width: auto;
 
 
-      .report-info-row {
-        height: 50%;
+      .report-info-row,{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        position: relative;
+        height: 33%;
         width: 100%;
       }
 
@@ -65,6 +65,23 @@ $display-section-border: 2px solid rgba($blue, 0.8);
         display: inline-block;
         width: 50%;
       }
+    }
+
+
+
+
+    .report-section{
+      border-bottom: $display-section-border;
+      margin-top: 20px;
+
+      .report-section-title {
+        margin: 20px 0 0 0;
+      }
+
+      .report-content {
+        margin: 10px 0 0 20px;
+      }
+
     }
 
 }
