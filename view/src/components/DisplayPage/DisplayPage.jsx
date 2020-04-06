@@ -31,30 +31,6 @@ class DisplayPage extends Component {
       .catch(err => console.log(err));
   }
 
-  render() {
-    const { id } = this.props.match.params;
-    const { docData } = this.state;
-    let text, // whole plain text of the case report
-      entities, // entities for graph
-      tokensToHighlight, // array of tokens to highlight
-      textEntities; // plain text highlight entities
-    if (docData) {
-      ({ text } = docData);
-    }
-    entities = [];
-
-    if (this.props.location.state) {
-      ({ textEntities } = this.props.location.state);
-      tokensToHighlight = textEntities.map(e => e.label);
-      // Entities
-      for (var i = 0; i < this.props.location.state.entities.length; i++) {
-        for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
-          entities.push(this.props.location.state.entities[i][j]);
-        }
-      }
-      entities = [...new Set(entities)];
-    }
-
     render() {
         const { id } = this.props.match.params;
         const { docData } = this.state;
@@ -74,12 +50,19 @@ class DisplayPage extends Component {
             tokensToHighlight,      // array of tokens to highlight
             textEntities;           // plain text highlight entities
         if (docData) { ({ text } = docData); }
+
+        entities = [];
+
         if (this.props.location.state) {
-            // console.log('data:', this.props.location.state);
-            ({ entities, textEntities } = this.props.location.state);
-            console.log(textEntities);
-            tokensToHighlight = textEntities.map(e => e.label);
-            console.log('tokensToHighlight:', tokensToHighlight);
+          ({ textEntities } = this.props.location.state);
+          tokensToHighlight = textEntities.map(e => e.label);
+          // Entities
+          for (var i = 0; i < this.props.location.state.entities.length; i++) {
+            for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+              entities.push(this.props.location.state.entities[i][j]);
+            }
+          }
+          entities = [...new Set(entities)];
         }
         const styles = {
           sidebar: {
@@ -190,7 +173,7 @@ class DisplayPage extends Component {
                         }
 
                            {docData && (
-                              <div className="report-section' id="relation">
+                              <div className="report-section" id="relation">
                                 <div calssName="report-section-title"><b>Relation Graph</b></div>
                                 <React.Fragment>
                                   <div className="subgraph-container">
