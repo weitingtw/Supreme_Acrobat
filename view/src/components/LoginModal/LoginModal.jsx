@@ -142,15 +142,146 @@ class ModalContent extends Component {
 
 class SubmitModalContent extends Component {
     state = {
-        text: ""
+        file: "",
+        filename: "Choose File",
+        uploadedFile: {},
+        message: "",
+        title: "",
+        authors: [],
+        keywords:[],
+        content:""
+    }
+    // handle file change
+    onChangeFile = e => {
+      if(e.target.files[0]){
+        let fname = e.target.files[0].name;
+        fname = fname.replace(/\s/g, '');
+        this.setState({ file: e.target.files[0]});
+        this.setState({ filename: fname });
+      }
+    };
+
+    // upload file to grobid
+    onSubmitFile = async e => {
+      e.preventDefault();
+      alert("clicked");
+      const formData = new FormData();
+      formData.append('input', this.state.file);
+      console.log("file appended");
+
+      // upload file to grobid
+      try {
+        const res = await axios.post('http://localhost:8070/api/processFulltextDocument', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(res.data);
+        this.setState({ message: 'File Uploaded' });
+        console.log("state updated");
+        this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    processXML = data => {
+      console.log("in process xml");
+      var xml = data;
+      //extract title
+      var title = xml.getElementsByTagName("title")[0].innerHTML;
+      this.setState({ title: title });
+      console.log(this.state.title);
+      //extract keywords
+      var terms = xml.getElementsByTagName("term");
+      const kwarr = [];
+      for(let i = 0; i < terms.length; i++){
+        kwarr.push(terms[i].innerHTML);
+      }
+      this.setState({ keywords: kwarr});
+      //extract authors
+      var author = xml.querySelectorAll("fileDesc author");
+      const authorList = [];
+      for(let i = 0; i < author.length; i++){
+        let name = "";
+        const fore = author[i].getElementsByTagName('forename');
+        const sur = author[i].getElementsByTagName('surname');
+        for(let j = 0; j < fore.length; j++){
+          name = name + fore[j].innerHTML + " ";
+        }
+        for(let j = 0; j < sur.length; j++){
+          name = name + sur[j].innerHTML;
+        }
+        authorList.push(name);
+      }
+
+      this.setState({ authors: authorList});
+      console.log(this.authors);
+
+      const contentList = [];
+
+      //extract abstract
+      // var abstract = xml.querySelectorAll("abstract div");
+      // for(let i = 0; i < abstract.length; i++){
+      //   for(let j = 0; j < abstract[i].children.length; j++){
+      //     if(abstract[i].children[j].tagName.toLowerCase() === "head"){
+      //       contentList.push("\n");
+      //       contentList.push(abstract[i].children[j].innerHTML);
+      //       contentList.push("\n");
+      //     }
+      //     if(abstract[i].children[j].tagName.toLowerCase() === "p"){
+      //       var elements = abstract[i].children[j].getElementsByTagName('ref');
+      //       // remove all <a> elements
+      //       while (elements[0]){
+      //         elements[0].parentNode.removeChild(elements[0])
+      //       }
+      //       contentList.push(abstract[i].children[j].innerHTML);
+      //     }
+      //   }
+      // }
+
+      //extract contents
+      var content = xml.querySelectorAll("body div");
+
+      for(let i = 0; i < content.length; i++){ // iterate through each div under body tag
+        for(let j = 0; j < content[i].children.length; j++){// iterate through each tag under each div
+          if(content[i].children[j].tagName.toLowerCase() === "head" && content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1){
+            // extract content
+            while(j < content[i].children.length){
+              if(content[i].children[j].tagName.toLowerCase() === "p"){
+                var tmp = content[i].children[j].getElementsByTagName('ref');
+                // remove all <a> elements
+                while (tmp[0]){
+                  tmp[0].parentNode.removeChild(tmp[0])
+                }
+                contentList.push(content[i].children[j].innerHTML);
+              }
+              j++;
+            }
+          }
+
+        }
+      }
+      //console.log(contentList.join(''));
+      this.setState({content: contentList.join('')});
     }
 
-    handleSubmitInput = e => {
-        this.setState({ text: e.target.value });
+    onChangeContent = e => {
+      this.setState({content: e.target.value});
+    }
+    onChangeTitle = e => {
+      this.setState({title: e.target.value});
+    }
+    onChangeKeywords = e => {
+      this.setState({keywords: e.target.value});
+    }
+    onChangeAuthor = e => {
+      this.setState({authors: e.target.value});
     }
 
     handleSubmit = () => {
         this.props.handleSubmit(this.state);
+        //.split(',').map(item => {return item.trim();})
     }
 
     render() {
@@ -173,12 +304,42 @@ class SubmitModalContent extends Component {
 
 
         return <div className='modal-inner-content'>
-            <span>Submit your Report</span>
+            <span>Submit your Report from PDF</span>
             <div>
-                <textarea value={this.state.value} onChange={this.handleSubmitInput} rows={10} cols={30} />
+              <div className="custom-file">
+                <input type="file" className="custom-file-input" id="customFile" onChange={this.onChangeFile} />
+                <label className="custom-file-label" for="customFile">{this.state.filename}</label>
+                <button type="submit" onClick={this.onSubmitFile} className="btn btn-primary">Submit</button>
+              </div>
+            </div>
+
+            <div>
+            <form>
+              <div className="form-row formitem">
+                <label className="col-sm-2 col-form-label" for="reportTitle">Title</label>
+                <input type="text"
+                className="form-control col-sm-10"
+                value={this.state.title}
+                onChange={this.onChangeTitle}
+                id="reportTitle"
+                placeholder="Title" />
+              </div>
+              <div className="form-row">
+                <label className="col-sm-2 col-form-label" for="reportAuthors">Authors</label>
+                <input type="text" value={this.state.authors} className="form-control col-sm-10" onChange={this.onChangeAuthor} id="reportAuthors" placeholder="Authors (separate using commas)" />
+              </div>
+              <div className="form-row">
+                <label className="col-form-label col-sm-2"for="reportKeywords">Keywords</label>
+                <input type="text" value={this.state.keywords} className="form-control col-sm-10" onChange={this.onChangeKeywords} id="reportKeywords" placeholder="Keywords (separate using commas)" />
+              </div>
+              <div className="form-row">
+                <label className="col-form-label col-sm-2" for="reportContent">Content</label>
+                <textarea className="form-control col-sm-10" value={this.state.content} style={{ resize: 'none' }} onChange={this.onChangeContent} id="reportContent" rows="5"></textarea>
+              </div>
+              <button type="submit" onSubmit={this.onSubmitReport} className="btn btn-primary">Submit Report</button>
+            </form>
             </div>
             {CloseModalButton}
-            {_submitButton}
 
         </div >
     }

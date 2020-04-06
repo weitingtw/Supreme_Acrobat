@@ -4,8 +4,9 @@ const bodyParser = require("body-parser");
 const logger = require("morgan");
 const axios = require('axios');
 const cors = require('cors');
-const session = require('express-session')
+const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 
 const API_PORT = 3001;
 const app = express();
@@ -42,6 +43,7 @@ app.use(session({
         }
     }));
 app.use(cookieParser());
+app.use(fileUpload());
 //*********************************************************************************
 //  route
 //*********************************************************************************

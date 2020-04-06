@@ -1,22 +1,44 @@
 @import "../shared";
 
 $display-section-border: 2px solid rgba($blue, 0.8);
+.banner{
+  display: inline-block;
+  position: relative;
+  top: 0%;
+  margin-left: 20px;
+  width: 100%;
+  height: 56px;
+  background-color: #ffffff;
+  .banner-title{
+    color: #0188cb;
+    font-size: 50px;
+
+    .E{
+      color: #f49541;
+    }
+  }
+
+}
 .display-page {
   position: relative;
 
-  .brat-intro,
-  .report-plain-text,
-  .brat-container {
-    position: relative;
-    width: 80%;
-    left: 10%;
-  }
+    .brat-intro,
+    .report-info,
+    .report-keywords,
+    .report-section,
+    .brat-container {
+        position: relative;
+        width: 90%;
+        left: 5%;
+        margin-bottom: 20px;
+    }
 
-  .brat-intro {
-    font-size: 200%;
-    padding-right: 30px;
-    border-bottom: $display-section-border;
-    padding: 10px 0;
+    .brat-intro {
+        margin-top: 10px;
+        font-size: 170%;
+        padding-right: 30px;
+        border-bottom: $display-section-border;
+        padding: 10px 0;
 
     svg {
       margin-right: 15px;
@@ -28,25 +50,61 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     }
   }
 
-  .report-plain-text {
-    padding: 20px 0;
-    margin-bottom: 20px;
-    border-bottom: $display-section-border;
+    .report-plain-text {
+        padding: 20px 0;
+        border-bottom: $display-section-border;
 
     .highLight {
       background-color: rgba($orange, 0.7);
       padding: 1px 5px;
       border-radius: 2px;
     }
-  }
+    .report-info{
+      width: auto;
 
-  .loading-container {
+
+      .report-info-row,{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        position: relative;
+        height: 33%;
+        width: 100%;
+      }
+
+      .report-info-item {
+        display: inline-block;
+        width: 50%;
+      }
+    }
+
+
+
+
+    .report-section{
+      border-bottom: $display-section-border;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+      .report-section-title {
+        margin: 20px 0 0 0;
+      }
+
+      .report-content {
+        margin: 10px 0 20px 20px;
+      }
+
+    }
+
+}
+.loading-container {
     overflow: show;
     position: relative;
-    top: 100px;
-    left: 30%;
+    top: 20%;
+    left: 20%;
     font-size: 150px;
     color: $orange;
+    z-index: 9999;
+
   }
   .graph-container {
     position: relative;
@@ -62,4 +120,5 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     margin: auto;
     border: 1px solid #dedede;
   }
+
 }
