@@ -54,11 +54,13 @@ $display-section-border: 2px solid rgba($blue, 0.8);
         padding: 20px 0;
         border-bottom: $display-section-border;
 
-    .highLight {
-      background-color: rgba($orange, 0.7);
-      padding: 1px 5px;
-      border-radius: 2px;
-    }
+        .highLight {
+          background-color: rgba($orange, 0.7);
+          padding: 1px 5px;
+          border-radius: 2px;
+        }
+      }
+
     .report-info{
       width: auto;
 
@@ -94,6 +96,20 @@ $display-section-border: 2px solid rgba($blue, 0.8);
       }
 
     }
+    .graph-container {
+      position: relative;
+      width: 80%;
+      max-width: 500px;
+      margin: auto;
+      border: 1px solid #dedede;
+    }
+    .subgraph-container {
+      position: relative;
+      width: 80%;
+      max-width: 500px;
+      margin: auto;
+      border: 1px solid #dedede;
+    }
 
 }
 .loading-container {
@@ -104,21 +120,5 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     font-size: 150px;
     color: $orange;
     z-index: 9999;
-
-  }
-  .graph-container {
-    position: relative;
-    width: 80%;
-    max-width: 500px;
-    margin: auto;
-    border: 1px solid #dedede;
-  }
-  .subgraph-container {
-    position: relative;
-    width: 80%;
-    max-width: 500px;
-    margin: auto;
-    border: 1px solid #dedede;
-  }
 
 }

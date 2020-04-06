@@ -83,6 +83,18 @@
       margin: 20px 0 0 0; }
     .display-page .report-section .report-content {
       margin: 10px 0 20px 20px; }
+  .display-page .graph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid #dedede; }
+  .display-page .subgraph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid #dedede; }
 
 .loading-container {
   overflow: show;
