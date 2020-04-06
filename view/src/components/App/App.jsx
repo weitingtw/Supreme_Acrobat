@@ -9,25 +9,25 @@ import './App.css';
 
 
 class App extends Component {
-    state = {};
+  state = {};
 
-    render() {
-        return (
-          <Router>
-            <div id='app'>
-                {/*<TitlePanel />*/}
-                <Switch>
-                    <Route exact path="/" component={ MainPage }/>    
-                    <Route exact path="/search" component={ SearchPage }/>    
-                    <Route path="/search/:id" component={ DisplayPage }/>    
-                    <Route exact path="/relationSearch" component={ RelationSearchPage }/>    
-                    {/*<Route exact path="/addCaseReport" component={AddCaseReport}/>*/}
-                    <Route component={() => (<h1>404!!!</h1>)} />
-                </Switch>
-            </div>
-          </Router>
-        );
-    }
+  render() {
+    return (
+      <Router>
+        <div id='app'>
+          {/*<TitlePanel />*/}
+          <Switch>
+            <Route exact path="/" component={SearchPage} />
+            <Route exact path="/search" component={SearchPage} />
+            <Route path="/search/:id" component={DisplayPage} />
+            <Route exact path="/relationSearch" component={RelationSearchPage} />
+            {/*<Route exact path="/addCaseReport" component={AddCaseReport}/>*/}
+            <Route component={() => (<h1>404!!!</h1>)} />
+          </Switch>
+        </div>
+      </Router>
+    );
+  }
 }
 
 export default App;

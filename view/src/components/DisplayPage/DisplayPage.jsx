@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios'
@@ -11,27 +12,48 @@ import { getHost } from '../../utils';
 
 import Sidebar from "react-sidebar";
 import LoginModal from '../LoginModal/LoginModal';
+import EntityGraph from "../EntityGraph/EntityGraph";
 
 
 class DisplayPage extends Component {
-    state = {
-        docData: null,
+  state = {
+    docData: null
+  };
+
+
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    axios.post(getHost() + "/api/getCaseReportById", { id })
+      .then(res => {
+        const data = res.data.data[0];
+        this.setState({ docData: data });
+      })
+      .catch(err => console.log(err));
+  }
+
+  render() {
+    const { id } = this.props.match.params;
+    const { docData } = this.state;
+    let text, // whole plain text of the case report
+      entities, // entities for graph
+      tokensToHighlight, // array of tokens to highlight
+      textEntities; // plain text highlight entities
+    if (docData) {
+      ({ text } = docData);
     }
+    entities = [];
 
-
-    componentDidMount() {
-        const { id } = this.props.match.params;
-        console.log("in did mount");
-
-        axios.post(getHost() + ":3001/api/getCaseReportById", { id })
-            .then(res => {
-              console.log(res.data);
-                const data = res.data.data[0];
-                this.setState({ docData: data })
-            })
-            .catch(err => console.log(err));
+    if (this.props.location.state) {
+      ({ textEntities } = this.props.location.state);
+      tokensToHighlight = textEntities.map(e => e.label);
+      // Entities
+      for (var i = 0; i < this.props.location.state.entities.length; i++) {
+        for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+          entities.push(this.props.location.state.entities[i][j]);
+        }
+      }
+      entities = [...new Set(entities)];
     }
-
 
     render() {
         const { id } = this.props.match.params;
@@ -167,17 +189,20 @@ class DisplayPage extends Component {
                           </div>
                         }
 
-                          {docData &&
-                            <div className="report-section" id='relation'>
-                              <div calssName="report-section-title"><b>Relation Graph</b></div>
-                              <div className='graph-container'>
-                                  <Graph
-                                      graphData={docData}
-                                      entities={entities}
-                                  />
+                           {docData && (
+                              <div className="report-section' id="relation">
+                                <div calssName="report-section-title"><b>Relation Graph</b></div>
+                                <React.Fragment>
+                                  <div className="subgraph-container">
+                                    <EntityGraph graphData={docData} entities={entities} />
+                                  </div>
+                                  <div className="graph-container">
+                                    {/* <Graph graphData={docData} entities={entities} /> */}
+                                    <EntityGraph graphData={docData} />
+                                  </div>
+                                </React.Fragment>
                               </div>
-                            </div>
-                          }
+                            )}
                       </div>
                       </Sidebar>
                     </div>
@@ -193,45 +218,15 @@ class DisplayPage extends Component {
                           />
                       </div>
                   }
-            </div>
-        );
-    }
+
+      </div>
+    );
+  }
 }
 
 // DisplayPage.propTypes = {
 //     id: PropTypes.number.isRequired
 // };
-// <div className="report" styles={styles.content}>
-//
-//
-//
-//   {docData &&
-//       <div
-//           className='report-plain-text'
-//           dangerouslySetInnerHTML={{
-//               __html: addHighLight(text, tokensToHighlight)
-//           }}
-//       />
-//   }
-//
-//   {docData &&
-//       <div className='brat-container'>
-//           <Brat docData={docData} />
-//       </div>
-//   }
-//
-//   {docData &&
-//       <div className='graph-container'>
-//           <Graph
-//               graphData={docData}
-//               entities={entities}
-//           />
-//       </div>
-//   }
-//
-//
-//
-// </div>
 
 
 export default DisplayPage;

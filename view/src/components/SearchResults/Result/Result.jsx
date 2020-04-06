@@ -16,7 +16,7 @@ class Result extends Component {
         const {
             displayData: { previewText, id, textEntities, entities }
         } = this.props;
-        axios.post(getHost() + ":3001/api/getCaseReportById", { id })
+        axios.post(getHost() + "/api/getCaseReportById", { id })
             .then(res => {
                 console.log(res, "res");
                 const text = (res.data.data[0].text).substring(0, 350) + '...';

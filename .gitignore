@@ -69,3 +69,6 @@ typings/
 
 # Complete Data Folder
 server/COMPLETE/
+
+# .DS_Store
+.DS_Store

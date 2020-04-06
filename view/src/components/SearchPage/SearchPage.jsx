@@ -30,7 +30,7 @@ class SearchPage extends Component {
         // if last typing is not alphabet
         // go over crf API to get entities
 
-        axios.post(getHost() + ":3001/api/getPrediction", {
+        axios.post(getHost() + "/api/getPrediction", {
             data: { query: queryText }
         })
             .then(response => {
@@ -45,44 +45,9 @@ class SearchPage extends Component {
             })
             .catch(error => { console.log(error); });
 
-
-        const type_list = ["Sign_symptom"]
-        const { textEntities } = this.state;
-        console.log(textEntities);
-        var newQueries = [];
-        for (var i = 0; i < textEntities.length; i++) {
-            for (var j = i + 1; j < textEntities.length; j++) {
-                if (type_list.indexOf(textEntities[i].type) > -1 && type_list.indexOf(textEntities[j].type) > -1) {
-
-                    var query_object = {
-                        queries: [textEntities[i].label, textEntities[j].label],
-                        relations: ['BEFORE']
-                    }
-                    var relations = []
-                    await axios.post(getHost() + ":3001/api/getRelationPrediction", {
-                        data: { query: queryText, query1: query_object.queries[0], query2: query_object.queries[1] }
-                    })
-                        .then(response => {
-                            const { data: { relation } } = response;
-                            console.log(relation)
-                            relations.push(relation)
-
-
-                        })
-                        .catch(error => { console.log(error); });
-                    console.log(query_object.queries[0])
-                    console.log(query_object.queries[1])
-                    console.log(relations)
-                    query_object.relations = relations
-                    newQueries.push(query_object)
-                }
-            }
-        }
-        console.log(newQueries)
         this.setState({
-            allQueries: newQueries
+            allQueries: []
         })
-        console.log(this.state.allQueries)
 
     }
 
@@ -94,7 +59,7 @@ class SearchPage extends Component {
         }
         console.log('basic search: ', queryObj);
 
-        axios.post(getHost() + ":3001/api/searchNodes", queryObj)
+        axios.post(getHost() + "/api/searchNodes", queryObj)
             .then(res => {
                 // search results
                 const results = res.data.data.map(info => {
@@ -119,10 +84,9 @@ class SearchPage extends Component {
         }
         console.log('basic search: ', queryObj);
 
-        axios.post(getHost() + ":3001/api/searchNodesWithRelations", queryObj)
+        axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
             .then(res => {
                 // search results
-                //console.log(res);
                 const results = res.data.data.map(info => {
                     console.log(info.type);
                     if (info.type == "searchNode") {
@@ -189,6 +153,45 @@ class SearchPage extends Component {
         this.setState({ allQueries });
     }
 
+    handleRelationSearch = async () => {
+        const { textEntities, queryText } = this.state;
+        const type_list = ["Sign_symptom"]
+        console.log(textEntities);
+        var newQueries = [];
+        for (var i = 0; i < textEntities.length; i++) {
+            for (var j = i + 1; j < textEntities.length; j++) {
+                if (type_list.indexOf(textEntities[i].type) > -1 && type_list.indexOf(textEntities[j].type) > -1) {
+
+                    var query_object = {
+                        queries: [textEntities[i].label, textEntities[j].label],
+                        relations: ['BEFORE']
+                    }
+                    var relations = []
+                    await axios.post(getHost() + "/api/getRelationPrediction", {
+                        data: { query: queryText, query1: query_object.queries[0], query2: query_object.queries[1] }
+                    })
+                        .then(response => {
+                            const { data: { relation } } = response;
+                            console.log(relation)
+                            relations.push(relation)
+
+
+                        })
+                        .catch(error => { console.log(error); });
+                    console.log(query_object.queries[0])
+                    console.log(query_object.queries[1])
+                    console.log(relations)
+                    query_object.relations = relations
+                    newQueries.push(query_object)
+                }
+            }
+        }
+        console.log(newQueries)
+        this.setState({
+            allQueries: newQueries
+        })
+    }
+
 
     render() {
         const { results, textEntities, allQueries } = this.state;
@@ -206,6 +209,11 @@ class SearchPage extends Component {
                         handleAdvancedSearch={this.handleAdvancedSearch}
                         handleTyping={this.handleTyping}
                     />
+                    <button
+                        type="submit"
+                        id="relationSearchButton"
+                        onClick={this.handleRelationSearch}
+                    >Parse Relations</button>
                     <RelationSearchBar
                         textEntities={textEntities}
                         allQueries={this.state.allQueries}

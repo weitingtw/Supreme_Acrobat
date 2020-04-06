@@ -285,9 +285,14 @@ module.exports = function (app) {
   /* ------------------------- Machine Learning API Routers ------------------------------ */
   router.post("/getPrediction", (req, res) => {
     const params = req.body.data;
+    var host = "http://127.0.0.1:5000"
+    if (process.env.BACKEND_SERVER1) {
+      host = process.env.BACKEND_SERVER1.concat(':5000/')
+    }
+
     // console.log(params);
     axios
-      .get("http://127.0.0.1:5000/", { params })
+      .get(host, { params })
       .then(response => {
         data = response.data;
         // console.log(data);
@@ -300,9 +305,13 @@ module.exports = function (app) {
 
   router.post("/getRelationPrediction", (req, res) => {
     const params = req.body.data;
+    var host = "http://127.0.0.1:5001"
+    if (process.env.BACKEND_SERVER2) {
+      host = process.env.BACKEND_SERVER2.concat(':5001/')
+    }
     // console.log(params);
     axios
-      .get("http://127.0.0.1:5001/", { params })
+      .get(host, { params })
       .then(response => {
         data = response.data;
         console.log(data);

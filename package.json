@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"cd server/ && node server.js\" \"cd view/ && npm start\" \"cd ML-API/ && python3 api-server.py\" \"cd ML-API/ && python3 api-server2.py\""
+    "start": "concurrently \"cd server/ && node server.js\" \"cd view/ && npm start\" \"cd ML-API/entity/ && python3 api-server.py\" \"cd ML-API/relation/ && python3 api-server2.py\"",
+    "docker": "concurrently \"cd server/ && node server.js\" \"nginx\" \"cd ML-API/entity/ && python3 api-server.py\" \"cd ML-API/relation/ && python3 api-server2.py\""
   },
   "repository": {
     "type": "git",
@@ -16,7 +17,7 @@
   "dependencies": {
     "concurrently": "^4.1.0",
     "express-fileupload": "^1.1.6",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "swagger-node-express": "^2.1.3",
     "uuid": "^3.3.2"
   }

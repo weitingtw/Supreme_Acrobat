@@ -1,6 +1,5 @@
 @import "../shared";
 
-
 $display-section-border: 2px solid rgba($blue, 0.8);
 .banner{
   display: inline-block;
@@ -21,7 +20,7 @@ $display-section-border: 2px solid rgba($blue, 0.8);
 
 }
 .display-page {
-    position: relative;
+  position: relative;
 
     .brat-intro,
     .report-info,
@@ -41,23 +40,24 @@ $display-section-border: 2px solid rgba($blue, 0.8);
         border-bottom: $display-section-border;
         padding: 10px 0;
 
-        svg {
-            margin-right: 15px;
-            font-size: 90%;
-        }
-
-        .report-id { color: $orange; }
+    svg {
+      margin-right: 15px;
+      font-size: 90%;
     }
+
+    .report-id {
+      color: $orange;
+    }
+  }
 
     .report-plain-text {
         padding: 20px 0;
         border-bottom: $display-section-border;
 
-        .highLight {
-            background-color: rgba($orange, 0.7);
-            padding: 1px 5px;
-            border-radius: 2px;
-        }
+    .highLight {
+      background-color: rgba($orange, 0.7);
+      padding: 1px 5px;
+      border-radius: 2px;
     }
     .report-info{
       width: auto;
@@ -104,4 +104,21 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     font-size: 150px;
     color: $orange;
     z-index: 9999;
+
+  }
+  .graph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid #dedede;
+  }
+  .subgraph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid #dedede;
+  }
+
 }
