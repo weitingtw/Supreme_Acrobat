@@ -29,6 +29,7 @@ const CaseReportSchema = new Schema(
     // sentence_offsets 	: [],
     // token_offsets 	: [],
     action: String,
+    title: String,
     abstract: String,
     authors: [],
     keywords: [],
