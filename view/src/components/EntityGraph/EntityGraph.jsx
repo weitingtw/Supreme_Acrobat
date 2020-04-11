@@ -4,20 +4,20 @@ import {
   forceManyBody,
   forceLink,
   forceCenter,
-  forceCollide
+  forceCollide,
 } from "d3-force";
 
 import "./EntityGraph.css";
 
 import { extent } from "d3-array";
 
-import { formatData } from "./graph-utils";
+import { createGraph } from "./graph-utils";
 
 class EntityGraph extends Component {
   constructor(props) {
     super(props);
 
-    const graph = this.initializeData(formatData(this.props.graphData));
+    const graph = this.initializeData(createGraph(this.props.graphData));
     const subGraph = this.props.entities
       ? this.getSubGraph(graph, this.props.entities)
       : null;
@@ -74,7 +74,7 @@ class EntityGraph extends Component {
       Coreference: "#808000",
       Date: "#8fee90",
       Duration: "#8fee90",
-      OVERLAP: "#fff"
+      OVERLAP: "#fff",
     };
 
     this.state = {
@@ -83,24 +83,17 @@ class EntityGraph extends Component {
       currEdges: this.props.entities ? subGraph.edges : graph.edges,
       layout: "force",
       colors: nodeColors,
-      activeNode: null
+      activeNode: null,
     };
   }
 
   initializeData(data) {
-    data.nodes.forEach(node => {
+    data.nodes.forEach((node) => {
       if (node.type === "OVERLAP") {
         node.radius = 5;
       } else {
         node.radius = 12;
       }
-    });
-
-    let nodesMap = this.mapNodes(data.nodes);
-
-    data.edges.forEach(edge => {
-      edge.source = nodesMap[edge.source];
-      edge.target = nodesMap[edge.target];
     });
 
     data.adjList = this.getAdjacencyList(data.edges);
@@ -127,7 +120,7 @@ class EntityGraph extends Component {
       if (this.isOverlapNode(node)) {
         overlapNode = node;
       } else {
-        adjList[node].forEach(neighbor => {
+        adjList[node].forEach((neighbor) => {
           if (!(neighbor in pathTo)) {
             pathTo[neighbor] = node;
           }
@@ -149,12 +142,12 @@ class EntityGraph extends Component {
 
       return {
         ID: overlapNode,
-        path: path
+        path: path,
       };
     } else {
       return {
         ID: startNode,
-        path: [startNode]
+        path: [startNode],
       };
     }
   }
@@ -163,43 +156,35 @@ class EntityGraph extends Component {
     // get set of all nodes that belong depending on the query
     const { adjList } = graph;
     const subGraphNodeIDs = new Set();
-    const overlaps = query.map(node => this.findNearestOverlap(node, graph));
+    const overlaps = query.map((node) => this.findNearestOverlap(node, graph));
     const overlappingNodes = [];
 
     // get all nodes in the overlap
-    overlaps.forEach(ov => {
-      adjList[ov.ID].forEach(neighborID => {
+    overlaps.forEach((ov) => {
+      adjList[ov.ID].forEach((neighborID) => {
         overlappingNodes.push(neighborID);
       });
       // add all nodes from paths to set of subgraph nodes.
-      ov.path.forEach(node => subGraphNodeIDs.add(node));
+      ov.path.forEach((node) => subGraphNodeIDs.add(node));
     });
 
     // get neighbors of all overlapping nodes and add to the set.
-    overlappingNodes.forEach(nodeID => {
+    overlappingNodes.forEach((nodeID) => {
       subGraphNodeIDs.add(nodeID);
-      adjList[nodeID].forEach(neighborID => {
+      adjList[nodeID].forEach((neighborID) => {
         subGraphNodeIDs.add(neighborID);
       });
     });
 
     // then filter: if the node has id that is in the set, then it belongs
     const nodes = graph.nodes;
-    let subGraphNodes = nodes.filter(node => subGraphNodeIDs.has(node.id));
+    let subGraphNodes = nodes.filter((node) => subGraphNodeIDs.has(node.id));
     let subGraphEdges = graph.edges.filter(
-      edge =>
+      (edge) =>
         subGraphNodeIDs.has(edge.source.id) &&
         subGraphNodeIDs.has(edge.target.id)
     );
     return { nodes: subGraphNodes, edges: subGraphEdges };
-  }
-
-  mapNodes(nodes) {
-    let nodesMap = {};
-    nodes.forEach(node => {
-      nodesMap[node.id] = node;
-    });
-    return nodesMap;
   }
 
   componentDidMount() {
@@ -211,12 +196,7 @@ class EntityGraph extends Component {
 
     let simulation = forceSimulation(nodes)
       .force("charge", chargeForce)
-      .force(
-        "link",
-        forceLink(edges)
-          .distance(10)
-          .strength(1)
-      )
+      .force("link", forceLink(edges).distance(10).strength(1))
       .force("collision", forceCollide(30))
       .force("center", forceCenter());
     simulation.tick(50);
@@ -227,28 +207,28 @@ class EntityGraph extends Component {
       simulation.tick(5);
     });
 
-    document.querySelectorAll(".node").forEach(node => {
-      node.addEventListener("mouseenter", event => {
+    document.querySelectorAll(".node").forEach((node) => {
+      node.addEventListener("mouseenter", (event) => {
         this.handleMouseEnter(event);
       });
-      node.addEventListener("mouseleave", event => {
+      node.addEventListener("mouseleave", (event) => {
         this.handleMouseLeave(event);
       });
     });
   }
 
-  handleMouseEnter = event => {
+  handleMouseEnter = (event) => {
     const id = event.srcElement.classList[0];
     this.setState({ activeNode: id });
   };
 
-  handleMouseLeave = event => {
+  handleMouseLeave = (event) => {
     this.setState({ activeNode: null });
   };
 
   getAdjacencyList(edges) {
     const res = {};
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       if (!res[edge.source.id]) {
         res[edge.source.id] = new Set();
       }
@@ -294,7 +274,7 @@ class EntityGraph extends Component {
         <tspan x={anchor} dy="0em">
           {words[0]}
         </tspan>
-        {words.slice(1).map(word => (
+        {words.slice(1).map((word) => (
           <tspan x={anchor} dy="1em">
             {word}
           </tspan>
@@ -327,8 +307,8 @@ class EntityGraph extends Component {
   };
 
   render() {
-    const xDomain = extent(this.state.currNodes, node => node.x);
-    const yDomain = extent(this.state.currNodes, node => node.y);
+    const xDomain = extent(this.state.currNodes, (node) => node.x);
+    const yDomain = extent(this.state.currNodes, (node) => node.y);
 
     let scaler = this.props.entities ? 2 : 1.25;
 
@@ -336,7 +316,7 @@ class EntityGraph extends Component {
     const viewBoxHeight = scaler * Math.abs(yDomain[1] - yDomain[0]);
     const viewBoxDim = Math.max(viewBoxWidth, viewBoxHeight);
 
-    const nodes = this.state.currNodes.map(n => {
+    const nodes = this.state.currNodes.map((n) => {
       if (n.type === "OVERLAP") {
         return (
           <React.Fragment>
@@ -388,7 +368,7 @@ class EntityGraph extends Component {
       }
     });
 
-    const edges = this.state.currEdges.map(e => (
+    const edges = this.state.currEdges.map((e) => (
       <React.Fragment>
         <line
           className={this.getEdgeClassList(e.source.id, e.target.id)}
@@ -415,8 +395,9 @@ class EntityGraph extends Component {
     return (
       <svg
         className="graph"
-        viewBox={`${-viewBoxDim / 2} ${-viewBoxDim /
-          2} ${viewBoxDim} ${viewBoxDim}`}
+        viewBox={`${-viewBoxDim / 2} ${
+          -viewBoxDim / 2
+        } ${viewBoxDim} ${viewBoxDim}`}
       >
         <defs>
           <marker

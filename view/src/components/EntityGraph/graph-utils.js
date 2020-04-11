@@ -1,8 +1,15 @@
+function Graph(nodes, edges, pmID) {
+  this.nodes = nodes;
+  this.edges = edges;
+  this.pmID = pmID;
+}
+
 /**
  * Converts raw data into an object of nodes and edges
  * @param {Object} graphData
  */
-export const formatData = graphData => {
+
+export const createGraph = (graphData) => {
   const nodes = [];
   const edges = [];
 
@@ -60,7 +67,7 @@ export const formatData = graphData => {
    * Map nodes to overlaps
    * */
   const nodeIDToOverLapID = {};
-  Object.keys(eventIDToOverlapID).forEach(eventID => {
+  Object.keys(eventIDToOverlapID).forEach((eventID) => {
     let nodeID = eventIDToNodeID[eventID];
     let overlapID = eventIDToOverlapID[eventID];
     nodeIDToOverLapID[nodeID] = overlapID;
@@ -101,14 +108,14 @@ export const formatData = graphData => {
         id: sourceID,
         text: nodeText,
         type: nodeIDToNodeType[sourceID],
-        overlap: overlapID
+        overlap: overlapID,
       });
       //   add overlap edge and node
       if (overlapID) {
         edges.push({
           source: sourceID,
           target: overlapID,
-          type: "OVERLAP"
+          type: "OVERLAP",
         });
 
         // if not already have node created, create a node of the overlap
@@ -117,7 +124,7 @@ export const formatData = graphData => {
             id: overlapID,
             text: undefined,
             type: "OVERLAP",
-            overlap: undefined
+            overlap: undefined,
           });
           nodeSet.add(overlapID);
         }
@@ -139,21 +146,21 @@ export const formatData = graphData => {
         id: targetID,
         text: nodeText,
         type: nodeIDToNodeType[targetID],
-        overlap: overlapID
+        overlap: overlapID,
       });
 
       if (overlapID) {
         edges.push({
           source: targetID,
           target: overlapID,
-          type: "OVERLAP"
+          type: "OVERLAP",
         });
         if (!nodeSet.has(overlapID)) {
           nodes.push({
             id: overlapID,
             text: undefined,
             type: "OVERLAP",
-            overlap: undefined
+            overlap: undefined,
           });
           nodeSet.add(overlapID);
         }
@@ -165,7 +172,7 @@ export const formatData = graphData => {
     edges.push({
       source: sourceID,
       target: targetID,
-      label: eventLabel
+      label: eventLabel,
     });
   }
 
@@ -189,16 +196,42 @@ export const formatData = graphData => {
           id: sourceID,
           text: nodeText,
           type: nodeIDToNodeType[sourceID],
-          overlap: overlapID
+          overlap: overlapID,
         });
       }
       edges.push({
         source: sourceID,
         target: overlapID,
-        label: "OVERLAP"
+        label: "OVERLAP",
       });
     }
   }
 
-  return { nodes: nodes, edges: edges, pmid: graphData.pmID };
+  resolveEdgeRefs(nodes, edges);
+
+  // return { nodes: nodes, edges: edges, pmid: graphData.pmID };
+  return new Graph(nodes, edges, graphData.pmID);
 };
+
+/** Sets edges to reference nodes directly rather than by ID.
+ * @param {Array} an array of node objects
+ * @param {Array} an array of edge objects
+ */
+function resolveEdgeRefs(nodes, edges) {
+  let nodesMap = mapNodes(nodes);
+  edges.forEach((edge) => {
+    edge.source = nodesMap[edge.source];
+    edge.target = nodesMap[edge.target];
+  });
+  return edges;
+}
+/** Returns a map from nodeID to corresponding node object
+ * @param {Array} an array of node objects
+ */
+function mapNodes(nodes) {
+  let nodesMap = {};
+  nodes.forEach((node) => {
+    nodesMap[node.id] = node;
+  });
+  return nodesMap;
+}
