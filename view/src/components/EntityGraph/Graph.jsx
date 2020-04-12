@@ -2,22 +2,27 @@ import React, { Component, createRef } from "react";
 import * as d3 from "d3";
 
 import { createGraph } from "./graph-utils";
-import { forceManyBody } from "d3";
+import { linkVertical } from "d3";
 
 class Graph extends Component {
   constructor(props) {
     super(props);
+
+    const graph = createGraph(this.props.graphData);
+
+    this.state = {
+      graph: graph,
+      adjList: graph.getAdjacencyList(),
+    };
 
     this.ref = createRef();
   }
   componentDidMount() {
     this.createViz();
   }
-  shouldComponentUpdate() {
-    return false;
-  }
+
   createViz() {
-    const graph = createGraph(this.props.graphData);
+    const { graph, adjList } = this.state;
     const radiusScaler = this.degreeToRadius(graph);
     graph.nodes.forEach((n) => {
       n.radius = radiusScaler(n.indegree);
@@ -46,8 +51,8 @@ class Graph extends Component {
         .enter()
         .append("line")
         .attr("class", "link")
-        .attr("stroke", "#000")
-        .attr("stroke-opacity", 0.5);
+        .attr("stroke", "#ddd")
+        .attr("stroke-opacity", 0.8);
 
       let node = svg
         .append("g")
@@ -56,6 +61,7 @@ class Graph extends Component {
         .data(graph.nodes)
         .enter()
         .append("circle")
+        .attr("class", (d) => `${d.id} node`)
         .attr("r", (d) => d.radius)
         .call(
           d3
@@ -63,7 +69,9 @@ class Graph extends Component {
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended)
-        );
+        )
+        .on("mouseover", handleMouseOver)
+        .on("mouseout", handleMouseOut);
 
       svg.call(
         d3
@@ -94,23 +102,55 @@ class Graph extends Component {
         node.attr("transform", d3.event.transform);
         edge.attr("transform", d3.event.transform);
       }
-    }
 
-    function dragstarted(d) {
-      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
+      function handleMouseOver(d, i) {
+        // highlight connected edges
+        edge
+          .attr("stroke", (l) => {
+            return l.source === d || l.target === d ? "#555" : "#ddd";
+          })
+          .attr("stroke-opacity", (l) => {
+            return l.source === d || l.target === d ? 1.0 : 0.5;
+          });
+        // highlight connected nodes
+        node
+          .attr("stroke", (n) => {
+            return neighboring(d, n) ? "#eee" : "#000";
+          })
+          .attr("stroke-width", (n) => {
+            return neighboring(d, n) ? 2.0 : 1.0;
+          });
+        //   highlight self
+        d3.select(this).attr("stroke", "#eee").attr("stroke-width", 2.0);
+      }
 
-    function dragged(d) {
-      d.fx = d3.event.x;
-      d.fy = d3.event.y;
-    }
+      function handleMouseOut(d, i) {
+        edge.attr("stroke", "#ddd").attr("stroke-opacity", 0.8);
+        node.attr("stroke", "#000").attr("stroke-width", 1.0);
+      }
 
-    function dragended(d) {
-      d.fx = d3.event.x;
-      d.fy = d3.event.y;
-      if (!d3.event.active) simulation.alphaTarget(0);
+      function neighboring(n1, n2) {
+        const id1 = n1.id;
+        const id2 = n2.id;
+        return adjList[id1].has(id1) || adjList[id2].has(id1);
+      }
+
+      function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+
+      function dragended(d) {
+        d.fx = null;
+        d.fy = null;
+        if (!d3.event.active) simulation.alphaTarget(0);
+      }
     }
 
     run(graph);

@@ -2,6 +2,21 @@ function Graph(nodes, edges, pmID) {
   this.nodes = nodes;
   this.edges = edges;
   this.pmID = pmID;
+
+  this.getAdjacencyList = () => {
+    const res = {};
+    edges.forEach((edge) => {
+      if (!res[edge.source.id]) {
+        res[edge.source.id] = new Set();
+      }
+      if (!res[edge.target.id]) {
+        res[edge.target.id] = new Set();
+      }
+      res[edge.source.id].add(edge.target.id);
+      res[edge.target.id].add(edge.source.id);
+    });
+    return res;
+  };
 }
 
 /**
