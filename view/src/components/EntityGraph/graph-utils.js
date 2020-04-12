@@ -208,6 +208,7 @@ export const createGraph = (graphData) => {
   }
 
   resolveEdgeRefs(nodes, edges);
+  initializeNodeInDegree(edges);
 
   // return { nodes: nodes, edges: edges, pmid: graphData.pmID };
   return new Graph(nodes, edges, graphData.pmID);
@@ -234,4 +235,14 @@ function mapNodes(nodes) {
     nodesMap[node.id] = node;
   });
   return nodesMap;
+}
+
+/** Adds indegree property to all nodes */
+function initializeNodeInDegree(edges) {
+  edges.forEach((edge) => {
+    if (!edge.source.indegree) {
+      edge.source.indegree = 0;
+    }
+    edge.target.indegree = edge.target.indegree ? edge.target.indegree + 1 : 1;
+  });
 }

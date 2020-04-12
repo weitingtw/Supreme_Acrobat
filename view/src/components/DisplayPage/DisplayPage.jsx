@@ -2,17 +2,17 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import Brat from "../Brat/Brat";
-import Graph from "../Graph/Graph";
 import { PacmanLoader } from "react-spinners";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
 import EntityGraph from "../EntityGraph/EntityGraph";
+import Graph from "../EntityGraph/Graph";
 
 class DisplayPage extends Component {
   state = {
-    docData: null
+    docData: null,
   };
 
   componentDidMount() {
@@ -20,11 +20,11 @@ class DisplayPage extends Component {
 
     axios
       .post(getHost() + ":3001/api/getCaseReportById", { id })
-      .then(res => {
+      .then((res) => {
         const data = res.data.data[0];
         this.setState({ docData: data });
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   render() {
@@ -41,7 +41,7 @@ class DisplayPage extends Component {
 
     if (this.props.location.state) {
       ({ textEntities } = this.props.location.state);
-      tokensToHighlight = textEntities.map(e => e.label);
+      tokensToHighlight = textEntities.map((e) => e.label);
 
       // Entities
       for (var i = 0; i < this.props.location.state.entities.length; i++) {
@@ -62,18 +62,20 @@ class DisplayPage extends Component {
           <div
             className="report-plain-text"
             dangerouslySetInnerHTML={{
-              __html: addHighLight(text, tokensToHighlight)
+              __html: addHighLight(text, tokensToHighlight),
             }}
           />
         )}
         {docData && (
           <React.Fragment>
-            <div className="subgraph-container">
+            {/* <div className="subgraph-container">
               <EntityGraph graphData={docData} entities={entities} />
             </div>
             <div className="graph-container">
-              {/* <Graph graphData={docData} entities={entities} /> */}
               <EntityGraph graphData={docData} />
+            </div> */}
+            <div className="graph-container">
+              <Graph graphData={docData} />
             </div>
           </React.Fragment>
         )}
