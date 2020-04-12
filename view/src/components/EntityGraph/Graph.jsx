@@ -62,7 +62,7 @@ class Graph extends Component {
       Coreference: "#808000",
       Date: "#8fee90",
       Duration: "#8fee90",
-      OVERLAP: "#fff",
+      OVERLAP: "#000",
     };
     this.state = {
       graph: graph,
@@ -81,7 +81,7 @@ class Graph extends Component {
     const radiusScaler = this.degreeScaler(graph, [3, 12]);
     const arrowPosScaler = this.degreeScaler(graph, [15, 17]);
     graph.nodes.forEach((n) => {
-      n.radius = radiusScaler(n.indegree);
+      n.radius = n.type === "OVERLAP" ? 5 : radiusScaler(n.indegree);
     });
 
     let svg = d3.select(this.ref.current),
@@ -131,12 +131,15 @@ class Graph extends Component {
       let node = svg
         .append("g")
         .attr("id", "nodes")
-        .selectAll("circle")
+        .selectAll("rect")
         .data(graph.nodes)
         .enter()
-        .append("circle")
+        .append("rect")
         .attr("class", (d) => `${d.id} node`)
-        .attr("r", (d) => d.radius)
+        .attr("rx", (d) => (d.type === "OVERLAP" ? 1 : 2 * d.radius))
+        .attr("ry", (d) => (d.type === "OVERLAP" ? 1 : 2 * d.radius))
+        .attr("width", (d) => 2 * d.radius)
+        .attr("height", (d) => 2 * d.radius)
         .attr("fill", (d) => colors[d.type])
         .attr("stroke", "#000")
         .call(
@@ -169,10 +172,7 @@ class Graph extends Component {
           .attr("x2", (d) => d.target.x)
           .attr("y2", (d) => d.target.y);
 
-        node
-          .attr("r", (d) => d.radius)
-          .attr("cx", (d) => d.x)
-          .attr("cy", (d) => d.y);
+        node.attr("x", (d) => d.x - d.radius).attr("y", (d) => d.y - d.radius);
       }
       function zoomed() {
         node.attr("transform", d3.event.transform);
