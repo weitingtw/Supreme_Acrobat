@@ -78,7 +78,8 @@ class Graph extends Component {
 
   createViz() {
     const { graph, adjList, colors } = this.state;
-    const radiusScaler = this.degreeToRadius(graph);
+    const radiusScaler = this.degreeScaler(graph, [3, 12]);
+    const arrowPosScaler = this.degreeScaler(graph, [15, 17]);
     graph.nodes.forEach((n) => {
       n.radius = radiusScaler(n.indegree);
     });
@@ -98,6 +99,21 @@ class Graph extends Component {
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     function run(graph) {
+      let marker = svg
+        .append("defs")
+        .append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 15)
+        .attr("refY", 0)
+        .attr("markerWidth", 7)
+        .attr("markerHeight", 7)
+        .attr("markerUnits", "userSpaceOnUse")
+        .attr("orient", "auto")
+        .attr("fill", "#555")
+        .append("svg:path")
+        .attr("d", "M-4,-4L8,0L-4,4L");
+
       let edge = svg
         .append("g")
         .attr("id", "edges")
@@ -106,8 +122,11 @@ class Graph extends Component {
         .enter()
         .append("line")
         .attr("class", "link")
-        .attr("stroke", "#ddd")
-        .attr("stroke-opacity", 0.8);
+        .attr("stroke", "#555")
+        .attr("stroke-opacity", 0.8)
+        .attr("marker-end", (d) =>
+          d.target.type === "OVERLAP" ? "" : "url(#arrow)"
+        );
 
       let node = svg
         .append("g")
@@ -164,7 +183,7 @@ class Graph extends Component {
         // highlight connected edges
         edge
           .attr("stroke", (l) => {
-            return l.source === d || l.target === d ? "#555" : "#ddd";
+            return l.source === d || l.target === d ? "#555" : "#bbb";
           })
           .attr("stroke-opacity", (l) => {
             return l.source === d || l.target === d ? 1.0 : 0.5;
@@ -180,7 +199,7 @@ class Graph extends Component {
       }
 
       function handleMouseOut(d, i) {
-        edge.attr("stroke", "#ddd").attr("stroke-opacity", 0.8);
+        edge.attr("stroke", "#555").attr("stroke-opacity", 0.8);
         node.attr("stroke", "#000").attr("stroke-opacity", 1.0);
       }
 
@@ -211,10 +230,10 @@ class Graph extends Component {
     run(graph);
   }
 
-  degreeToRadius(data) {
+  degreeScaler(data, range) {
     const degreeExtent = d3.extent(data.nodes, (d) => d.indegree);
 
-    return d3.scaleSqrt().domain(degreeExtent).range([3, 12]);
+    return d3.scaleSqrt().domain(degreeExtent).range(range);
   }
 
   render() {
