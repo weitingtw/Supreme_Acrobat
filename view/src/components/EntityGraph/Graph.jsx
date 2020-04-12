@@ -10,9 +10,64 @@ class Graph extends Component {
 
     const graph = createGraph(this.props.graphData);
 
+    const nodeColors = {
+      Age: "#EDC1F0", // Entities
+      Sex: "#EDC1F0",
+      Personal_background: "#EDC1F0",
+      Occupation: "#EDC1F0",
+      Weigh: "#EDC1F0",
+      Height: "#EDC1F0",
+      History: "ellipse",
+      Family_history: "#EDC1F0",
+      Family_member: "#EDC1F0",
+      Medication: "#2FCACA",
+      Lab: "#8f97ff",
+      Therapeutic_procedure: "#6495ed",
+      Diagnostic_procedure: "#9fdfff",
+      Sign_disease: "#f4eded",
+      Sign_symptom: "#DAE48B",
+      Disease_disorder: "#EB8315",
+      Activity: "#E07BAF",
+      Clinical_event: "#E07BAF",
+      Outcome: "#E07BAF",
+      Subject: "#ffd700",
+      Negation: "#ffd700",
+      Uncertainty: "#ffd700",
+      Condition: "#ffd700",
+      Quantitative_concept: "#ffd700",
+      Qualitative_concept: "#ffd700",
+      Other_entity: "#c1cdcd",
+      Other_event: "#c1cdcd",
+      Administration: "#ffd700",
+      Dosage: "#ffd700",
+      Frequency: "#ffd700",
+      Cause: "#ffd700",
+      Complication: "#ffd700",
+      Severity: "#ffd700",
+      Location: "#ffd700",
+      Result_outcome: "#ffd700",
+      Lab_value: "#A04AF0",
+      Biological_structure: "#ffd700",
+      Detail_description: "#ffd700",
+      Biological_attribute: "#ffd700",
+      Nonbiological_location: "#ffd700",
+      Detailed_description: "#ffd700",
+      Distance: "#ffd700",
+      Area: "#ffd700",
+      Volume: "#ffd700",
+      Mass: "#ffd700",
+      Color: "#ffd700",
+      Shape: "#ffd700",
+      Texture: "#ffd700",
+      Coreference: "#808000",
+      Date: "#8fee90",
+      Duration: "#8fee90",
+      OVERLAP: "#fff",
+    };
     this.state = {
       graph: graph,
       adjList: graph.getAdjacencyList(),
+      colors: nodeColors,
     };
 
     this.ref = createRef();
@@ -22,7 +77,7 @@ class Graph extends Component {
   }
 
   createViz() {
-    const { graph, adjList } = this.state;
+    const { graph, adjList, colors } = this.state;
     const radiusScaler = this.degreeToRadius(graph);
     graph.nodes.forEach((n) => {
       n.radius = radiusScaler(n.indegree);
@@ -63,6 +118,8 @@ class Graph extends Component {
         .append("circle")
         .attr("class", (d) => `${d.id} node`)
         .attr("r", (d) => d.radius)
+        .attr("fill", (d) => colors[d.type])
+        .attr("stroke", "#000")
         .call(
           d3
             .drag()
@@ -115,18 +172,16 @@ class Graph extends Component {
         // highlight connected nodes
         node
           .attr("stroke", (n) => {
-            return neighboring(d, n) ? "#eee" : "#000";
+            return d === n || neighboring(d, n) ? "#000" : "#ddd";
           })
-          .attr("stroke-width", (n) => {
-            return neighboring(d, n) ? 2.0 : 1.0;
+          .attr("stroke-opacity", (n) => {
+            return d === n || neighboring(d, n) ? 1.0 : 0.5;
           });
-        //   highlight self
-        d3.select(this).attr("stroke", "#eee").attr("stroke-width", 2.0);
       }
 
       function handleMouseOut(d, i) {
         edge.attr("stroke", "#ddd").attr("stroke-opacity", 0.8);
-        node.attr("stroke", "#000").attr("stroke-width", 1.0);
+        node.attr("stroke", "#000").attr("stroke-opacity", 1.0);
       }
 
       function neighboring(n1, n2) {
