@@ -11,6 +11,7 @@ import './DisplayPage.css';
 import { getHost } from '../../utils';
 
 import Sidebar from "react-sidebar";
+import ucla_logo from "../../static/img/ucla_logo.png";
 import LoginModal from '../LoginModal/LoginModal';
 import EntityGraph from "../EntityGraph/EntityGraph";
 
@@ -101,13 +102,19 @@ class DisplayPage extends Component {
             backgroundColor: "#03a9f4",
             color: "white",
             padding: "16px",
-            fontSize: "24px",
+            fontSize: "30px",
+          },
+          e:{
+            color: "#f49541",
           }
         };
 
         const sidebar_content = (
           <div style={styles.root}>
-            <div style={styles.header}>Menu</div>
+            <div style={styles.header}>
+              CREAT
+              <span style={styles.e}>e</span>
+            </div>
             <div style={styles.content}>
               <a href="/" style={styles.sidebarLink}>
                 Home
@@ -118,7 +125,7 @@ class DisplayPage extends Component {
               <div style={styles.divider} />
                 <a key="title" href="#title" style={styles.sidebarLink}>Title</a>
                 <a key="case_report" href="#case_report" style={styles.sidebarLink}>Case Presentation</a>
-                <a key="brat" href="#brat" style={styles.sidebarLink}>Brat Graph</a>
+                <a key="annotated" href="#annotated" style={styles.sidebarLink}>Annotated Report</a>
                 <a key="relation" href="#relation" style={styles.sidebarLink}>Relation Graph</a>
             </div>
           </div>
@@ -137,11 +144,10 @@ class DisplayPage extends Component {
                       >
                       <div className='display-page'>
                         <div className="banner">
-                          <a className="banner-title" href="/">
-                            CREAT
-                            <span className='E'>e</span>
-                          </a>
-                          <LoginModal />
+                          <React.Fragment>
+                            <img src={ucla_logo} alt="uclalogo" width="250" height="52" />
+                            <LoginModal />
+                          </React.Fragment>
                         </div>
                         <div className='brat-intro' id="title">
                             <FontAwesomeIcon icon={['fal', 'file-alt']} />
@@ -151,12 +157,18 @@ class DisplayPage extends Component {
                           <div className="report-info-row">
                             <div className="report-info-item"><b>Authors: </b>{author}</div>
                             <div className="report-info-item"><b>Date Published: </b>{pub_date}</div>
-                          </div>
-                          <div className="report-info-row">
                             <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
                             <div className="report-info-item"><b>DOI: </b>{doi}</div>
+                            <div className="report-info-item"><b>Keywords: </b>{kwlink}</div>
                           </div>
-                          <div className="report-info-row"><b>Keywords: </b>{kwlink}</div>
+                          <div className="report-info-row">
+                            <React.Fragment>
+                              <div className="subgraph-container">
+                                <EntityGraph graphData={docData} entities={entities} />
+                              </div>
+                            </React.Fragment>
+                          </div>
+
                         </div>
 
                         <div className="report-section" id="case_report">
@@ -164,8 +176,8 @@ class DisplayPage extends Component {
                           <div className="report-content">{text}</div>
                         </div>
                         {docData &&
-                          <div className="report-section" id="brat">
-                              <div calssName="report-section-title"><b>Brat Graph</b></div>
+                          <div className="report-section" id="annotated">
+                              <div calssName="report-section-title"><b>Annotated Report</b></div>
                               <div className='brat-container'>
                                   <Brat docData={docData} />
                               </div>
