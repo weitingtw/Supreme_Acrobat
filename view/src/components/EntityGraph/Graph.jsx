@@ -78,9 +78,9 @@ class Graph extends Component {
 
   createViz() {
     const { graph, adjList, colors } = this.state;
-    const radiusScaler = this.degreeScaler(graph, [3, 12]);
+    const radiusScaler = this.degreeScaler(graph, [6, 20]);
     graph.nodes.forEach((n) => {
-      n.radius = n.type === "OVERLAP" ? 5 : radiusScaler(n.indegree);
+      n.radius = n.type === "OVERLAP" ? 6 : radiusScaler(n.indegree);
     });
     let ref = this.ref.current;
     let vizcontainer = d3.select(ref);
@@ -123,29 +123,38 @@ class Graph extends Component {
         .append("marker")
         .attr("id", "arrow")
         .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 15)
+        .attr("refX", 20)
         .attr("refY", 0)
-        .attr("markerWidth", 7)
-        .attr("markerHeight", 7)
+        .attr("markerWidth", 10)
+        .attr("markerHeight", 10)
         .attr("markerUnits", "userSpaceOnUse")
         .attr("orient", "auto")
         .attr("fill", "#555")
         .append("svg:path")
         .attr("d", "M-4,-4L8,0L-4,4L");
 
-      let edge = svg
-        .append("g")
-        .attr("id", "edges")
+      let link = svg.append("g").attr("id", "edges");
+
+      let edge = link
         .selectAll("line")
         .data(graph.edges)
         .enter()
         .append("line")
         .attr("class", "link")
-        .attr("stroke", "#555")
+        .attr("stroke", (d) => (d.label === "OVERLAP" ? "#86c5da" : "#555"))
         .attr("stroke-opacity", 0.8)
         .attr("marker-end", (d) =>
           d.target.type === "OVERLAP" ? "" : "url(#arrow)"
         );
+
+      let edgeText = link
+        .selectAll("text")
+        .data(graph.edges)
+        .enter()
+        .append("text")
+        .text((d) => (d.label === "OVERLAP" ? "" : d.label))
+        .attr("font-size", 8)
+        .attr("text-anchor", "middle");
 
       let node = svg
         .append("g")
@@ -186,6 +195,14 @@ class Graph extends Component {
       simulation.force("link").links(graph.edges);
 
       function ticked() {
+        edgeText
+          .attr("x", (d) => {
+            return (d.source.x + d.target.x) / 2;
+          })
+          .attr("y", (d) => {
+            return (d.source.y + d.target.y) / 2;
+          });
+
         edge
           .attr("x1", (d) => d.source.x)
           .attr("y1", (d) => d.source.y)
@@ -197,18 +214,20 @@ class Graph extends Component {
       function zoomed() {
         node.attr("transform", d3.event.transform);
         edge.attr("transform", d3.event.transform);
+        edgeText.attr("transform", d3.event.transform);
       }
 
       function handleMouseOver(d, i) {
         // highlight connected edges
         tooltip.style("opacity", 0.85);
-        edge
-          .attr("stroke", (l) => {
-            return l.source === d || l.target === d ? "#555" : "#bbb";
-          })
-          .attr("stroke-opacity", (l) => {
-            return l.source === d || l.target === d ? 1.0 : 0.5;
-          });
+        edge.attr("stroke-opacity", (l) => {
+          return l.source === d || l.target === d ? 1.0 : 0.3;
+        });
+
+        edgeText.attr("opacity", (l) => {
+          return l.source === d || l.target === d ? 1.0 : 0.5;
+        });
+
         // highlight connected nodes
         node
           .attr("stroke", (n) => {
@@ -235,7 +254,8 @@ class Graph extends Component {
       function handleMouseOut(d, i) {
         tooltip.style("opacity", 0);
 
-        edge.attr("stroke", "#555").attr("stroke-opacity", 0.8);
+        edge.attr("stroke-opacity", 0.8);
+        edgeText.attr("opacity", 1.0);
         node
           .attr("stroke", "#000")
           .attr("stroke-opacity", 1.0)
