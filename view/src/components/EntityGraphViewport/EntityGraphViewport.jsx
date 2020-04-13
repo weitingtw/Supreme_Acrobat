@@ -1,6 +1,6 @@
 import React from 'react';
 import EntityGraph from '../EntityGraph/EntityGraph';
-import {INITIAL_VALUE, ReactSVGPanZoom, TOOL_NONE, closeMiniature } from 'react-svg-pan-zoom';
+import {INITIAL_VALUE, ReactSVGPanZoom, TOOL_NONE } from 'react-svg-pan-zoom';
 
 export default class App extends React.PureComponent {
 
@@ -34,6 +34,7 @@ export default class App extends React.PureComponent {
 
   render() {
     const { graphData, entities } = this.props;
+    const miniatureProps = { position: "none" };
     return (
       <div>
         <hr/>
@@ -43,6 +44,7 @@ export default class App extends React.PureComponent {
           ref={Viewer => this.Viewer = Viewer}
           tool={this.state.tool} onChangeTool={tool => this.changeTool(tool)}
           value={this.state.value} onChangeValue={value => this.changeValue(value)}
+          miniatureProps={miniatureProps}
         >
           <svg width={500} height={300}>
             <EntityGraph graphData={graphData} entities={entities} /> 
