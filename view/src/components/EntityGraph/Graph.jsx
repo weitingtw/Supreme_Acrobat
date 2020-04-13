@@ -79,14 +79,17 @@ class Graph extends Component {
   createViz() {
     const { graph, adjList, colors } = this.state;
     const radiusScaler = this.degreeScaler(graph, [3, 12]);
-    const arrowPosScaler = this.degreeScaler(graph, [15, 17]);
     graph.nodes.forEach((n) => {
       n.radius = n.type === "OVERLAP" ? 5 : radiusScaler(n.indegree);
     });
+    let ref = this.ref.current;
+    let vizcontainer = d3.select(ref);
 
-    let svg = d3.select(this.ref.current),
-      width = +svg.attr("width"),
-      height = +svg.attr("height");
+    let width = 500;
+    let height = 500;
+    // let svg = d3.select(this.ref.current),
+    //   width = +svg.attr("width"),
+    //   height = +svg.attr("height");
 
     let simulation = d3
       .forceSimulation()
@@ -99,7 +102,23 @@ class Graph extends Component {
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     function run(graph) {
-      let marker = svg
+      let tooltip = vizcontainer
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "2px")
+        .style("padding", "5px")
+        .style("pointer-events", "none");
+
+      let svg = vizcontainer
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      svg
         .append("defs")
         .append("marker")
         .attr("id", "arrow")
@@ -150,6 +169,7 @@ class Graph extends Component {
             .on("end", dragended)
         )
         .on("mouseover", handleMouseOver)
+        .on("mousemove", handleMouseMove)
         .on("mouseout", handleMouseOut);
 
       svg.call(
@@ -181,6 +201,7 @@ class Graph extends Component {
 
       function handleMouseOver(d, i) {
         // highlight connected edges
+        tooltip.style("opacity", 1);
         edge
           .attr("stroke", (l) => {
             return l.source === d || l.target === d ? "#555" : "#bbb";
@@ -195,12 +216,29 @@ class Graph extends Component {
           })
           .attr("stroke-opacity", (n) => {
             return d === n || neighboring(d, n) ? 1.0 : 0.5;
+          })
+          .attr("fill-opacity", (n) => {
+            return d == n || neighboring(d, n) ? 1.0 : 0.5;
           });
       }
 
+      function handleMouseMove(d) {
+        let coordinates = d3.mouse(ref);
+        console.log(coordinates);
+
+        tooltip
+          .html("Testing: " + d.id)
+          .style("left", coordinates[0] + 10 + "px")
+          .style("top", coordinates[1] + "px");
+      }
       function handleMouseOut(d, i) {
+        tooltip.style("opacity", 0);
+
         edge.attr("stroke", "#555").attr("stroke-opacity", 0.8);
-        node.attr("stroke", "#000").attr("stroke-opacity", 1.0);
+        node
+          .attr("stroke", "#000")
+          .attr("stroke-opacity", 1.0)
+          .attr("fill-opacity", 1.0);
       }
 
       function neighboring(n1, n2) {
@@ -237,7 +275,7 @@ class Graph extends Component {
   }
 
   render() {
-    return <svg ref={this.ref} width={500} height={500} />;
+    return <div ref={this.ref} />;
   }
 }
 
