@@ -110,7 +110,7 @@ class Graph extends Component {
         .style("border", "solid")
         .style("border-width", "1px")
         .style("border-radius", "2px")
-        .style("padding", "5px")
+        .style("padding", "0.5em")
         .style("pointer-events", "none");
 
       let svg = vizcontainer
@@ -201,7 +201,7 @@ class Graph extends Component {
 
       function handleMouseOver(d, i) {
         // highlight connected edges
-        tooltip.style("opacity", 1);
+        tooltip.style("opacity", 0.85);
         edge
           .attr("stroke", (l) => {
             return l.source === d || l.target === d ? "#555" : "#bbb";
@@ -223,13 +223,14 @@ class Graph extends Component {
       }
 
       function handleMouseMove(d) {
-        let coordinates = d3.mouse(ref);
-        console.log(coordinates);
+        let content = `<span> ${
+          d.text ? "Description: " + d.text : "Overlap"
+        }</span>`;
 
         tooltip
-          .html("Testing: " + d.id)
-          .style("left", coordinates[0] + 10 + "px")
-          .style("top", coordinates[1] + "px");
+          .html(content)
+          .style("left", d3.mouse(ref)[0] + 10 + "px")
+          .style("top", d3.mouse(ref)[1] + "px");
       }
       function handleMouseOut(d, i) {
         tooltip.style("opacity", 0);
