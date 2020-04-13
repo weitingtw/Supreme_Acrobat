@@ -8,7 +8,7 @@ import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
 import EntityGraph from "../EntityGraph/EntityGraph";
-import Graph from "../EntityGraph/Graph";
+import EGraph from "../EntityGraph/EGraph";
 
 class DisplayPage extends Component {
   state = {
@@ -37,7 +37,7 @@ class DisplayPage extends Component {
     if (docData) {
       ({ text } = docData);
     }
-    entities = [];
+    entities = ["T16", "T17"];
 
     if (this.props.location.state) {
       ({ textEntities } = this.props.location.state);
@@ -74,8 +74,11 @@ class DisplayPage extends Component {
             <div className="graph-container">
               <EntityGraph graphData={docData} />
             </div> */}
+            <div className="subgraph-container">
+              <EGraph graphData={docData} entities={entities} />
+            </div>
             <div className="graph-container">
-              <Graph graphData={docData} />
+              <EGraph graphData={docData} />
             </div>
           </React.Fragment>
         )}

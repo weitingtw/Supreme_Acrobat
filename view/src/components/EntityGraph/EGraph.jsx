@@ -1,14 +1,17 @@
 import React, { Component, createRef } from "react";
 import * as d3 from "d3";
 
-import { createGraph } from "./graph-utils";
-import { linkVertical } from "d3";
+import { createGraph, Graph } from "./graph-utils";
 
-class Graph extends Component {
+class EGraph extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props.graphData);
+    let graph = createGraph(this.props.graphData);
 
-    const graph = createGraph(this.props.graphData);
+    let subgraph = this.props.entities
+      ? this.getSubGraph(graph, this.props.entities)
+      : null;
 
     const nodeColors = {
       Age: "#EDC1F0", // Entities
@@ -65,8 +68,8 @@ class Graph extends Component {
       OVERLAP: "#000",
     };
     this.state = {
-      graph: graph,
-      adjList: graph.getAdjacencyList(),
+      graph: this.props.entities ? subgraph : graph,
+      // adjList: graph.getAdjacencyList(),
       colors: nodeColors,
     };
 
@@ -77,7 +80,8 @@ class Graph extends Component {
   }
 
   createViz() {
-    const { graph, adjList, colors } = this.state;
+    const { graph, colors } = this.state;
+    const adjList = graph.getAdjacencyList();
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
     graph.nodes.forEach((n) => {
       n.radius = n.type === "OVERLAP" ? 6 : radiusScaler(n.indegree);
@@ -289,6 +293,93 @@ class Graph extends Component {
     run(graph);
   }
 
+  isOverlapNode(nodeID) {
+    return nodeID.includes("OV");
+  }
+
+  findNearestOverlap = (startNode, graph) => {
+    const adjList = graph.getAdjacencyList();
+    const pathTo = {};
+    pathTo[startNode] = null;
+    const marked = new Set();
+    marked.add(startNode);
+    const queue = [startNode];
+
+    let overlapNode = null;
+
+    while (Array.isArray(queue) && !overlapNode && queue.length) {
+      let node = queue.shift();
+      if (this.isOverlapNode(node)) {
+        overlapNode = node;
+      } else {
+        adjList[node].forEach((neighbor) => {
+          if (!(neighbor in pathTo)) {
+            pathTo[neighbor] = node;
+          }
+          if (!marked.has(neighbor)) {
+            marked.add(neighbor);
+            queue.push(neighbor);
+          }
+        });
+      }
+    }
+
+    if (overlapNode) {
+      const path = [];
+      let currNode = overlapNode;
+      while (currNode) {
+        path.unshift(currNode);
+        currNode = pathTo[currNode];
+      }
+
+      return {
+        ID: overlapNode,
+        path: path,
+      };
+    } else {
+      return {
+        ID: startNode,
+        path: [startNode],
+      };
+    }
+  };
+
+  getSubGraph = (graph, query) => {
+    // get set of all nodes that belong depending on the query
+    const adjList = graph.getAdjacencyList();
+    const pmid = graph.pmid;
+    const subGraphNodeIDs = new Set();
+    const overlaps = query.map((node) => this.findNearestOverlap(node, graph));
+    const overlappingNodes = [];
+
+    // get all nodes in the overlap
+    overlaps.forEach((ov) => {
+      adjList[ov.ID].forEach((neighborID) => {
+        overlappingNodes.push(neighborID);
+      });
+      // add all nodes from paths to set of subgraph nodes.
+      ov.path.forEach((node) => subGraphNodeIDs.add(node));
+    });
+
+    // get neighbors of all overlapping nodes and add to the set.
+    overlappingNodes.forEach((nodeID) => {
+      subGraphNodeIDs.add(nodeID);
+      adjList[nodeID].forEach((neighborID) => {
+        subGraphNodeIDs.add(neighborID);
+      });
+    });
+
+    // then filter: if the node has id that is in the set, then it belongs
+    const nodes = graph.nodes;
+    let subGraphNodes = nodes.filter((node) => subGraphNodeIDs.has(node.id));
+    let subGraphEdges = graph.edges.filter(
+      (edge) =>
+        subGraphNodeIDs.has(edge.source.id) &&
+        subGraphNodeIDs.has(edge.target.id)
+    );
+    return new Graph(subGraphNodes, subGraphEdges, pmid);
+  };
+
   degreeScaler(data, range) {
     const degreeExtent = d3.extent(data.nodes, (d) => d.indegree);
 
@@ -300,4 +391,4 @@ class Graph extends Component {
   }
 }
 
-export default Graph;
+export default EGraph;

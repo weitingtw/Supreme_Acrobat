@@ -1,4 +1,4 @@
-function Graph(nodes, edges, pmID) {
+export function Graph(nodes, edges, pmID) {
   this.nodes = nodes;
   this.edges = edges;
   this.pmID = pmID;
