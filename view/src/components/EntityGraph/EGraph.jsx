@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { Component, createRef, Fragment } from "react";
 import * as d3 from "d3";
 
 import { createGraph, Graph } from "./graph-utils";
@@ -69,7 +69,6 @@ class EGraph extends Component {
     };
     this.state = {
       graph: this.props.entities ? subgraph : graph,
-      // adjList: graph.getAdjacencyList(),
       colors: nodeColors,
     };
 
@@ -87,13 +86,12 @@ class EGraph extends Component {
       n.radius = n.type === "OVERLAP" ? 6 : radiusScaler(n.indegree);
     });
     let ref = this.ref.current;
-    let vizcontainer = d3.select(ref);
+    let viz = d3.select(ref);
 
-    let width = 500;
-    let height = 500;
-    // let svg = d3.select(this.ref.current),
-    //   width = +svg.attr("width"),
-    //   height = +svg.attr("height");
+    // shrink-wrap the span
+    viz.style("display", "inline-block");
+
+    let { width, height } = this.props;
 
     let simulation = d3
       .forceSimulation()
@@ -106,7 +104,7 @@ class EGraph extends Component {
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     function run(graph) {
-      let tooltip = vizcontainer
+      let tooltip = viz
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
@@ -117,10 +115,11 @@ class EGraph extends Component {
         .style("padding", "0.5em")
         .style("pointer-events", "none");
 
-      let svg = vizcontainer
+      let svg = viz
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`);
 
       svg
         .append("defs")
@@ -192,7 +191,7 @@ class EGraph extends Component {
             [0, 0],
             [500, 500],
           ])
-          .scaleExtent([1, 8])
+          .scaleExtent([0.5, 2])
           .on("zoom", zoomed)
       );
       simulation.nodes(graph.nodes).on("tick", ticked);
@@ -247,7 +246,7 @@ class EGraph extends Component {
 
       function handleMouseMove(d) {
         let content = `<span> ${
-          d.text ? "Description: " + d.text : "Overlap"
+          d.text ? "Description: " + d.text : "Overlap: " + d.id
         }</span>`;
 
         tooltip
@@ -387,7 +386,7 @@ class EGraph extends Component {
   }
 
   render() {
-    return <div ref={this.ref} />;
+    return <span class="viz" ref={this.ref} />;
   }
 }
 

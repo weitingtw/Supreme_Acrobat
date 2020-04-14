@@ -51,15 +51,19 @@ $display-section-border: 2px solid rgba($blue, 0.8);
   .graph-container {
     position: relative;
     width: 80%;
-    max-width: 500px;
     margin: auto;
-    border: 1px solid #dedede;
+    display: flex;
+    justify-content: center;
   }
   .subgraph-container {
     position: relative;
     width: 80%;
-    max-width: 500px;
     margin: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .viz {
     border: 1px solid #dedede;
   }
 }

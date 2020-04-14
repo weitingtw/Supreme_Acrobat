@@ -37,7 +37,7 @@ class DisplayPage extends Component {
     if (docData) {
       ({ text } = docData);
     }
-    entities = ["T16", "T17"];
+    entities = [];
 
     if (this.props.location.state) {
       ({ textEntities } = this.props.location.state);
@@ -75,10 +75,15 @@ class DisplayPage extends Component {
               <EntityGraph graphData={docData} />
             </div> */}
             <div className="subgraph-container">
-              <EGraph graphData={docData} entities={entities} />
+              <EGraph
+                graphData={docData}
+                entities={entities}
+                width={150}
+                height={150}
+              />
             </div>
             <div className="graph-container">
-              <EGraph graphData={docData} />
+              <EGraph graphData={docData} width={500} height={500} />
             </div>
           </React.Fragment>
         )}
