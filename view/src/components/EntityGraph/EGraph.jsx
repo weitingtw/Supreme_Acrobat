@@ -173,6 +173,7 @@ class EGraph extends Component {
         .attr("height", (d) => 2 * d.radius)
         .attr("fill", (d) => colors[d.type])
         .attr("stroke", "#000")
+        .attr("stroke-width", 0.7)
         .call(
           d3
             .drag()
@@ -262,22 +263,20 @@ class EGraph extends Component {
       }
 
       function handleMouseMove(d) {
-        let content = `
-        <p>${d.text ? d.text : d.id}</p>
-        <hr/>
-        `;
+        let content = `<span>${d.text ? d.text : d.id}</span>`;
+        let hasModifiers = false;
 
         adjList[d.id].forEach((neighborID) => {
           const neighbor = graph.nodes.find((node) => node.id === neighborID);
-          const edge = graph.edges.filter(
-            (edge) =>
-              (edge.source === neighbor && edge.target === d) ||
-              (edge.target === neighbor && edge.source === d)
+          const edge = graph.edges.find(
+            (edge) => edge.source === neighbor && edge.target === d
           );
-          if (neighbor.text) {
-            content += `<span>${neighbor.text} (${
-              edge[0].label || edge[1].label
-            })</span><br/>`;
+          if (edge) {
+            if (!hasModifiers) {
+              hasModifiers = true;
+              content += "<hr/>";
+            }
+            content += `<span>${neighbor.text} (${edge.label})</span><br/>`;
           }
         });
 
