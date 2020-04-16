@@ -136,9 +136,9 @@ class EGraph extends Component {
         .append("svg:path")
         .attr("d", "M-4,-4L8,0L-4,4L");
 
-      let link = svg.append("g").attr("id", "edges");
+      let edgesG = svg.append("g").attr("id", "edges");
 
-      let edge = link
+      let edge = edgesG
         .selectAll("line")
         .data(graph.edges)
         .enter()
@@ -150,7 +150,7 @@ class EGraph extends Component {
           d.target.type === "OVERLAP" ? "" : "url(#arrow)"
         );
 
-      let edgeText = link
+      let edgeText = edgesG
         .selectAll("text")
         .data(graph.edges)
         .enter()
@@ -159,9 +159,9 @@ class EGraph extends Component {
         .attr("font-size", 8)
         .attr("text-anchor", "middle");
 
-      let node = svg
-        .append("g")
-        .attr("id", "nodes")
+      let nodesG = svg.append("g").attr("id", "nodes");
+
+      let node = nodesG
         .selectAll("rect")
         .data(graph.nodes)
         .enter()
@@ -183,6 +183,15 @@ class EGraph extends Component {
         .on("mouseover", handleMouseOver)
         .on("mousemove", handleMouseMove)
         .on("mouseout", handleMouseOut);
+
+      let nodeText = nodesG
+        .selectAll("text")
+        .data(graph.nodes)
+        .enter()
+        .append("text")
+        .text((d) => d.text)
+        .attr("font-size", 9)
+        .attr("text-anchor", "middle");
 
       svg.call(
         d3
@@ -212,11 +221,14 @@ class EGraph extends Component {
           .attr("x2", (d) => d.target.x)
           .attr("y2", (d) => d.target.y);
 
+        nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y);
+
         node.attr("x", (d) => d.x - d.radius).attr("y", (d) => d.y - d.radius);
       }
       function zoomed() {
         node.attr("transform", d3.event.transform);
         edge.attr("transform", d3.event.transform);
+        nodeText.attr("transform", d3.event.transform);
         edgeText.attr("transform", d3.event.transform);
       }
 
