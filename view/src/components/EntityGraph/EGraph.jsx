@@ -64,8 +64,9 @@ class EGraph extends Component {
       Texture: "#ffd700",
       Coreference: "#808000",
       Date: "#8fee90",
+      Time: "#dbe48b",
       Duration: "#8fee90",
-      OVERLAP: "#000",
+      OVERLAP: "#fff",
     };
     this.state = {
       graph: this.props.entities ? subgraph : graph,
@@ -190,8 +191,9 @@ class EGraph extends Component {
         .data(graph.nodes)
         .enter()
         .append("text")
-        .text((d) => d.text)
-        .attr("font-size", 6)
+        .text((d) => (d.id === "OV0" ? "START" : d.text))
+        .attr("font-size", (d) => (d.id === "OV0" ? 14 : 6))
+        .attr("font-weight", (d) => (d.id === "OV0" ? 700 : null))
         .attr("text-anchor", "middle")
         .style("text-transform", "capitalize");
 
@@ -276,7 +278,9 @@ class EGraph extends Component {
               hasModifiers = true;
               content += "<hr/>";
             }
-            content += `<span>${neighbor.text} (${edge.label})</span><br/>`;
+            content += `<span>${neighbor.text} (${
+              edge.type || edge.label
+            })</span><br/>`;
           }
         });
 
