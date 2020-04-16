@@ -201,7 +201,7 @@ class EGraph extends Component {
             [0, 0],
             [500, 500],
           ])
-          .scaleExtent([0.5, 2])
+          .scaleExtent([0.4, 2])
           .on("zoom", zoomed)
       );
       simulation.nodes(graph.nodes).on("tick", ticked);
@@ -262,9 +262,24 @@ class EGraph extends Component {
       }
 
       function handleMouseMove(d) {
-        let content = `<span> ${
-          d.text ? "Description: " + d.text : "Overlap: " + d.id
-        }</span>`;
+        let content = `
+        <p>${d.text ? d.text : d.id}</p>
+        <hr/>
+        `;
+
+        adjList[d.id].forEach((neighborID) => {
+          const neighbor = graph.nodes.find((node) => node.id === neighborID);
+          const edge = graph.edges.filter(
+            (edge) =>
+              (edge.source === neighbor && edge.target === d) ||
+              (edge.target === neighbor && edge.source === d)
+          );
+          if (neighbor.text) {
+            content += `<span>${neighbor.text} (${
+              edge[0].label || edge[1].label
+            })</span><br/>`;
+          }
+        });
 
         tooltip
           .html(content)
