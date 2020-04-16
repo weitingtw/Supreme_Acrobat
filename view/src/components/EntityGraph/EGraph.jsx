@@ -152,10 +152,10 @@ class EGraph extends Component {
 
       let edgeText = edgesG
         .selectAll("text")
-        .data(graph.edges)
+        .data(graph.edges.filter((d) => d.label != "OVERLAP"))
         .enter()
         .append("text")
-        .text((d) => (d.label === "OVERLAP" ? "" : d.label))
+        .text((d) => d.label)
         .attr("font-size", 8)
         .attr("text-anchor", "middle");
 
@@ -190,8 +190,9 @@ class EGraph extends Component {
         .enter()
         .append("text")
         .text((d) => d.text)
-        .attr("font-size", 9)
-        .attr("text-anchor", "middle");
+        .attr("font-size", 6)
+        .attr("text-anchor", "middle")
+        .style("text-transform", "capitalize");
 
       svg.call(
         d3
@@ -221,7 +222,7 @@ class EGraph extends Component {
           .attr("x2", (d) => d.target.x)
           .attr("y2", (d) => d.target.y);
 
-        nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y);
+        nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y + 2);
 
         node.attr("x", (d) => d.x - d.radius).attr("y", (d) => d.y - d.radius);
       }
@@ -254,6 +255,10 @@ class EGraph extends Component {
           .attr("fill-opacity", (n) => {
             return d == n || neighboring(d, n) ? 1.0 : 0.5;
           });
+
+        nodeText.attr("opacity", (n) => {
+          return d == n || neighboring(d, n) ? 1.0 : 0.5;
+        });
       }
 
       function handleMouseMove(d) {
@@ -275,6 +280,7 @@ class EGraph extends Component {
           .attr("stroke", "#000")
           .attr("stroke-opacity", 1.0)
           .attr("fill-opacity", 1.0);
+        nodeText.attr("opacity", 1.0);
       }
 
       function neighboring(n1, n2) {
