@@ -11,7 +11,7 @@ import { getHost } from "../../utils";
 
 import Sidebar from "react-sidebar";
 import LoginModal from "../LoginModal/LoginModal";
-import EGraph from "../EntityGraph/EGraph";
+import EntityGraph from "../EntityGraph/EntityGraph";
 
 class DisplayPage extends Component {
   state = {
@@ -207,7 +207,7 @@ class DisplayPage extends Component {
                         </div>
                         <React.Fragment>
                           <div className="subgraph-container">
-                            <EGraph
+                            <EntityGraph
                               graphData={docData}
                               entities={entities}
                               viewBoxWidth={500}
@@ -215,7 +215,7 @@ class DisplayPage extends Component {
                             />
                           </div>
                           <div className="graph-container">
-                            <EGraph
+                            <EntityGraph
                               graphData={docData}
                               viewBoxWidth={500}
                               viewBoxHeight={500}

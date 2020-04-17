@@ -1,9 +1,9 @@
-import React, { Component, createRef, Fragment } from "react";
+import React, { Component, createRef } from "react";
 import * as d3 from "d3";
 
 import { createGraph, Graph } from "./graph-utils";
 
-class EGraph extends Component {
+class EntityGraph extends Component {
   constructor(props) {
     super(props);
     let graph = createGraph(this.props.graphData);
@@ -428,4 +428,4 @@ class EGraph extends Component {
   }
 }
 
-export default EGraph;
+export default EntityGraph;
