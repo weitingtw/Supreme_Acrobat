@@ -158,7 +158,8 @@ class EntityGraph extends Component {
         .append("text")
         .text((d) => d.label)
         .attr("font-size", 8)
-        .attr("text-anchor", "middle");
+        .attr("text-anchor", "middle")
+        .style("pointer-events", "none");
 
       let nodesG = svg.append("g").attr("id", "nodes");
 
@@ -195,7 +196,8 @@ class EntityGraph extends Component {
         .attr("font-size", (d) => (d.type === "OVERLAP" ? 14 : 6))
         .attr("font-weight", (d) => (d.type === "OVERLAP" ? 700 : null))
         .attr("text-anchor", "middle")
-        .style("text-transform", "capitalize");
+        .style("text-transform", "capitalize")
+        .style("pointer-events", "none");
 
       svg.call(
         d3
