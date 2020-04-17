@@ -89,7 +89,7 @@ class EGraph extends Component {
     let viz = d3.select(ref);
 
     // shrink-wrap the span
-    viz.style("display", "inline-block");
+    // viz.style("display", "inline-block");
 
     let { width, height } = this.props;
 
@@ -117,8 +117,8 @@ class EGraph extends Component {
 
       let svg = viz
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        // .attr("width", width)
+        // .attr("height", height)
         .attr("viewBox", `0 0 ${width} ${height}`);
 
       svg
@@ -427,7 +427,7 @@ class EGraph extends Component {
   }
 
   render() {
-    return <span class="viz" ref={this.ref} />;
+    return <div class="viz" ref={this.ref} />;
   }
 }
 

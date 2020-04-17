@@ -52,18 +52,14 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     position: relative;
     width: 80%;
     margin: auto;
-    // display: flex;
-    // justify-content: center;
+    max-width: 500px;
+    border: 1px solid #dedede;
   }
   .subgraph-container {
     position: relative;
     width: 80%;
     margin: auto;
-    // display: flex;
-    // justify-content: center;
-  }
-
-  .viz {
+    max-width: 150px;
     border: 1px solid #dedede;
   }
 }
