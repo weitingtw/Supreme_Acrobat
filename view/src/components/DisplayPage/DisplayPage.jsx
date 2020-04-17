@@ -11,7 +11,6 @@ import { getHost } from "../../utils";
 
 import Sidebar from "react-sidebar";
 import LoginModal from "../LoginModal/LoginModal";
-import EntityGraph from "../EntityGraph/EntityGraph";
 import EGraph from "../EntityGraph/EGraph";
 
 class DisplayPage extends Component {
