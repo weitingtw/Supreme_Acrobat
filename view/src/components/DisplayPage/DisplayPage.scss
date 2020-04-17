@@ -53,6 +53,7 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     width: 80%;
     margin: auto;
     max-width: 500px;
+    overflow: hidden;
     border: 1px solid #dedede;
   }
   .subgraph-container {
@@ -60,6 +61,7 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     width: 80%;
     margin: auto;
     max-width: 150px;
+    overflow: hidden;
     border: 1px solid #dedede;
   }
 }

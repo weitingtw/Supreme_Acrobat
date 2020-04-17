@@ -88,10 +88,7 @@ class EGraph extends Component {
     let ref = this.ref.current;
     let viz = d3.select(ref);
 
-    // shrink-wrap the span
-    // viz.style("display", "inline-block");
-
-    let { width, height } = this.props;
+    let { viewBoxWidth, viewBoxHeight } = this.props;
 
     let simulation = d3
       .forceSimulation()
@@ -101,7 +98,7 @@ class EGraph extends Component {
         "collide",
         d3.forceCollide().radius((d) => radiusScaler(d.indegree))
       )
-      .force("center", d3.forceCenter(width / 2, height / 2));
+      .force("center", d3.forceCenter(viewBoxWidth / 2, viewBoxHeight / 2));
 
     function run(graph) {
       let tooltip = viz
@@ -117,9 +114,9 @@ class EGraph extends Component {
 
       let svg = viz
         .append("svg")
-        // .attr("width", width)
-        // .attr("height", height)
-        .attr("viewBox", `0 0 ${width} ${height}`);
+        .attr("width", viewBoxWidth)
+        .attr("height", viewBoxHeight)
+        .attr("viewBox", `0 0 ${viewBoxWidth} ${viewBoxHeight}`);
 
       svg
         .append("defs")

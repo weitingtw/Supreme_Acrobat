@@ -78,12 +78,16 @@ class DisplayPage extends Component {
               <EGraph
                 graphData={docData}
                 entities={entities}
-                width={150}
-                height={150}
+                viewBoxWidth={150}
+                viewBoxHeight={150}
               />
             </div>
             <div className="graph-container">
-              <EGraph graphData={docData} width={500} height={500} />
+              <EGraph
+                graphData={docData}
+                viewBoxWidth={500}
+                viewBoxHeight={500}
+              />
             </div>
           </React.Fragment>
         )}
