@@ -6,7 +6,6 @@ import { createGraph, Graph } from "./graph-utils";
 class EGraph extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props.graphData);
     let graph = createGraph(this.props.graphData);
 
     let subgraph = this.props.entities
@@ -97,7 +96,7 @@ class EGraph extends Component {
     let simulation = d3
       .forceSimulation()
       .force("charge", d3.forceManyBody().strength(-200).distanceMax(150))
-      .force("link", d3.forceLink(graph.edges).distance(10).strength(1))
+      .force("link", d3.forceLink(graph.edges).distance(15).strength(1))
       .force(
         "collide",
         d3.forceCollide().radius((d) => radiusScaler(d.indegree))
@@ -127,7 +126,7 @@ class EGraph extends Component {
         .append("marker")
         .attr("id", "arrow")
         .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 20)
+        .attr("refX", 17)
         .attr("refY", 0)
         .attr("markerWidth", 10)
         .attr("markerHeight", 10)
@@ -153,7 +152,11 @@ class EGraph extends Component {
 
       let edgeText = edgesG
         .selectAll("text")
-        .data(graph.edges.filter((d) => d.label != "OVERLAP"))
+        .data(
+          graph.edges.filter(
+            (d) => !(d.label == "OVERLAP" || d.label == "MODIFY")
+          )
+        )
         .enter()
         .append("text")
         .text((d) => d.label)
@@ -191,9 +194,9 @@ class EGraph extends Component {
         .data(graph.nodes)
         .enter()
         .append("text")
-        .text((d) => (d.id === "OV0" ? "START" : d.text))
-        .attr("font-size", (d) => (d.id === "OV0" ? 14 : 6))
-        .attr("font-weight", (d) => (d.id === "OV0" ? 700 : null))
+        .text((d) => d.text)
+        .attr("font-size", (d) => (d.type === "OVERLAP" ? 14 : 6))
+        .attr("font-weight", (d) => (d.type === "OVERLAP" ? 700 : null))
         .attr("text-anchor", "middle")
         .style("text-transform", "capitalize");
 
@@ -238,7 +241,7 @@ class EGraph extends Component {
 
       function handleMouseOver(d, i) {
         // highlight connected edges
-        tooltip.style("opacity", 0.85);
+        tooltip.style("opacity", 0.8);
         edge.attr("stroke-opacity", (l) => {
           return l.source === d || l.target === d ? 1.0 : 0.3;
         });
@@ -265,7 +268,9 @@ class EGraph extends Component {
       }
 
       function handleMouseMove(d) {
-        let content = `<span>${d.text ? d.text : d.id}</span>`;
+        let content = `<span>${
+          d.type != "OVERLAP" ? d.text : `Overlap (${d.id})`
+        }</span>`;
         let hasModifiers = false;
 
         adjList[d.id].forEach((neighborID) => {

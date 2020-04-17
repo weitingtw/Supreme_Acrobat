@@ -135,9 +135,16 @@ export const createGraph = (graphData) => {
 
         // if not already have node created, create a node of the overlap
         if (!nodeSet.has(overlapID)) {
+          let nOverlaps = graphData.equivs.length - 1;
+          let text = undefined;
+          if (overlapID == "OV0") {
+            text = "START";
+          } else if (overlapID == "OV" + nOverlaps) {
+            text = "END";
+          }
           nodes.push({
             id: overlapID,
-            text: undefined,
+            text: text,
             type: "OVERLAP",
             overlap: undefined,
           });
@@ -171,9 +178,17 @@ export const createGraph = (graphData) => {
           type: "OVERLAP",
         });
         if (!nodeSet.has(overlapID)) {
+          let nOverlaps = graphData.equivs.length - 1;
+          let text = undefined;
+          if (overlapID == "OV0") {
+            text = "START";
+          } else if (overlapID == "OV" + nOverlaps) {
+            text = "END";
+          }
+
           nodes.push({
             id: overlapID,
-            text: undefined,
+            text: text,
             type: "OVERLAP",
             overlap: undefined,
           });
