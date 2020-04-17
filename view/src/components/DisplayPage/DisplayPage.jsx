@@ -208,14 +208,19 @@ class DisplayPage extends Component {
                         </div>
                         <React.Fragment>
                           <div className="subgraph-container">
-                            <EntityGraph
+                            <EGraph
                               graphData={docData}
                               entities={entities}
+                              viewBoxWidth={500}
+                              viewBoxHeight={500}
                             />
                           </div>
                           <div className="graph-container">
-                            {/* <Graph graphData={docData} entities={entities} /> */}
-                            <EntityGraph graphData={docData} />
+                            <EGraph
+                              graphData={docData}
+                              viewBoxWidth={500}
+                              viewBoxHeight={500}
+                            />
                           </div>
                         </React.Fragment>
                       </div>
