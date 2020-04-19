@@ -1,24 +1,14 @@
-import React, { Component } from "react";
-import {
-  forceSimulation,
-  forceManyBody,
-  forceLink,
-  forceCenter,
-  forceCollide
-} from "d3-force";
+import React, { Component, createRef } from "react";
+import * as d3 from "d3";
 
-import "./EntityGraph.css";
-
-import { extent } from "d3-array";
-
-import { formatData } from "./graph-utils";
+import { createGraph, Graph } from "./graph-utils";
 
 class EntityGraph extends Component {
   constructor(props) {
     super(props);
+    let graph = createGraph(this.props.graphData);
 
-    const graph = this.initializeData(formatData(this.props.graphData));
-    const subGraph = this.props.entities
+    let subgraph = this.props.entities
       ? this.getSubGraph(graph, this.props.entities)
       : null;
 
@@ -73,47 +63,281 @@ class EntityGraph extends Component {
       Texture: "#ffd700",
       Coreference: "#808000",
       Date: "#8fee90",
+      Time: "#dbe48b",
       Duration: "#8fee90",
-      OVERLAP: "#fff"
+      OVERLAP: "#fff",
+    };
+    this.state = {
+      graph: this.props.entities ? subgraph : graph,
+      colors: nodeColors,
     };
 
-    this.state = {
-      fullGraph: graph,
-      currNodes: this.props.entities ? subGraph.nodes : graph.nodes,
-      currEdges: this.props.entities ? subGraph.edges : graph.edges,
-      layout: "force",
-      colors: nodeColors,
-      activeNode: null
-    };
+    this.ref = createRef();
+  }
+  componentDidMount() {
+    this.createViz();
   }
 
-  initializeData(data) {
-    data.nodes.forEach(node => {
-      if (node.type === "OVERLAP") {
-        node.radius = 5;
-      } else {
-        node.radius = 12;
+  createViz() {
+    const { graph, colors } = this.state;
+    const adjList = graph.getAdjacencyList();
+    const radiusScaler = this.degreeScaler(graph, [6, 20]);
+    graph.nodes.forEach((n) => {
+      n.radius = n.type === "OVERLAP" ? 6 : radiusScaler(n.indegree);
+    });
+    let ref = this.ref.current;
+    let viz = d3.select(ref);
+
+    let { viewBoxWidth, viewBoxHeight } = this.props;
+
+    let simulation = d3
+      .forceSimulation()
+      .force("charge", d3.forceManyBody().strength(-200).distanceMax(150))
+      .force("link", d3.forceLink(graph.edges).distance(15).strength(1))
+      .force(
+        "collide",
+        d3.forceCollide().radius((d) => radiusScaler(d.indegree))
+      )
+      .force("center", d3.forceCenter(viewBoxWidth / 2, viewBoxHeight / 2));
+
+    function run(graph) {
+      let tooltip = viz
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "2px")
+        .style("padding", "0.5em")
+        .style("pointer-events", "none");
+
+      let svg = viz
+        .append("svg")
+        .attr("width", viewBoxWidth)
+        .attr("height", viewBoxHeight)
+        .attr("viewBox", `0 0 ${viewBoxWidth} ${viewBoxHeight}`);
+
+      svg
+        .append("defs")
+        .append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 17)
+        .attr("refY", 0)
+        .attr("markerWidth", 10)
+        .attr("markerHeight", 10)
+        .attr("markerUnits", "userSpaceOnUse")
+        .attr("orient", "auto")
+        .attr("fill", "#555")
+        .append("svg:path")
+        .attr("d", "M-4,-4L8,0L-4,4L");
+
+      let edgesG = svg.append("g").attr("id", "edges");
+
+      let edge = edgesG
+        .selectAll("line")
+        .data(graph.edges)
+        .enter()
+        .append("line")
+        .attr("class", "link")
+        .attr("stroke", (d) => (d.label === "OVERLAP" ? "#86c5da" : "#555"))
+        .attr("stroke-opacity", 0.8)
+        .attr("marker-end", (d) =>
+          d.target.type === "OVERLAP" ? "" : "url(#arrow)"
+        );
+
+      let edgeText = edgesG
+        .selectAll("text")
+        .data(
+          graph.edges.filter(
+            (d) => !(d.label == "OVERLAP" || d.label == "MODIFY")
+          )
+        )
+        .enter()
+        .append("text")
+        .text((d) => d.label)
+        .attr("font-size", 8)
+        .attr("text-anchor", "middle")
+        .style("pointer-events", "none");
+
+      let nodesG = svg.append("g").attr("id", "nodes");
+
+      let node = nodesG
+        .selectAll("rect")
+        .data(graph.nodes)
+        .enter()
+        .append("rect")
+        .attr("class", (d) => `${d.id} node`)
+        .attr("rx", (d) => (d.type === "OVERLAP" ? 1 : 2 * d.radius))
+        .attr("ry", (d) => (d.type === "OVERLAP" ? 1 : 2 * d.radius))
+        .attr("width", (d) => 2 * d.radius)
+        .attr("height", (d) => 2 * d.radius)
+        .attr("fill", (d) => colors[d.type])
+        .attr("stroke", "#000")
+        .attr("stroke-width", 0.7)
+        .call(
+          d3
+            .drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        )
+        .on("mouseover", handleMouseOver)
+        .on("mousemove", handleMouseMove)
+        .on("mouseout", handleMouseOut);
+
+      let nodeText = nodesG
+        .selectAll("text")
+        .data(graph.nodes)
+        .enter()
+        .append("text")
+        .text((d) => d.text)
+        .attr("font-size", (d) => (d.type === "OVERLAP" ? 14 : 6))
+        .attr("font-weight", (d) => (d.type === "OVERLAP" ? 700 : null))
+        .attr("text-anchor", "middle")
+        .style("text-transform", "capitalize")
+        .style("pointer-events", "none");
+
+      svg.call(
+        d3
+          .zoom()
+          .extent([
+            [0, 0],
+            [500, 500],
+          ])
+          .scaleExtent([0.4, 2])
+          .on("zoom", zoomed)
+      );
+      simulation.nodes(graph.nodes).on("tick", ticked);
+      simulation.force("link").links(graph.edges);
+
+      function ticked() {
+        edgeText
+          .attr("x", (d) => {
+            return (d.source.x + d.target.x) / 2;
+          })
+          .attr("y", (d) => {
+            return (d.source.y + d.target.y) / 2;
+          });
+
+        edge
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y);
+
+        nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y + 2);
+
+        node.attr("x", (d) => d.x - d.radius).attr("y", (d) => d.y - d.radius);
       }
-    });
+      function zoomed() {
+        node.attr("transform", d3.event.transform);
+        edge.attr("transform", d3.event.transform);
+        nodeText.attr("transform", d3.event.transform);
+        edgeText.attr("transform", d3.event.transform);
+      }
 
-    let nodesMap = this.mapNodes(data.nodes);
+      function handleMouseOver(d, i) {
+        // highlight connected edges
+        tooltip.style("opacity", 0.8);
+        edge.attr("stroke-opacity", (l) => {
+          return l.source === d || l.target === d ? 1.0 : 0.3;
+        });
 
-    data.edges.forEach(edge => {
-      edge.source = nodesMap[edge.source];
-      edge.target = nodesMap[edge.target];
-    });
+        edgeText.attr("opacity", (l) => {
+          return l.source === d || l.target === d ? 1.0 : 0.5;
+        });
 
-    data.adjList = this.getAdjacencyList(data.edges);
+        // highlight connected nodes
+        node
+          .attr("stroke", (n) => {
+            return d === n || neighboring(d, n) ? "#000" : "#ddd";
+          })
+          .attr("stroke-opacity", (n) => {
+            return d === n || neighboring(d, n) ? 1.0 : 0.5;
+          })
+          .attr("fill-opacity", (n) => {
+            return d == n || neighboring(d, n) ? 1.0 : 0.5;
+          });
 
-    return data;
+        nodeText.attr("opacity", (n) => {
+          return d == n || neighboring(d, n) ? 1.0 : 0.5;
+        });
+      }
+
+      function handleMouseMove(d) {
+        let content = `<span>${
+          d.type != "OVERLAP" ? d.text : `Overlap (${d.id})`
+        }</span>`;
+        let hasModifiers = false;
+
+        adjList[d.id].forEach((neighborID) => {
+          const neighbor = graph.nodes.find((node) => node.id === neighborID);
+          const edge = graph.edges.find(
+            (edge) => edge.source === neighbor && edge.target === d
+          );
+          if (edge) {
+            if (!hasModifiers) {
+              hasModifiers = true;
+              content += "<hr/>";
+            }
+            content += `<span>${neighbor.text} (${
+              edge.type || edge.label
+            })</span><br/>`;
+          }
+        });
+
+        tooltip
+          .html(content)
+          .style("left", d3.mouse(ref)[0] + 10 + "px")
+          .style("top", d3.mouse(ref)[1] + "px");
+      }
+      function handleMouseOut(d, i) {
+        tooltip.style("opacity", 0);
+
+        edge.attr("stroke-opacity", 0.8);
+        edgeText.attr("opacity", 1.0);
+        node
+          .attr("stroke", "#000")
+          .attr("stroke-opacity", 1.0)
+          .attr("fill-opacity", 1.0);
+        nodeText.attr("opacity", 1.0);
+      }
+
+      function neighboring(n1, n2) {
+        const id1 = n1.id;
+        const id2 = n2.id;
+        return adjList[id1].has(id1) || adjList[id2].has(id1);
+      }
+
+      function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+
+      function dragended(d) {
+        d.fx = null;
+        d.fy = null;
+        if (!d3.event.active) simulation.alphaTarget(0);
+      }
+    }
+
+    run(graph);
   }
 
   isOverlapNode(nodeID) {
     return nodeID.includes("OV");
   }
 
-  findNearestOverlap(startNode, graph) {
-    const { adjList } = graph;
+  findNearestOverlap = (startNode, graph) => {
+    const adjList = graph.getAdjacencyList();
     const pathTo = {};
     pathTo[startNode] = null;
     const marked = new Set();
@@ -127,7 +351,7 @@ class EntityGraph extends Component {
       if (this.isOverlapNode(node)) {
         overlapNode = node;
       } else {
-        adjList[node].forEach(neighbor => {
+        adjList[node].forEach((neighbor) => {
           if (!(neighbor in pathTo)) {
             pathTo[neighbor] = node;
           }
@@ -149,294 +373,60 @@ class EntityGraph extends Component {
 
       return {
         ID: overlapNode,
-        path: path
+        path: path,
       };
     } else {
       return {
         ID: startNode,
-        path: [startNode]
+        path: [startNode],
       };
     }
-  }
+  };
 
-  getSubGraph(graph, query) {
+  getSubGraph = (graph, query) => {
     // get set of all nodes that belong depending on the query
-    const { adjList } = graph;
+    const adjList = graph.getAdjacencyList();
+    const pmid = graph.pmid;
     const subGraphNodeIDs = new Set();
-    const overlaps = query.map(node => this.findNearestOverlap(node, graph));
+    const overlaps = query.map((node) => this.findNearestOverlap(node, graph));
     const overlappingNodes = [];
 
     // get all nodes in the overlap
-    overlaps.forEach(ov => {
-      adjList[ov.ID].forEach(neighborID => {
+    overlaps.forEach((ov) => {
+      adjList[ov.ID].forEach((neighborID) => {
         overlappingNodes.push(neighborID);
       });
       // add all nodes from paths to set of subgraph nodes.
-      ov.path.forEach(node => subGraphNodeIDs.add(node));
+      ov.path.forEach((node) => subGraphNodeIDs.add(node));
     });
 
     // get neighbors of all overlapping nodes and add to the set.
-    overlappingNodes.forEach(nodeID => {
+    overlappingNodes.forEach((nodeID) => {
       subGraphNodeIDs.add(nodeID);
-      adjList[nodeID].forEach(neighborID => {
+      adjList[nodeID].forEach((neighborID) => {
         subGraphNodeIDs.add(neighborID);
       });
     });
 
     // then filter: if the node has id that is in the set, then it belongs
     const nodes = graph.nodes;
-    let subGraphNodes = nodes.filter(node => subGraphNodeIDs.has(node.id));
+    let subGraphNodes = nodes.filter((node) => subGraphNodeIDs.has(node.id));
     let subGraphEdges = graph.edges.filter(
-      edge =>
+      (edge) =>
         subGraphNodeIDs.has(edge.source.id) &&
         subGraphNodeIDs.has(edge.target.id)
     );
-    return { nodes: subGraphNodes, edges: subGraphEdges };
+    return new Graph(subGraphNodes, subGraphEdges, pmid);
+  };
+
+  degreeScaler(data, range) {
+    const degreeExtent = d3.extent(data.nodes, (d) => d.indegree);
+
+    return d3.scaleSqrt().domain(degreeExtent).range(range);
   }
-
-  mapNodes(nodes) {
-    let nodesMap = {};
-    nodes.forEach(node => {
-      nodesMap[node.id] = node;
-    });
-    return nodesMap;
-  }
-
-  componentDidMount() {
-    const nodes = this.state.currNodes;
-    const edges = this.state.currEdges;
-    const chargeForce = this.props.entities
-      ? forceManyBody().strength(-50)
-      : forceManyBody().strength(-100);
-
-    let simulation = forceSimulation(nodes)
-      .force("charge", chargeForce)
-      .force(
-        "link",
-        forceLink(edges)
-          .distance(10)
-          .strength(1)
-      )
-      .force("collision", forceCollide(30))
-      .force("center", forceCenter());
-    simulation.tick(50);
-
-    simulation.on("tick", () => {
-      this.setState({ currNodes: nodes });
-      this.setState({ currEdges: edges });
-      simulation.tick(5);
-    });
-
-    document.querySelectorAll(".node").forEach(node => {
-      node.addEventListener("mouseenter", event => {
-        this.handleMouseEnter(event);
-      });
-      node.addEventListener("mouseleave", event => {
-        this.handleMouseLeave(event);
-      });
-    });
-  }
-
-  handleMouseEnter = event => {
-    const id = event.srcElement.classList[0];
-    this.setState({ activeNode: id });
-  };
-
-  handleMouseLeave = event => {
-    this.setState({ activeNode: null });
-  };
-
-  getAdjacencyList(edges) {
-    const res = {};
-    edges.forEach(edge => {
-      if (!res[edge.source.id]) {
-        res[edge.source.id] = new Set();
-      }
-      if (!res[edge.target.id]) {
-        res[edge.target.id] = new Set();
-      }
-      res[edge.source.id].add(edge.target.id);
-      res[edge.target.id].add(edge.source.id);
-    });
-    return res;
-  }
-
-  getNodeClassList = (node, type) => {
-    const { id, overlap } = node;
-    const { adjList } = this.state.fullGraph;
-    const classList = [];
-    classList.push(id);
-    classList.push(type);
-    if (!overlap) {
-      classList.push("secondary");
-    }
-    if (
-      (this.state.activeNode && adjList[this.state.activeNode].has(id)) ||
-      this.state.activeNode === id
-    ) {
-      classList.push("active");
-    }
-    return classList.join(" ");
-  };
-
-  getEdgeClassList = (source, target) => {
-    const activeNode = this.state.activeNode;
-    if (activeNode && (activeNode === source || activeNode === target)) {
-      return "edge active";
-    }
-    return "edge";
-  };
-
-  wordWrap = (text, anchor) => {
-    const words = text.split(" ");
-    const textSegments = (
-      <React.Fragment>
-        <tspan x={anchor} dy="0em">
-          {words[0]}
-        </tspan>
-        {words.slice(1).map(word => (
-          <tspan x={anchor} dy="1em">
-            {word}
-          </tspan>
-        ))}
-      </React.Fragment>
-    );
-    return textSegments;
-  };
-
-  // Source: https://www.sitepoint.com/javascript-generate-lighter-darker-color/
-  colorLuminance = (hex, lum) => {
-    // validate hex string
-    hex = String(hex).replace(/[^0-9a-f]/gi, "");
-    if (hex.length < 6) {
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-    lum = lum || 0;
-
-    // convert to decimal and change luminosity
-    var rgb = "#",
-      c,
-      i;
-    for (i = 0; i < 3; i++) {
-      c = parseInt(hex.substr(i * 2, 2), 16);
-      c = Math.round(Math.min(Math.max(0, c + c * lum), 255)).toString(16);
-      rgb += ("00" + c).substr(c.length);
-    }
-
-    return rgb;
-  };
 
   render() {
-    const xDomain = extent(this.state.currNodes, node => node.x);
-    const yDomain = extent(this.state.currNodes, node => node.y);
-
-    let scaler = this.props.entities ? 2 : 1.25;
-
-    const viewBoxWidth = scaler * Math.abs(xDomain[1] - xDomain[0]);
-    const viewBoxHeight = scaler * Math.abs(yDomain[1] - yDomain[0]);
-    const viewBoxDim = Math.max(viewBoxWidth, viewBoxHeight);
-
-    const nodes = this.state.currNodes.map(n => {
-      if (n.type === "OVERLAP") {
-        return (
-          <React.Fragment>
-            <rect
-              className={this.getNodeClassList(n, "node")}
-              x={n.x - n.radius}
-              y={n.y - n.radius}
-              rx={n.radius / 4}
-              width={2 * n.radius}
-              height={2 * n.radius}
-              stroke="#343434"
-              strokeWidth={1.5}
-              fill={this.state.colors[n.type]}
-            ></rect>
-            <text
-              x={n.x}
-              y={n.y}
-              textAnchor="middle"
-              fontSize={8}
-              fontWeight={700}
-            >
-              {"OVERLAP"}
-            </text>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment>
-            <circle
-              className={this.getNodeClassList(n, "node")}
-              cx={n.x}
-              cy={n.y}
-              r={n.radius}
-              stroke={this.colorLuminance(this.state.colors[n.type], -0.3)}
-              strokeWidth={1.3}
-              fill={this.colorLuminance(this.state.colors[n.type], 0.3)}
-            ></circle>
-            <text
-              className={this.getNodeClassList(n, "text")}
-              x={n.x}
-              y={n.y}
-              textAnchor="middle"
-              fontSize={8}
-            >
-              {n.text ? this.wordWrap(n.text, n.x) : ""}
-            </text>
-          </React.Fragment>
-        );
-      }
-    });
-
-    const edges = this.state.currEdges.map(e => (
-      <React.Fragment>
-        <line
-          className={this.getEdgeClassList(e.source.id, e.target.id)}
-          marker-end={e.target.type === "OVERLAP" ? "" : "url(#arrow)"}
-          x1={e.source.x}
-          y1={e.source.y}
-          x2={e.target.x}
-          y2={e.target.y}
-          stroke={e.target.type === "OVERLAP" ? "#86c5da" : "#343434"}
-          strokeOpacity={0.8}
-        ></line>
-        <text
-          x={(e.source.x + e.target.x) / 2}
-          y={(e.source.y + e.target.y) / 2}
-          textAnchor="middle"
-          fontSize={8}
-          fontWeight={700}
-        >
-          {e.label === "OVERLAP" ? "" : e.label}
-        </text>
-      </React.Fragment>
-    ));
-
-    return (
-      <svg
-        className="graph"
-        viewBox={`${-viewBoxDim / 2} ${-viewBoxDim /
-          2} ${viewBoxDim} ${viewBoxDim}`}
-      >
-        <defs>
-          <marker
-            id="arrow"
-            viewBox="0 -5 10 10"
-            refX="16"
-            refY="0"
-            markerWidth="15"
-            markerHeight="15"
-            markerUnits="userSpaceOnUse"
-            orient="auto"
-            fill="#343434"
-          >
-            <path d="M-4,-4L8,0L-4,4L" />
-          </marker>
-        </defs>
-        <g id="edges">{edges}</g>
-        <g id="nodes">{nodes}</g>
-      </svg>
-    );
+    return <div class="viz" ref={this.ref} />;
   }
 }
 

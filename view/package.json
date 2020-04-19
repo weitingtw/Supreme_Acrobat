@@ -21,8 +21,8 @@
     "cytoscape-cola": "^2.3.0",
     "cytoscape-dagre": "^2.2.2",
     "cytoscape-klay": "^3.1.2",
-    "d3-array": "^2.4.0",
-    "d3-force": "^2.0.1",
+    "d3": "^5.15.1",
+    "express-fileupload": "^1.1.6",
     "klay": "^2.4.0",
     "prop-types": "^15.7.2",
     "react": "^16.7.0",
@@ -33,8 +33,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.8",
     "react-sidebar": "^3.0.2",
-    "react-spinners": "^0.5.4",
-    "express-fileupload": "^1.1.6"
+    "react-spinners": "^0.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
