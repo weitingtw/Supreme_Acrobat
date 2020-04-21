@@ -157,7 +157,7 @@ class EntityGraph extends Component {
         .enter()
         .append("text")
         .text((d) => d.label)
-        .attr("font-size", 8)
+        .attr("font-size", 6)
         .attr("text-anchor", "middle")
         .style("pointer-events", "none");
 
@@ -268,7 +268,7 @@ class EntityGraph extends Component {
 
       function handleMouseMove(d) {
         let content = `<span>${
-          d.type != "OVERLAP" ? d.text : `Overlap (${d.id})`
+          d.type != "OVERLAP" ? `${d.text} (${d.type})` : `Overlap (${d.id})`
         }</span>`;
         let hasModifiers = false;
 
