@@ -10,6 +10,7 @@ import "./DisplayPage.css";
 import { getHost } from "../../utils";
 
 import Sidebar from "react-sidebar";
+import ucla_logo from "../../static/ucla.png";
 import LoginModal from "../LoginModal/LoginModal";
 import EntityGraph from "../EntityGraph/EntityGraph";
 
@@ -32,23 +33,32 @@ class DisplayPage extends Component {
   render() {
     const { id } = this.props.match.params;
     const { docData } = this.state;
-    let title = "A cold sympotom in a 57-year old patient";
-    let pub_date = "2019-03-24";
-    let doi = "10.1159/000330840";
-    let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
-    let keywords = ["Cough", "Fever", "Cold Sympotom"];
-    const kwlink = [];
-    for (const [index, value] of keywords.entries()) {
-      kwlink.push(<a href="/search">{value}</a>);
-      kwlink.push(", ");
-    }
+    // let title = "A cold sympotom in a 57-year old patient";
+    // let pub_date = "2019-03-24";
+    // let doi = "10.1159/000330840";
+    // let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
+    // let keywords = ["Cough", "Fever", "Cold Sympotom"];
+    console.log("docs~");
+    console.log(docData);
+    let text,                   // whole plain text of the case report
+        entities,               // entities for graph
+        tokensToHighlight,      // array of tokens to highlight
+        textEntities,           // plain text highlight entities
+        title,
+        authors,
+        doi,
+        keywords,
+        abstract;
 
-    let text, // whole plain text of the case report
-      entities, // entities for graph
-      tokensToHighlight, // array of tokens to highlight
-      textEntities; // plain text highlight entities
+    const kwlink = [];
+
     if (docData) {
-      ({ text } = docData);
+       ({ text, title, authors, doi, keywords, abstract } = docData);
+       for (const [index, value] of keywords.entries()) {
+          kwlink.push(<a href="/search">{value}</a>);
+          if(index < keywords.length - 1)
+            kwlink.push(", ");
+        }
     }
 
     entities = [];
@@ -103,11 +113,17 @@ class DisplayPage extends Component {
         padding: "16px",
         fontSize: "24px",
       },
+      e:{
+        color: "#f49541",
+      }
     };
 
     const sidebar_content = (
       <div style={styles.root}>
-        <div style={styles.header}>Menu</div>
+        <div style={styles.header}>
+          CREAT
+          <span style={styles.e}>e</span>
+        </div>
         <div style={styles.content}>
           <a href="/" style={styles.sidebarLink}>
             Home
@@ -122,8 +138,8 @@ class DisplayPage extends Component {
           <a key="case_report" href="#case_report" style={styles.sidebarLink}>
             Case Presentation
           </a>
-          <a key="brat" href="#brat" style={styles.sidebarLink}>
-            Brat Graph
+          <a key="annotated" href="#annotated" style={styles.sidebarLink}>
+            Annotated Report
           </a>
           <a key="relation" href="#relation" style={styles.sidebarLink}>
             Relation Graph
@@ -146,42 +162,36 @@ class DisplayPage extends Component {
                 >
                   <div className="display-page">
                     <div className="banner">
-                      <a className="banner-title" href="/">
-                        CREAT
-                        <span className="E">e</span>
-                      </a>
-                      <LoginModal />
-                    </div>
+                        <React.Fragment>
+                          <img src={ucla_logo} alt="uclalogo" width="204.8" height="67.2" />
+                          <LoginModal />
+                        </React.Fragment>
+                      </div>
                     <div className="brat-intro" id="title">
                       <FontAwesomeIcon icon={["fal", "file-alt"]} />
                       {title}
                     </div>
                     <div className="report-info">
                       <div className="report-info-row">
-                        <div className="report-info-item">
-                          <b>Authors: </b>
-                          {author}
-                        </div>
-                        <div className="report-info-item">
-                          <b>Date Published: </b>
-                          {pub_date}
-                        </div>
+                        <div className="report-info-item"><b>Authors: </b>{authors}</div>
+                        <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
+                        <div className="report-info-item"><b>DOI: </b>{doi}</div>
+                        <div className="report-info-item"><b>Keywords: </b>{kwlink}</div>
                       </div>
                       <div className="report-info-row">
-                        <div className="report-info-item">
-                          <b>Case Report ID: </b>
-                          {id}
-                        </div>
-                        <div className="report-info-item">
-                          <b>DOI: </b>
-                          {doi}
-                        </div>
-                      </div>
-                      <div className="report-info-row">
-                        <b>Keywords: </b>
-                        {kwlink}
+                        <React.Fragment>
+                          <div className="subgraph-container">
+                            <EntityGraph graphData={docData} entities={entities} />
+                          </div>
+                        </React.Fragment>
                       </div>
                     </div>
+
+                    {abstract && (
+                      <div className="report-section" id="abstract">
+                        <div className="report-section-title"><b>Abstract</b></div>
+                        <div className="report-content">{abstract}</div>
+                      </div>)}
 
                     <div className="report-section" id="case_report">
                       <div className="report-section-title">
@@ -190,9 +200,9 @@ class DisplayPage extends Component {
                       <div className="report-content">{text}</div>
                     </div>
                     {docData && (
-                      <div className="report-section" id="brat">
+                      <div className="report-section" id="annotated">
                         <div calssName="report-section-title">
-                          <b>Brat Graph</b>
+                          <b>Annotated Report</b>
                         </div>
                         <div className="brat-container">
                           <Brat docData={docData} />
@@ -206,14 +216,6 @@ class DisplayPage extends Component {
                           <b>Relation Graph</b>
                         </div>
                         <React.Fragment>
-                          <div className="subgraph-container">
-                            <EntityGraph
-                              graphData={docData}
-                              entities={entities}
-                              viewBoxWidth={500}
-                              viewBoxHeight={500}
-                            />
-                          </div>
                           <div className="graph-container">
                             <EntityGraph
                               graphData={docData}
