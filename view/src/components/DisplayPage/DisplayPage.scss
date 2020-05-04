@@ -1,7 +1,7 @@
 @import "../shared";
 
 $display-section-border: 2px solid rgba($blue, 0.8);
-.banner{
+.banner {
   display: inline-block;
   position: relative;
   margin-top: 10px;
@@ -9,36 +9,35 @@ $display-section-border: 2px solid rgba($blue, 0.8);
   width: 100%;
   height: 56px;
   background-color: #ffffff;
-  .banner-title{
+  .banner-title {
     color: #0188cb;
     font-size: 50px;
 
-    .E{
+    .E {
       color: #f49541;
     }
   }
-
 }
 .display-page {
   position: relative;
 
-    .brat-intro,
-    .report-info,
-    .report-keywords,
-    .report-section,
-    .brat-container {
-        position: relative;
-        width: 90%;
-        left: 5%;
-        margin-bottom: 20px;
-    }
+  .brat-intro,
+  .report-info,
+  .report-keywords,
+  .report-section,
+  .brat-container {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    margin-bottom: 20px;
+  }
 
-    .brat-intro {
-        margin-top: 10px;
-        font-size: 170%;
-        padding-right: 30px;
-        border-bottom: $display-section-border;
-        padding: 10px 0;
+  .brat-intro {
+    margin-top: 10px;
+    font-size: 170%;
+    padding-right: 30px;
+    border-bottom: $display-section-border;
+    padding: 10px 0;
 
     svg {
       margin-right: 15px;
@@ -81,22 +80,29 @@ $display-section-border: 2px solid rgba($blue, 0.8);
         height: 25%;
       }
     }
+  }
 
+  .report-info {
+    width: auto;
 
+    .report-info-row {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      position: relative;
+      height: 33%;
+      width: 100%;
+    }
 
+    .report-info-item {
+      display: inline-block;
+      width: 50%;
+    }
+  }
 
-    .report-section{
-      border-bottom: $display-section-border;
-      margin-top: 20px;
-      margin-bottom: 20px;
-
-      .report-section-title {
-        margin: 20px 0 0 0;
-      }
-
-      .report-content {
-        margin: 10px 0 20px 20px;
-      }
+  .report-section {
+    border-bottom: $display-section-border;
+    margin-top: 20px;
+    margin-bottom: 20px;
 
     }
     .graph-container {
@@ -114,16 +120,33 @@ $display-section-border: 2px solid rgba($blue, 0.8);
       border: 1px solid #dedede;
     }
 
+    .report-content {
+      margin: 10px 0 20px 20px;
+    }
+  }
+  .graph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid #dedede;
+  }
+  .subgraph-container {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid #dedede;
+  }
 }
 .loading-container {
-    overflow: show;
-    position: relative;
-    top: 20%;
-    left: 20%;
-    font-size: 150px;
-    color: $orange;
-    z-index: 9999;
-
+  overflow: show;
+  position: relative;
+  top: 20%;
+  left: 20%;
+  font-size: 150px;
+  color: $orange;
+  z-index: 9999;
 }
 
 .banner-img{

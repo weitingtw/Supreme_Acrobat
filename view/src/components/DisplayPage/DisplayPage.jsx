@@ -1,36 +1,36 @@
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios'
-import Brat from '../Brat/Brat'
-import Graph from '../Graph/Graph'
-import { PacmanLoader } from 'react-spinners';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { addHighLight } from '../../utils';
-import './DisplayPage.css';
-import { getHost } from '../../utils';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+import Brat from "../Brat/Brat";
+import Graph from "../Graph/Graph";
+import { PacmanLoader } from "react-spinners";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { addHighLight } from "../../utils";
+import "./DisplayPage.css";
+import { getHost } from "../../utils";
 
 import Sidebar from "react-sidebar";
+
 import ucla_logo from "../../static/img/ucla.png";
 import LoginModal from '../LoginModal/LoginModal';
 import EntityGraph from "../EntityGraph/EntityGraph";
 
-
 class DisplayPage extends Component {
   state = {
-    docData: null
+    docData: null,
   };
-
 
   componentDidMount() {
     const { id } = this.props.match.params;
-    axios.post(getHost() + "/api/getCaseReportById", { id })
-      .then(res => {
+    axios
+      .post(getHost() + "/api/getCaseReportById", { id })
+      .then((res) => {
         const data = res.data.data[0];
         this.setState({ docData: data });
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
+
 
     render() {
         const { id } = this.props.match.params;
@@ -142,8 +142,14 @@ class DisplayPage extends Component {
           </div>
         );
 
-        return (
+  
+
+    return (
+      <div>
+        {docData && (
+          <div>
             <div>
+
                 {docData && <div>
                   <div >
                     <div styles={styles.diaplay}>
@@ -159,10 +165,11 @@ class DisplayPage extends Component {
                             <img src={ucla_logo} alt="uclalogo" width="250" height="52" />
                             <LoginModal />
                           </React.Fragment>
+
                         </div>
-                        <div className='brat-intro' id="title">
-                            <FontAwesomeIcon icon={['fal', 'file-alt']} />
-                            {title}
+                        <div className="report-info-item">
+                          <b>Date Published: </b>
+                          {pub_date}
                         </div>
                         <div className="report-info">
                           <div className="report-info-row">
@@ -213,22 +220,61 @@ class DisplayPage extends Component {
                                 </React.Fragment>
                               </div>
                             )}
+                     
                       </div>
-                      </Sidebar>
+                      <div className="report-content">{text}</div>
                     </div>
-                  </div>
-                </div>}
-                {!docData &&
-                      <div className='loading-container'>
-                          <span className="loading-text">Loading ......</span>
-                          <PacmanLoader
-                              sizeUnit={"px"}
-                              size={150}
-                              color={'rgb(1, 136, 203)'}
-                          />
+                    {docData && (
+                      <div className="report-section" id="brat">
+                        <div calssName="report-section-title">
+                          <b>Brat Graph</b>
+                        </div>
+                        <div className="brat-container">
+                          <Brat docData={docData} />
+                        </div>
                       </div>
-                  }
+                    )}
 
+                    {docData && (
+                      <div className="report-section" id="relation">
+                        <div calssName="report-section-title">
+                          <b>Relation Graph</b>
+                        </div>
+                        <React.Fragment>
+                          <div className="subgraph-container">
+                            <EntityGraph
+                              graphData={docData}
+                              entities={entities}
+                              viewBoxWidth={500}
+                              viewBoxHeight={500}
+                            />
+                          </div>
+                          <div className="graph-container">
+                            <EntityGraph
+                              graphData={docData}
+                              viewBoxWidth={500}
+                              viewBoxHeight={500}
+                            />
+                          </div>
+                        </React.Fragment>
+                      </div>
+                    )}
+                  </div>
+                </Sidebar>
+              </div>
+            </div>
+          </div>
+        )}
+        {!docData && (
+          <div className="loading-container">
+            <span className="loading-text">Loading ......</span>
+            <PacmanLoader
+              sizeUnit={"px"}
+              size={150}
+              color={"rgb(1, 136, 203)"}
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -237,6 +283,5 @@ class DisplayPage extends Component {
 // DisplayPage.propTypes = {
 //     id: PropTypes.number.isRequired
 // };
-
 
 export default DisplayPage;

@@ -12,6 +12,7 @@ const Schema = mongoose.Schema;
 const CaseReportSchema = new Schema(
   {
     pmID: 0,
+    doi: String,
     messages: [],
     source_files: [],
     modifications: [],
@@ -29,6 +30,7 @@ const CaseReportSchema = new Schema(
     // sentence_offsets 	: [],
     // token_offsets 	: [],
     action: String,
+    title: String,
     abstract: String,
     authors: [],
     keywords: [],
