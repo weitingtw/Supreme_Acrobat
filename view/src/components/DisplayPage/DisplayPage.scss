@@ -4,7 +4,7 @@ $display-section-border: 2px solid rgba($blue, 0.8);
 .banner {
   display: inline-block;
   position: relative;
-  top: 0%;
+  margin-top: 10px;
   margin-left: 20px;
   width: 100%;
   height: 56px;
@@ -49,14 +49,36 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     }
   }
 
-  .report-plain-text {
-    padding: 20px 0;
-    border-bottom: $display-section-border;
+    .report-plain-text {
+        padding: 20px 0;
+        border-bottom: $display-section-border;
 
-    .highLight {
-      background-color: rgba($orange, 0.7);
-      padding: 1px 5px;
-      border-radius: 2px;
+        .highLight {
+          background-color: rgba($orange, 0.7);
+          padding: 1px 5px;
+          border-radius: 2px;
+        }
+      }
+
+    .report-info{
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      .report-info-row,{
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        height: 100%;
+        width: 50%;
+      }
+
+      .report-info-item {
+        margin-top: 3px;
+        margin-bottom: 3px;
+        width: 100%;
+        height: 25%;
+      }
     }
   }
 
@@ -82,8 +104,20 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     margin-top: 20px;
     margin-bottom: 20px;
 
-    .report-section-title {
-      margin: 20px 0 0 0;
+    }
+    .graph-container {
+      position: relative;
+      width: 80%;
+      max-width: 500px;
+      margin: auto;
+      border: 1px solid #dedede;
+    }
+    .subgraph-container {
+      position: relative;
+      width: 50%;
+      max-width: 500px;
+      margin: auto;
+      border: 1px solid #dedede;
     }
 
     .report-content {
@@ -113,4 +147,8 @@ $display-section-border: 2px solid rgba($blue, 0.8);
   font-size: 150px;
   color: $orange;
   z-index: 9999;
+}
+
+.banner-img{
+  margin-top: 10px;
 }
