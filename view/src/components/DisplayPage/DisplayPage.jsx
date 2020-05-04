@@ -32,24 +32,31 @@ class DisplayPage extends Component {
   render() {
     const { id } = this.props.match.params;
     const { docData } = this.state;
-    let title = "A cold sympotom in a 57-year old patient";
+    //let title = "A cold sympotom in a 57-year old patient";
     let pub_date = "2019-03-24";
-    let doi = "10.1159/000330840";
-    let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
-    let keywords = ["Cough", "Fever", "Cold Sympotom"];
-    const kwlink = [];
-    for (const [index, value] of keywords.entries()) {
-      kwlink.push(<a href="/search">{value}</a>);
-      kwlink.push(", ");
-    }
+    console.log("docdata");
+    console.log(docData);
 
     let text, // whole plain text of the case report
       entities, // entities for graph
       tokensToHighlight, // array of tokens to highlight
-      textEntities; // plain text highlight entities
+      textEntities, // plain text highlight entities
+      authors,
+      keywords,
+      abstract,
+      doi,
+      title;
+
     if (docData) {
-      ({ text } = docData);
+      ({ text, doi, title, keywords, abstract, authors } = docData);
     }
+    console.log("title: " + title);
+    console.log("keywords: " + keywords);
+    const kwlink = [];
+    // for (const [index, value] of keywords.entries()) {
+    //   kwlink.push(<a href="/search">{value}</a>);
+    //   kwlink.push(", ");
+    // }
 
     entities = [];
 
@@ -160,7 +167,7 @@ class DisplayPage extends Component {
                       <div className="report-info-row">
                         <div className="report-info-item">
                           <b>Authors: </b>
-                          {author}
+                          {authors}
                         </div>
                         <div className="report-info-item">
                           <b>Date Published: </b>

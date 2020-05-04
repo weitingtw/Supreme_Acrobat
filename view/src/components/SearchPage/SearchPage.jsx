@@ -8,6 +8,9 @@ import { combineMultiWordEntity, allQueriesToTextEntities } from '../../utils';
 import { getHost } from '../../utils';
 import RelationSearchBar from '../RelationSearchBar/RelationSearchBar';
 
+import {Input, Layout} from 'antd';
+const {Search} = Input;
+const { Header, Content } = Layout;
 
 
 class SearchPage extends Component {
@@ -200,41 +203,48 @@ class SearchPage extends Component {
         console.log(allQueries)
         return (
             <div id='searchPage'>
-                <LoginModal />
 
-                <div id='top-bar-container'>
-                    <TopBar
-                        textEntities={textEntities}
-                        handleSearch={this.handleSearch3}
-                        handleAdvancedSearch={this.handleAdvancedSearch}
-                        handleTyping={this.handleTyping}
-                    />
-                    <button
-                        type="submit"
-                        id="relationSearchButton"
-                        onClick={this.handleRelationSearch}
-                    >Parse Relations</button>
-                    <RelationSearchBar
-                        textEntities={textEntities}
-                        allQueries={this.state.allQueries}
-                        handleTyping={this.handleTyping2}
-                        handleSelect={this.handleSelect2}
-                        handleKeyDown={this.handleKeyDown2}
-                        handleAddColumn={this.handleAddColumn2}
-                        handleAddRow={this.handleAddRow2}
-                        handleDeleteRow={this.handleDeleteRow2}
-                    />
-                </div>
-
-
-                {results.length > 0 &&
-                    <div id='search-result-container'>
-                        <SearchResults
-                            results={results}
-                            textEntities={textEntities.concat(allQueriesToTextEntities(allQueries))}
+                <Layout>
+                  <Header style={{ backgroundColor: 'white', display: 'flex', justifyContent: 'flex-end'}}>
+                    <LoginModal />
+                  </Header>
+                  <Content style={{ backgroundColor: 'white'}}>
+                    <div id='top-bar-container'>
+                        <TopBar
+                            textEntities={textEntities}
+                            handleSearch={this.handleSearch3}
+                            handleAdvancedSearch={this.handleAdvancedSearch}
+                            handleTyping={this.handleTyping}
+                        />
+                        <button
+                            type="submit"
+                            id="relationSearchButton"
+                            onClick={this.handleRelationSearch}
+                        >Parse Relations</button>
+                        <RelationSearchBar
+                            textEntities={textEntities}
+                            allQueries={this.state.allQueries}
+                            handleTyping={this.handleTyping2}
+                            handleSelect={this.handleSelect2}
+                            handleKeyDown={this.handleKeyDown2}
+                            handleAddColumn={this.handleAddColumn2}
+                            handleAddRow={this.handleAddRow2}
+                            handleDeleteRow={this.handleDeleteRow2}
                         />
                     </div>
-                }
+
+
+                    {results.length > 0 &&
+                        <div id='search-result-container'>
+                            <SearchResults
+                                results={results}
+                                textEntities={textEntities.concat(allQueriesToTextEntities(allQueries))}
+                            />
+                        </div>
+                    }
+                  </Content>
+                </Layout>
+
 
             </div>
         );
