@@ -20,15 +20,15 @@ $display-section-border: 2px solid rgba($blue, 0.8);
 }
 .display-page {
   position: relative;
+  width: 90%;
+  left: 5%;
+  right: 2%;
 
   .brat-intro,
   .report-info,
   .report-keywords,
-  .report-section,
-  .brat-container {
-    position: relative;
-    width: 90%;
-    left: 5%;
+  .report-section {
+    width: 100%;
     margin-bottom: 20px;
   }
 
@@ -60,20 +60,24 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     }
   }
 
-  .report-info {
-    width: auto;
+  .report-info{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 
-    .report-info-row {
+    .report-info-row,{
       margin-top: 10px;
       margin-bottom: 10px;
-      position: relative;
-      height: 33%;
-      width: 100%;
+
+      height: 100%;
+      width: 50%;
     }
 
     .report-info-item {
-      display: inline-block;
-      width: 50%;
+      margin-top: 3px;
+      margin-bottom: 3px;
+      width: 100%;
+      height: 25%;
     }
   }
 
@@ -104,6 +108,10 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     margin: auto;
     border: 1px solid #dedede;
   }
+
+  .brat-container{
+    width: 100%;
+  }
 }
 .loading-container {
   overflow: show;
@@ -114,3 +122,7 @@ $display-section-border: 2px solid rgba($blue, 0.8);
   color: $orange;
   z-index: 9999;
 }
+
+// .banner-img{
+//   margin-top: 10px;
+// }

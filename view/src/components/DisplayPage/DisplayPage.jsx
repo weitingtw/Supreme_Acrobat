@@ -113,11 +113,17 @@ class DisplayPage extends Component {
         padding: "16px",
         fontSize: "24px",
       },
+      e:{
+        color: "#f49541",
+      }
     };
 
     const sidebar_content = (
       <div style={styles.root}>
-        <div style={styles.header}>Menu</div>
+        <div style={styles.header}>
+          CREAT
+          <span style={styles.e}>e</span>
+        </div>
         <div style={styles.content}>
           <a href="/" style={styles.sidebarLink}>
             Home
@@ -132,8 +138,8 @@ class DisplayPage extends Component {
           <a key="case_report" href="#case_report" style={styles.sidebarLink}>
             Case Presentation
           </a>
-          <a key="brat" href="#brat" style={styles.sidebarLink}>
-            Brat Graph
+          <a key="annotated" href="#annotated" style={styles.sidebarLink}>
+            Annotated Report
           </a>
           <a key="relation" href="#relation" style={styles.sidebarLink}>
             Relation Graph
