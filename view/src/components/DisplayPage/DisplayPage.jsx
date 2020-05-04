@@ -11,7 +11,7 @@ import './DisplayPage.css';
 import { getHost } from '../../utils';
 
 import Sidebar from "react-sidebar";
-import ucla_logo from "../../static/img/ucla_logo.png";
+import ucla_logo from "../../static/img/ucla.png";
 import LoginModal from '../LoginModal/LoginModal';
 import EntityGraph from "../EntityGraph/EntityGraph";
 
@@ -35,22 +35,32 @@ class DisplayPage extends Component {
     render() {
         const { id } = this.props.match.params;
         const { docData } = this.state;
-        let title = "A cold sympotom in a 57-year old patient";
-        let pub_date = "2019-03-24";
-        let doi = "10.1159/000330840";
-        let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
-        let keywords = ["Cough", "Fever", "Cold Sympotom"];
-        const kwlink = [];
-        for (const [index, value] of keywords.entries()) {
-          kwlink.push(<a href="/search">{value}</a>);
-          kwlink.push(", ");
-        }
+        // let title = "A cold sympotom in a 57-year old patient";
+        // let pub_date = "2019-03-24";
+        // let doi = "10.1159/000330840";
+        // let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
+        // let keywords = ["Cough", "Fever", "Cold Sympotom"];
 
         let text,                   // whole plain text of the case report
             entities,               // entities for graph
             tokensToHighlight,      // array of tokens to highlight
-            textEntities;           // plain text highlight entities
-        if (docData) { ({ text } = docData); }
+            textEntities,           // plain text highlight entities
+            title,
+            author,
+            doi,
+            keywords;
+
+        const kwlink = [];
+
+        if (docData) {
+           ({ text } = docData);
+
+           for (const [index, value] of keywords.entries()) {
+             kwlink.push(<a href="/search">{value}</a>);
+             if(index < keywords.length - 1)
+              kwlink.push(", ");
+           }
+         }
 
         entities = [];
 
@@ -188,9 +198,6 @@ class DisplayPage extends Component {
                               <div className="report-section" id="relation">
                                 <div calssName="report-section-title"><b>Relation Graph</b></div>
                                 <React.Fragment>
-                                  <div className="subgraph-container">
-                                    <EntityGraph graphData={docData} entities={entities} />
-                                  </div>
                                   <div className="graph-container">
                                     {/* <Graph graphData={docData} entities={entities} /> */}
                                     <EntityGraph graphData={docData} />
