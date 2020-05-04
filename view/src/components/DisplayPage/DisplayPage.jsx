@@ -46,14 +46,15 @@ class DisplayPage extends Component {
             tokensToHighlight,      // array of tokens to highlight
             textEntities,           // plain text highlight entities
             title,
-            author,
+            authors,
             doi,
-            keywords;
+            keywords,
+            abstract;
 
         const kwlink = [];
 
         if (docData) {
-           ({ text } = docData);
+           ({ text, title, authors, doi, keywords, abstract } = docData);
 
            for (const [index, value] of keywords.entries()) {
              kwlink.push(<a href="/search">{value}</a>);
@@ -165,7 +166,7 @@ class DisplayPage extends Component {
                         </div>
                         <div className="report-info">
                           <div className="report-info-row">
-                            <div className="report-info-item"><b>Authors: </b>{author}</div>
+                            <div className="report-info-item"><b>Authors: </b>{authors}</div>
                             <div className="report-info-item"><b>Date Published: </b>{pub_date}</div>
                             <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
                             <div className="report-info-item"><b>DOI: </b>{doi}</div>
@@ -181,10 +182,17 @@ class DisplayPage extends Component {
 
                         </div>
 
+                        {abstract &&
+                          <div className="report-section" id="abstract">
+                            <div className="report-section-title"><b>Abstract</b></div>
+                            <div className="report-content">{abstract}</div>
+                          </div>}
+
                         <div className="report-section" id="case_report">
                           <div className="report-section-title"><b>Case Presentation</b></div>
                           <div className="report-content">{text}</div>
                         </div>
+
                         {docData &&
                           <div className="report-section" id="annotated">
                               <div calssName="report-section-title"><b>Annotated Report</b></div>
