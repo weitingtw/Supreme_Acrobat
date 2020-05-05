@@ -163,7 +163,7 @@ class DisplayPage extends Component {
                   <div className="display-page">
                     <div className="banner">
                         <React.Fragment>
-                          <img src={ucla_logo} alt="uclalogo" width="204.8" height="67.2" />
+                          <img src={ucla_logo} alt="uclalogo" width="184.3" height="60.5" />
                           <LoginModal />
                         </React.Fragment>
                       </div>
