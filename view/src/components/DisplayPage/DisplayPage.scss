@@ -60,12 +60,12 @@ $display-section-border: 2px solid rgba($blue, 0.8);
     }
   }
 
-  .report-info{
+  .report-info {
     width: 100%;
     display: flex;
     justify-content: space-between;
 
-    .report-info-row,{
+    .report-info-row {
       margin-top: 10px;
       margin-bottom: 10px;
 
@@ -104,12 +104,12 @@ $display-section-border: 2px solid rgba($blue, 0.8);
   .subgraph-container {
     position: relative;
     width: 80%;
-    max-width: 500px;
+    max-width: 200px;
     margin: auto;
     border: 1px solid #dedede;
   }
 
-  .brat-container{
+  .brat-container {
     width: 100%;
   }
 }

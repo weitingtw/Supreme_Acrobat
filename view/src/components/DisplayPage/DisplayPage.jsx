@@ -40,25 +40,24 @@ class DisplayPage extends Component {
     // let keywords = ["Cough", "Fever", "Cold Sympotom"];
     console.log("docs~");
     console.log(docData);
-    let text,                   // whole plain text of the case report
-        entities,               // entities for graph
-        tokensToHighlight,      // array of tokens to highlight
-        textEntities,           // plain text highlight entities
-        title,
-        authors,
-        doi,
-        keywords,
-        abstract;
+    let text, // whole plain text of the case report
+      entities, // entities for graph
+      tokensToHighlight, // array of tokens to highlight
+      textEntities, // plain text highlight entities
+      title,
+      authors,
+      doi,
+      keywords,
+      abstract;
 
     const kwlink = [];
 
     if (docData) {
-       ({ text, title, authors, doi, keywords, abstract } = docData);
-       for (const [index, value] of keywords.entries()) {
-          kwlink.push(<a href="/search">{value}</a>);
-          if(index < keywords.length - 1)
-            kwlink.push(", ");
-        }
+      ({ text, title, authors, doi, keywords, abstract } = docData);
+      for (const [index, value] of keywords.entries()) {
+        kwlink.push(<a href="/search">{value}</a>);
+        if (index < keywords.length - 1) kwlink.push(", ");
+      }
     }
 
     entities = [];
@@ -113,9 +112,9 @@ class DisplayPage extends Component {
         padding: "16px",
         fontSize: "24px",
       },
-      e:{
+      e: {
         color: "#f49541",
-      }
+      },
     };
 
     const sidebar_content = (
@@ -162,26 +161,48 @@ class DisplayPage extends Component {
                 >
                   <div className="display-page">
                     <div className="banner">
-                        <React.Fragment>
-                          <img src={ucla_logo} alt="uclalogo" width="184.3" height="60.5" />
-                          <LoginModal />
-                        </React.Fragment>
-                      </div>
+                      <React.Fragment>
+                        <img
+                          src={ucla_logo}
+                          alt="uclalogo"
+                          width="184.3"
+                          height="60.5"
+                        />
+                        <LoginModal />
+                      </React.Fragment>
+                    </div>
                     <div className="brat-intro" id="title">
                       <FontAwesomeIcon icon={["fal", "file-alt"]} />
                       {title}
                     </div>
                     <div className="report-info">
                       <div className="report-info-row">
-                        <div className="report-info-item"><b>Authors: </b>{authors}</div>
-                        <div className="report-info-item"><b>Case Report ID: </b>{id}</div>
-                        <div className="report-info-item"><b>DOI: </b>{doi}</div>
-                        <div className="report-info-item"><b>Keywords: </b>{kwlink}</div>
+                        <div className="report-info-item">
+                          <b>Authors: </b>
+                          {authors}
+                        </div>
+                        <div className="report-info-item">
+                          <b>Case Report ID: </b>
+                          {id}
+                        </div>
+                        <div className="report-info-item">
+                          <b>DOI: </b>
+                          {doi}
+                        </div>
+                        <div className="report-info-item">
+                          <b>Keywords: </b>
+                          {kwlink}
+                        </div>
                       </div>
                       <div className="report-info-row">
                         <React.Fragment>
                           <div className="subgraph-container">
-                            <EntityGraph graphData={docData} entities={entities} />
+                            <EntityGraph
+                              graphData={docData}
+                              entities={entities}
+                              viewBoxWidth={200}
+                              viewBoxHeight={200}
+                            />
                           </div>
                         </React.Fragment>
                       </div>
@@ -189,9 +210,12 @@ class DisplayPage extends Component {
 
                     {abstract && (
                       <div className="report-section" id="abstract">
-                        <div className="report-section-title"><b>Abstract</b></div>
+                        <div className="report-section-title">
+                          <b>Abstract</b>
+                        </div>
                         <div className="report-content">{abstract}</div>
-                      </div>)}
+                      </div>
+                    )}
 
                     <div className="report-section" id="case_report">
                       <div className="report-section-title">
