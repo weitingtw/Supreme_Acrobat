@@ -48,7 +48,7 @@ class DisplayPage extends Component {
         authors,
         doi,
         keywords,
-        abstract;
+        abstract; // abstract of document
 
     const kwlink = [];
 
