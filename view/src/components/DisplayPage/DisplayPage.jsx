@@ -51,12 +51,21 @@ class DisplayPage extends Component {
       abstract;
 
     const kwlink = [];
+    const author_li = [];
 
     if (docData) {
       ({ text, title, authors, doi, keywords, abstract } = docData);
+      //console.log(keywords);
+      keywords = keywords[0].split(';');
       for (const [index, value] of keywords.entries()) {
         kwlink.push(<a href="/search">{value}</a>);
         if (index < keywords.length - 1) kwlink.push(", ");
+      }
+
+      authors = authors[0].split(',');
+      for (const [index, value] of authors.entries()) {
+        author_li.push(<a href="/search">{value}</a>);
+        if (index < authors.length - 1) author_li.push(", ");
       }
     }
 
@@ -179,10 +188,10 @@ class DisplayPage extends Component {
                       <div className="report-info-row">
                         <div className="report-info-item">
                           <b>Authors: </b>
-                          {authors}
+                          {author_li}
                         </div>
                         <div className="report-info-item">
-                          <b>Case Report ID: </b>
+                          <b>PubMed ID: </b>
                           {id}
                         </div>
                         <div className="report-info-item">
@@ -211,7 +220,7 @@ class DisplayPage extends Component {
                     {abstract && (
                       <div className="report-section" id="abstract">
                         <div className="report-section-title">
-                          <b>Abstract</b>
+                          <h5>Abstract</h5>
                         </div>
                         <div className="report-content">{abstract}</div>
                       </div>
@@ -219,14 +228,14 @@ class DisplayPage extends Component {
 
                     <div className="report-section" id="case_report">
                       <div className="report-section-title">
-                        <b>Case Presentation</b>
+                        <h5>Case Presentation</h5>
                       </div>
                       <div className="report-content">{text}</div>
                     </div>
                     {docData && (
                       <div className="report-section" id="annotated">
                         <div calssName="report-section-title">
-                          <b>Annotated Report</b>
+                          <h5>Annotated Report</h5>
                         </div>
                         <div className="brat-container">
                           <Brat docData={docData} />
@@ -237,7 +246,7 @@ class DisplayPage extends Component {
                     {docData && (
                       <div className="report-section" id="relation">
                         <div calssName="report-section-title">
-                          <b>Relation Graph</b>
+                          <h5>Relation Graph</h5>
                         </div>
                         <React.Fragment>
                           <div className="graph-container">
