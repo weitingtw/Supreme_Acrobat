@@ -49,14 +49,23 @@ filename="model_save.zip"
 curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" 
 curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o ${filename}
 
+fileid="1swWtUjFAh66GuYWM-ZJMsFYlmvgE6U2j"
+filename="roberta_few_labels.zip"
+curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" 
+curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o ${filename}
+
 rm cookie
 mv best-model.pt ML-API/entity/best-model.pt
 mv model_save.zip ML-API/relation/model_save.zip
+mv roberta_few_labels.zip ML-API/entity/roberta_few_labels.zip
 
 cd ML-API/relation
 unzip model_save
 rm model_save.zip
 
+cd ../entity 
+unzip roberta_few_labels.zip
+rm roberta_few_labels.zip
 
 echo "
 ------------------------------------

@@ -4,15 +4,11 @@ from flask import request
 from flask_restful import Api, Resource
 from nltk import word_tokenize
 
-from flair.data import Sentence
-from flair.models import SequenceTagger
-
+from transformers import BertTokenizer, BertConfig, RobertaTokenizer
+from transformers import BertForTokenClassification, RobertaForTokenClassification
+import torch
+import numpy as np
 from pprint import pprint
-
-
-def tokenize(s):
-    s = s.replace('-', ' - ')       # deal with special case 17-year-old
-    return ' '.join(word_tokenize(s))
 
 
 class Predict(Resource):
@@ -21,35 +17,36 @@ class Predict(Resource):
 
     def get(self):
         # prepare the query
+        text = 'O, B-Diagnostic_procedure, I-Diagnostic_procedure,B-Biological_structure, I-Biological_structure, B-Sign_symptom, I-Sign_symptom, B-Detailed_description, I-Detailed_description, B-Lab_value, I-Lab_value, B-Date, I-Date, B-Age, I-Age, B-Clinical_event, I-Clinical_event, B-Date, I-Date, B-Disease_disorder, I-Disease_disorder, B-Nonbiological_location, I-Nonbiological_location, B-Severity, I-Severity, B-Sex, B-Therapeutic_procedure, I-Therapeutic_procedure'
+        tag_values =  text.split(',')
         params = request.args
         query = params['query']
-        query = [tokenize(q) for q in query.split('\\n')]
+        query = "a boy has fever "
+        tokenized_sentence = tokenizer.encode(query)
+        input_ids = torch.tensor([tokenized_sentence]).cuda()
 
+        with torch.no_grad():
+            output = model(input_ids)
+            label_indices = np.argmax(output[0].to('cpu').numpy(), axis=2)
         # predict
-        all_tokens = []
-        all_entities = []
-        for q in query:
-            sen = Sentence(q)
+        # join bpe split tokens
+        tokens = tokenizer.convert_ids_to_tokens(input_ids.to('cpu').numpy()[0])
+        new_tokens, new_labels = [], []
+        for token, label_idx in zip(tokens, label_indices[0]):
+            if token.startswith("##"):
+                new_tokens[-1] = new_tokens[-1] + token[2:]
+            else:
+                new_labels.append(tag_values[label_idx])
+                new_tokens.append(token)
 
-            self.model.predict(sen)
-            tokens = []
-            entity_types = []
-            for t in sen.tokens:
-                token = t.text
-                entity = t.tags['ner'].value
-                tokens.append(token)
-                entity_types.append(entity)
 
-            all_tokens.append(tokens)
-            all_entities.append(entity_types)
-
-        # pprint(all_tokens)
-        # pprint(all_entities)
+        pprint(new_labels)
+        pprint(new_tokens)
 
         # preparing a response object and storing the model's predictions
         response = {
-            'tokens': all_tokens,
-            'entity_types': all_entities
+            'tokens': new_tokens,
+            'entity_types': new_labels
         }
 
         # sending our response object back as json
@@ -57,7 +54,11 @@ class Predict(Resource):
 
 
 if __name__ == '__main__':
-    model = SequenceTagger.load_from_file('best-model.pt')
+    device = torch.device("cpu")
+    output_dir = './roberta_few_labels/'
+    tokenizer =  RobertaTokenizer.from_pretrained(output_dir)
+    model = RobertaForTokenClassification.from_pretrained(output_dir)
+    model.to(device)
     
     app = flask.Flask(__name__)
     api = Api(app)
