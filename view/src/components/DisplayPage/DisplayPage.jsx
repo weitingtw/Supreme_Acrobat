@@ -33,11 +33,6 @@ class DisplayPage extends Component {
   render() {
     const { id } = this.props.match.params;
     const { docData } = this.state;
-    // let title = "A cold sympotom in a 57-year old patient";
-    // let pub_date = "2019-03-24";
-    // let doi = "10.1159/000330840";
-    // let author = "Robert D. Rebeck, Isabel Ranges, Lebron D. Franklyn";
-    // let keywords = ["Cough", "Fever", "Cold Sympotom"];
     console.log("docs~");
     console.log(docData);
     let text, // whole plain text of the case report
@@ -49,7 +44,7 @@ class DisplayPage extends Component {
       doi,
       keywords,
       abstract;
-
+    const base_link = "https://www.ncbi.nlm.nih.gov/pubmed/?term=";
     const kwlink = [];
     const author_li = [];
 
@@ -57,14 +52,15 @@ class DisplayPage extends Component {
       ({ text, title, authors, doi, keywords, abstract } = docData);
       //console.log(keywords);
       keywords = keywords[0].split(';');
+
       for (const [index, value] of keywords.entries()) {
-        kwlink.push(<a href="/search">{value}</a>);
+        kwlink.push(<a href={base_link+value}>{value}</a>);
         if (index < keywords.length - 1) kwlink.push(", ");
       }
 
       authors = authors[0].split(',');
       for (const [index, value] of authors.entries()) {
-        author_li.push(<a href="/search">{value}</a>);
+        author_li.push(<a href={base_link+value}>{value}</a>);
         if (index < authors.length - 1) author_li.push(", ");
       }
     }
@@ -185,25 +181,27 @@ class DisplayPage extends Component {
                       {title}
                     </div>
                     <div className="report-info">
-                      <div className="report-info-row">
-                        <div className="report-info-item">
-                          <b>Authors: </b>
-                          {author_li}
-                        </div>
-                        <div className="report-info-item">
-                          <b>PubMed ID: </b>
-                          {id}
-                        </div>
-                        <div className="report-info-item">
-                          <b>DOI: </b>
-                          {doi}
-                        </div>
-                        <div className="report-info-item">
-                          <b>Keywords: </b>
-                          {kwlink}
-                        </div>
+                      <div className="report-info-block">
+                        <table className="">
+                          <tr className="table-row">
+                            <th className="table-title">Authors:</th>
+                            <th className="table-content">{author_li}</th>
+                          </tr>
+                          <tr className="table-row">
+                            <td className="table-title">PubMed ID:</td>
+                            <td className="table-content"><a href={base_link+id}>{id}</a></td>
+                          </tr>
+                          <tr className="table-row">
+                            <td className="table-title">DOI:</td>
+                            <td className="table-content">{doi}</td>
+                          </tr>
+                          <tr className="table-row">
+                            <td className="table-title">Keywords:</td>
+                            <td className="table-content">{kwlink}</td>
+                          </tr>
+                        </table>
                       </div>
-                      <div className="report-info-row">
+                      <div className="report-info-block">
                         <React.Fragment>
                           <div className="subgraph-container">
                             <EntityGraph
