@@ -13,11 +13,11 @@ class Predict(Resource):
     def __init__(self, model):
         self.model = model
 
-        f = open('./roberta_few_labels/tags_vals.pckl', 'rb')
+        f = open('./roberta/tags_vals.pckl', 'rb')
         self.tags_vals = pickle.load(f)
         f.close()
 
-        f = open('./roberta_few_labels/tag2idx.pckl', 'rb')
+        f = open('./roberta/tag2idx.pckl', 'rb')
         tag2idx = pickle.load(f)
         f.close()
         self.idx2tag = dict((v,k) for k, v in tag2idx.items())
@@ -75,7 +75,7 @@ class Predict(Resource):
 
 if __name__ == '__main__':
     device = torch.device("cpu")
-    output_dir = './roberta_few_labels/'
+    output_dir = './roberta/'
     tokenizer =  RobertaTokenizer.from_pretrained(output_dir)
     model = RobertaForTokenClassification.from_pretrained(output_dir)
     model.to(device)
