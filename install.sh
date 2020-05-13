@@ -50,7 +50,7 @@ curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}
 curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o ${filename}
 
 rm cookie
-mv roberta.zip ML-API/entity/best-model.pt
+mv roberta.zip ML-API/entity/roberta.zip
 mv model_save.zip ML-API/relation/model_save.zip
 
 cd ML-API/relation
