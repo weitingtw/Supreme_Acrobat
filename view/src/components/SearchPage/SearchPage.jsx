@@ -8,9 +8,9 @@ import { combineMultiWordEntity, allQueriesToTextEntities } from '../../utils';
 import { getHost } from '../../utils';
 import RelationSearchBar from '../RelationSearchBar/RelationSearchBar';
 
-import {Input, Layout} from 'antd';
-const {Search} = Input;
+import {Card, Layout, Form, Button, Row, Input} from 'antd';
 const { Header, Content } = Layout;
+
 
 
 class SearchPage extends Component {
@@ -72,12 +72,11 @@ class SearchPage extends Component {
                         previewText: info._source.content
                     }
                 })
-
                 this.setState({ results })
             })
             .catch(err => console.log(err));
     }
-
+    // this one is being used
     handleSearch3 = () => {
         const { textEntities, queryText, allQueries } = this.state;
         const queryObj = {
@@ -199,16 +198,18 @@ class SearchPage extends Component {
     render() {
         const { results, textEntities, allQueries } = this.state;
         console.log(textEntities.concat(allQueriesToTextEntities(allQueries)));
+        console.log("results!!!!");
         console.log(results)
         console.log(allQueries)
         return (
             <div id='searchPage'>
+              <Layout>
+                <Header style={{ backgroundColor: 'white', display: 'flex', justifyContent: 'flex-end'}}>
+                  <LoginModal />
+                </Header>
+                <Content style={{ backgroundColor: 'white'}}>
 
-                <Layout>
-                  <Header style={{ backgroundColor: 'white', display: 'flex', justifyContent: 'flex-end'}}>
-                    <LoginModal />
-                  </Header>
-                  <Content style={{ backgroundColor: 'white'}}>
+
                     <div id='top-bar-container'>
                         <TopBar
                             textEntities={textEntities}
@@ -232,9 +233,15 @@ class SearchPage extends Component {
                             handleDeleteRow={this.handleDeleteRow2}
                         />
                     </div>
+                    {
+                      // results.length > 0 && (
+                      //   <div id='search-result-container'>
+                      //     {resultList}
+                      //   </div>
+                      // )
+                    }
 
-
-                    {results.length > 0 &&
+                     {results.length > 0 &&
                         <div id='search-result-container'>
                             <SearchResults
                                 results={results}
