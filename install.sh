@@ -39,8 +39,8 @@ echo "
 ฿ retrieving ML Models ...                                                                                        
 -------------------------------------"
 
-fileid="16Neexi-QyX-WettcN6Oc6mNNuK4NlsIr"
-filename="roberta.zip"
+fileid="1kQExz-YngdZU8OhRnOhEstlEP2vbGvQZ"
+filename="best-model.pt"
 curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}"
 curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o ${filename}
 
@@ -50,18 +50,12 @@ curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}
 curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o ${filename}
 
 rm cookie
-mv roberta.zip ML-API/entity/roberta.zip
+mv best-model.pt ML-API/entity/best-model.pt
 mv model_save.zip ML-API/relation/model_save.zip
 
 cd ML-API/relation
 unzip model_save
 rm model_save.zip
-
-cd ../entity/
-unzip roberta
-rm roberta.zip
-
-
 
 echo "
 ------------------------------------

@@ -24,23 +24,22 @@ class SearchPage extends Component {
     }
 
     handleTyping = async (queryText) => {
-        const _isLetter = c => /^[a-zA-Z()]$/.test(c);
-        if (_isLetter(queryText.charAt(queryText.length - 1))) { return }
-
-        // if last typing is not alphabet
         // go over crf API to get entities
-
+        console.log(queryText)
         axios.post(getHost() + "/api/getPrediction", {
             data: { query: queryText }
         })
             .then(response => {
+                console.log(response)
                 const { data: { entity_types, tokens } } = response;
                 const textEntities = combineMultiWordEntity(entity_types, tokens);
-
+                console.log(textEntities)
                 // update state to save current entity tokens
                 this.setState({
                     textEntities,
                     queryText
+                }, () => {
+                    console.log(this.state);
                 });
             })
             .catch(error => { console.log(error); });
