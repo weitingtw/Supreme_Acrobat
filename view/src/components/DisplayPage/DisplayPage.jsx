@@ -44,7 +44,7 @@ class DisplayPage extends Component {
       doi,
       keywords,
       abstract;
-    const base_link = "https://www.ncbi.nlm.nih.gov/pubmed/?term=";
+    const base_link = "https://pubmed.ncbi.nlm.nih.gov/?term=";
     const kwlink = [];
     const author_li = [];
 
@@ -60,7 +60,7 @@ class DisplayPage extends Component {
 
       authors = authors[0].split(',');
       for (const [index, value] of authors.entries()) {
-        author_li.push(<a href={base_link+value}>{value}</a>);
+        author_li.push(<a href={base_link+value+"[Author]"}>{value}</a>);
         if (index < authors.length - 1) author_li.push(", ");
       }
     }
@@ -193,7 +193,7 @@ class DisplayPage extends Component {
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">DOI:</td>
-                            <td className="table-content">{doi}</td>
+                            <td className="table-content"><a href={"https://doi.org/"+doi}>{doi}</a></td>
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">Keywords:</td>
