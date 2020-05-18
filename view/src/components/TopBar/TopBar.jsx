@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import './TopBar.css';
 import {Form, Button, Row, Input} from 'antd';
 const Search = Input.Search;
+
 /*
     Component that contains the search bar and
     the query builder under the search bar
@@ -47,12 +48,13 @@ class TopBar extends Component {
 
                 <div id='search-bar-container'>
                     <SearchBar
+                        style={{display: 'inline-block'}}
                         handleSearch={this.handleSearch}
                         handleTyping={this.handleTyping}
                     />
                 </div>
 
-                <a onClick={this.toggle}>{this.state.expand_name}</a>
+                <a id="search-bar-advanced" onClick={this.toggle}>{this.state.expand_name}</a>
 
                 {this.state.expand && <div id='query-builder-container'>
                     <QueryBuilder

@@ -1,3 +1,33 @@
-@import '~antd/dist/antd.css';
-.search-bar-button-style{border:1px solid rgba(1,136,203,0.8);color:white;background:#0188cb;cursor:pointer}.search-bar-button-style:hover{background-color:#1278d1}.switch-mode-button-style{border:2px solid rgba(1,136,203,0.8);cursor:pointer;color:#0188cb;-webkit-transition-duration:.2s;transition-duration:.2s}.switch-mode-button-style:hover{background-color:#0188cb;color:white}#search-result-container{position:relative;width:60%;margin:auto}#top-bar-container{position:relative}
+/* --------------- Colors --------------- */
+/* --------------- Lengths --------------- */
+/* --------------- Query Panel --------------- */
+.search-bar-button-style {
+  border: 1px solid rgba(1, 136, 203, 0.8);
+  color: white;
+  background: #0188cb;
+  cursor: pointer; }
+  .search-bar-button-style:hover {
+    background-color: #1278d1; }
+
+.switch-mode-button-style {
+  border: 2px solid rgba(1, 136, 203, 0.8);
+  cursor: pointer;
+  color: #0188cb;
+  -webkit-transition-duration: 0.2s;
+  /* Safari */
+  transition-duration: 0.2s; }
+  .switch-mode-button-style:hover {
+    background-color: #0188cb;
+    color: white; }
+
+#search-result-container {
+  position: relative;
+  width: 60%;
+  margin: auto; }
+
+#top-bar-container {
+  position: relative;
+  padding-left: 25%;
+  padding-right: 25%; }
+
 /*# sourceMappingURL=SearchPage.css.map */

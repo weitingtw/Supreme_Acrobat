@@ -9,26 +9,24 @@
     text-align: center;
     // border-bottom: 1px solid rgba(grey, 0.3);
 
-     a { 
-        display: inline-block;
-        text-decoration: none; 
-    }
+    #search-bar-advanced {
+        float:left;
+        text-decoration: none;
+        color: #1890FF
 
-    #title {
-        margin-right: 10%;
     }
 
     #search-bar-container, #query-builder-container {
         position: relative;
-        width: $search-page-content-width;
         margin: auto;
     }
 
-    #search-bar-container { height: $search-bar-height; }
+    #search-bar-container {
+    }
 
 
     $title-width: 15%;
-    #title { 
+    #title {
         color: $blue;
         font-size: 58px;
 

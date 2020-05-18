@@ -7,7 +7,7 @@ import './SearchPage.css';
 import { combineMultiWordEntity, allQueriesToTextEntities } from '../../utils';
 import { getHost } from '../../utils';
 import RelationSearchBar from '../RelationSearchBar/RelationSearchBar';
-
+import 'antd/dist/antd.css';
 import {Card, Layout, Form, Button, Row, Input} from 'antd';
 const { Header, Content } = Layout;
 

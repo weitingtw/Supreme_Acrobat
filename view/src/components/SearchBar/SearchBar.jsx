@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './SearchBar.css';
+import {Input} from 'antd';
+import { BackTop } from 'antd';
+
+
+const {Search} = Input;
 
 
 
@@ -30,23 +35,34 @@ class SearchBar extends Component {
         return (
             <div id='search-section'>
                 <div id='searchBar'>
-                    <input
-                        ref="searchBar"
-                        type="text"
-                        id="searchText"
-                        placeholder="search in over 1000000+ medical case reports..."
-                        onChange={this.handleTyping}
-                        onKeyDown={this.handleKeyDown}
-                    />
-                    <button
-                        type="submit"
-                        id="searchButton"
-                        onClick={this.handleSearch}
-                    >
-                        <FontAwesomeIcon icon={['fas', 'search']} />
-                    </button>
+                    <Search
+                      placeholder="search in over 1000000+ medical case reports..."
+                      onChange={this.handleTyping}
+                      onKeyDown={this.handleKeyDown}
+                      onSearch={this.handleSearch}
+                      enterButton
+                      />
+                    {
+                    //   <input
+                    //     ref="searchBar"
+                    //     type="text"
+                    //     id="searchText"
+                    //     placeholder="search in over 1000000+ medical case reports..."
+                    //     onChange={this.handleTyping}
+                    //     onKeyDown={this.handleKeyDown}
+                    // />
+                    // <button
+                    //     type="submit"
+                    //     id="searchButton"
+                    //     onClick={this.handleSearch}
+                    // >
+                    //     <FontAwesomeIcon icon={['fas', 'search']} />
+                    // </button>
+                  }
                 </div>
-
+                <div>
+                  <BackTop />
+                </div>
             </div>);
     }
 }
