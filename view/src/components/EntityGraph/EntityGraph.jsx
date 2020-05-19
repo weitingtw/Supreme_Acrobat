@@ -273,6 +273,11 @@ class EntityGraph extends Component {
         let content = `<span>${
           d.type != "OVERLAP" ? `${d.text} (${d.type})` : `Overlap (${d.id})`
         }</span>`;
+
+        if (d.attribute) {
+          content += `<br/><span>${d.attribute.type}: ${d.attribute.desc}</span>`;
+        }
+
         let hasModifiers = false;
 
         adjList[d.id].forEach((neighborID) => {
