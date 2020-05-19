@@ -142,6 +142,9 @@ class EntityGraph extends Component {
         .append("line")
         .attr("class", "link")
         .attr("stroke", (d) => (d.label === "OVERLAP" ? "#86c5da" : "#555"))
+        .attr("stroke-dasharray", (d) =>
+          d.label === "MODIFY" ? "3, 4" : "none"
+        )
         .attr("stroke-opacity", 0.8)
         .attr("marker-end", (d) =>
           d.target.type === "OVERLAP" ? "" : "url(#arrow)"

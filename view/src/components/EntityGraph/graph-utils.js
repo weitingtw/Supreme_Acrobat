@@ -130,7 +130,7 @@ export const createGraph = (graphData) => {
         edges.push({
           source: sourceID,
           target: overlapID,
-          type: "OVERLAP",
+          label: "OVERLAP",
         });
 
         // if not already have node created, create a node of the overlap
@@ -175,7 +175,7 @@ export const createGraph = (graphData) => {
         edges.push({
           source: targetID,
           target: overlapID,
-          type: "OVERLAP",
+          label: "OVERLAP",
         });
         if (!nodeSet.has(overlapID)) {
           let nOverlaps = graphData.equivs.length - 1;
