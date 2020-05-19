@@ -79,6 +79,18 @@ export const createGraph = (graphData) => {
   }
 
   /**
+   * Map events to attributes
+   * */
+  const eventIDToAttribute = {};
+  for (let i = 0; i < graphData.attributes.length; i++) {
+    let type = graphData.attributes[i][1];
+    let eventID = graphData.attributes[i][2];
+    let desc = graphData.attributes[i][3];
+
+    eventIDToAttribute[eventID] = { type: type, desc: desc };
+  }
+
+  /**
    * Map nodes to overlaps
    * */
   const nodeIDToOverLapID = {};
@@ -89,7 +101,17 @@ export const createGraph = (graphData) => {
   });
 
   /**
-   * Create edges and nodes
+   * Map nodes to attributes
+   * */
+  const nodeIDToAttribute = {};
+  Object.keys(eventIDToAttribute).forEach((eventID) => {
+    let nodeID = eventIDToNodeID[eventID];
+    let attribute = eventIDToAttribute[eventID];
+    nodeIDToAttribute[nodeID] = attribute;
+  });
+
+  /**
+   * Create edges and nodes from entity-entity relations
    */
   const nodeSet = new Set();
   let nodeText;
@@ -108,15 +130,21 @@ export const createGraph = (graphData) => {
       : eventID2;
 
     let overlapID;
+    let attribute;
     if (!nodeSet.has(sourceID)) {
       // get text
       nodeText = graphData.text.substring(
         nodeIDToTextIndex[sourceID][0],
         nodeIDToTextIndex[sourceID][1]
       );
-      //   get overlap
+      //   get overlap if exist
       overlapID = nodeIDToOverLapID[sourceID]
         ? nodeIDToOverLapID[sourceID]
+        : undefined;
+
+      // get attribute if exist
+      attribute = nodeIDToAttribute[sourceID]
+        ? nodeIDToAttribute[sourceID]
         : undefined;
 
       nodes.push({
@@ -124,6 +152,7 @@ export const createGraph = (graphData) => {
         text: nodeText,
         type: nodeIDToNodeType[sourceID],
         overlap: overlapID,
+        attribute: attribute,
       });
       //   add overlap edge and node
       if (overlapID) {
@@ -147,6 +176,7 @@ export const createGraph = (graphData) => {
             text: text,
             type: "OVERLAP",
             overlap: undefined,
+            attribute: undefined,
           });
           nodeSet.add(overlapID);
         }
@@ -161,22 +191,33 @@ export const createGraph = (graphData) => {
         nodeIDToTextIndex[targetID][0],
         nodeIDToTextIndex[targetID][1]
       );
-      //   get overlap
-      overlapID = nodeIDToOverLapID[targetID];
+      //   get overlap if exist
+      overlapID = nodeIDToOverLapID[targetID]
+        ? nodeIDToOverLapID[targetID]
+        : undefined;
+
+      // get attribute if exist
+      attribute = nodeIDToAttribute[targetID]
+        ? nodeIDToAttribute[targetID]
+        : undefined;
 
       nodes.push({
         id: targetID,
         text: nodeText,
         type: nodeIDToNodeType[targetID],
         overlap: overlapID,
+        attribute: attribute,
       });
 
+      //   add overlap edge and node
       if (overlapID) {
         edges.push({
           source: targetID,
           target: overlapID,
           label: "OVERLAP",
         });
+
+        // if not already have node created, create a node of the overlap
         if (!nodeSet.has(overlapID)) {
           let nOverlaps = graphData.equivs.length - 1;
           let text = undefined;
@@ -191,6 +232,7 @@ export const createGraph = (graphData) => {
             text: text,
             type: "OVERLAP",
             overlap: undefined,
+            attribute: undefined,
           });
           nodeSet.add(overlapID);
         }
@@ -206,7 +248,7 @@ export const createGraph = (graphData) => {
     });
   }
 
-  // Add remaining nodes
+  // Add remaining nodes from overlap relations
   for (let i = 0; i < graphData.equivs.length; i++) {
     let overlapID = "OV" + i;
     for (let j = 2; j < graphData.equivs[i].length; j++) {
@@ -222,11 +264,17 @@ export const createGraph = (graphData) => {
           nodeIDToTextIndex[sourceID][1]
         );
 
+        // get attribute if exist
+        let attribute = nodeIDToAttribute[sourceID]
+          ? nodeIDToAttribute[sourceID]
+          : undefined;
+
         nodes.push({
           id: sourceID,
           text: nodeText,
           type: nodeIDToNodeType[sourceID],
           overlap: overlapID,
+          attribute: attribute,
         });
       }
       edges.push({
