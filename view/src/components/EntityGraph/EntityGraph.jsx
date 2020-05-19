@@ -176,15 +176,12 @@ class EntityGraph extends Component {
       let nodesG = svg.append("g").attr("id", "nodes");
 
       let node = nodesG
-        .selectAll("rect")
+        .selectAll("circle")
         .data(graph.nodes)
         .enter()
-        .append("rect")
+        .append("circle")
         .attr("class", (d) => `${d.id} node`)
-        .attr("rx", (d) => 2 * d.radius)
-        .attr("ry", (d) => 2 * d.radius)
-        .attr("width", (d) => 2 * d.radius)
-        .attr("height", (d) => 2 * d.radius)
+        .attr("r", (d) => d.radius)
         .attr("fill", (d) => colors[d.type])
         .attr("stroke", "#000")
         .attr("stroke-width", 0.7)
@@ -241,7 +238,7 @@ class EntityGraph extends Component {
 
         nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y + 2);
 
-        node.attr("x", (d) => d.x - d.radius).attr("y", (d) => d.y - d.radius);
+        node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
       }
       function zoomed() {
         node.attr("transform", d3.event.transform);
