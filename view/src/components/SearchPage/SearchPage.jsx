@@ -21,16 +21,23 @@ class SearchPage extends Component {
             //relations: ['BEFORE']
             //}
         ],
+        timeout: 0
     }
 
     handleTyping = async (queryText) => {
-        // go over crf API to get entities
-        console.log(queryText)
+        if (this.state.timeout) {
+            clearTimeout(this.state.timeout);
+        }
+        this.state.timeout = setTimeout(() => {
+            this.late_search(queryText);
+        }, 2000);
+    }
+
+    late_search = (queryText) => {
         axios.post(getHost() + "/api/getPrediction", {
             data: { query: queryText }
         })
             .then(response => {
-                console.log(response)
                 const { data: { entity_types, tokens } } = response;
                 const textEntities = combineMultiWordEntity(entity_types, tokens);
                 console.log(textEntities)
@@ -47,7 +54,6 @@ class SearchPage extends Component {
         this.setState({
             allQueries: []
         })
-
     }
 
     handleSearch = () => {
