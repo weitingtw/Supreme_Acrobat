@@ -83,7 +83,7 @@ class EntityGraph extends Component {
     const adjList = graph.getAdjacencyList();
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
     graph.nodes.forEach((n) => {
-      n.radius = n.type === "OVERLAP" ? 6 : radiusScaler(n.indegree);
+      n.radius = n.type === "OVERLAP" ? 2 : radiusScaler(n.indegree);
     });
     let ref = this.ref.current;
     let viz = d3.select(ref);
@@ -93,7 +93,15 @@ class EntityGraph extends Component {
     let simulation = d3
       .forceSimulation()
       .force("charge", d3.forceManyBody().strength(-200).distanceMax(150))
-      .force("link", d3.forceLink(graph.edges).distance(15).strength(1))
+      .force(
+        "link",
+        d3
+          .forceLink(graph.edges)
+          .distance((d) => {
+            return 15;
+          })
+          .strength(1)
+      )
       .force(
         "collide",
         d3.forceCollide().radius((d) => radiusScaler(d.indegree))
@@ -141,7 +149,11 @@ class EntityGraph extends Component {
         .enter()
         .append("line")
         .attr("class", "link")
-        .attr("stroke", (d) => (d.label === "OVERLAP" ? "#86c5da" : "#555"))
+        .attr("stroke", (d) => (d.label === "OVERLAP" ? "#7da2ff" : "#555"))
+        .attr("stroke-width", (d) => (d.label === "OVERLAP" ? 1.5 : 1))
+        .attr("stroke-dasharray", (d) =>
+          d.label === "MODIFY" ? "3, 4" : "none"
+        )
         .attr("stroke-opacity", 0.8)
         .attr("marker-end", (d) =>
           d.target.type === "OVERLAP" ? "" : "url(#arrow)"
@@ -164,15 +176,12 @@ class EntityGraph extends Component {
       let nodesG = svg.append("g").attr("id", "nodes");
 
       let node = nodesG
-        .selectAll("rect")
+        .selectAll("circle")
         .data(graph.nodes)
         .enter()
-        .append("rect")
+        .append("circle")
         .attr("class", (d) => `${d.id} node`)
-        .attr("rx", (d) => (d.type === "OVERLAP" ? 1 : 2 * d.radius))
-        .attr("ry", (d) => (d.type === "OVERLAP" ? 1 : 2 * d.radius))
-        .attr("width", (d) => 2 * d.radius)
-        .attr("height", (d) => 2 * d.radius)
+        .attr("r", (d) => d.radius)
         .attr("fill", (d) => colors[d.type])
         .attr("stroke", "#000")
         .attr("stroke-width", 0.7)
@@ -229,7 +238,7 @@ class EntityGraph extends Component {
 
         nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y + 2);
 
-        node.attr("x", (d) => d.x - d.radius).attr("y", (d) => d.y - d.radius);
+        node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
       }
       function zoomed() {
         node.attr("transform", d3.event.transform);
@@ -270,6 +279,11 @@ class EntityGraph extends Component {
         let content = `<span>${
           d.type != "OVERLAP" ? `${d.text} (${d.type})` : `Overlap (${d.id})`
         }</span>`;
+
+        if (d.attribute) {
+          content += `<br/><span>${d.attribute.type}: ${d.attribute.desc}</span>`;
+        }
+
         let hasModifiers = false;
 
         adjList[d.id].forEach((neighborID) => {

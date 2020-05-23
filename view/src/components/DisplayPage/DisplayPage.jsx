@@ -44,23 +44,35 @@ class DisplayPage extends Component {
       doi,
       keywords,
       abstract;
-    const base_link = "https://www.ncbi.nlm.nih.gov/pubmed/?term=";
+    const base_link = "https://pubmed.ncbi.nlm.nih.gov/?term=";
     const kwlink = [];
     const author_li = [];
+    const auth_aff_li = [];
 
     if (docData) {
       ({ text, title, authors, doi, keywords, abstract } = docData);
       //console.log(keywords);
-      keywords = keywords[0].split(';');
+      if (keywords[0]=="none") {
+        kwlink.push(<span>none.</span>);
+      }
+      else {
+        keywords = keywords[0].split(';');
 
-      for (const [index, value] of keywords.entries()) {
-        kwlink.push(<a href={base_link+value}>{value}</a>);
-        if (index < keywords.length - 1) kwlink.push(", ");
+        for (const [index, value] of keywords.entries()) {
+          kwlink.push(<a href={base_link+value}>{value}</a>);
+          if (index < keywords.length - 1) kwlink.push(", ");
+        }
       }
 
-      authors = authors[0].split(',');
+      authors = JSON.parse(authors[0]);
       for (const [index, value] of authors.entries()) {
-        author_li.push(<a href={base_link+value}>{value}</a>);
+        if(isNaN(value['id'])){
+          author_li.push(<a href={base_link+value+"[Author]"}>{value['name']}</a>);
+        }
+        else {
+          author_li.push(<span><a href={base_link+value+"[Author]"}>{value['name']}</a><sup>{value['id']}</sup></span>);
+          auth_aff_li.push(<dd className="aff-item">{value['id'] +". "+ value['aff']}</dd>)
+        }
         if (index < authors.length - 1) author_li.push(", ");
       }
     }
@@ -185,7 +197,9 @@ class DisplayPage extends Component {
                         <table className="">
                           <tr className="table-row">
                             <th className="table-title">Authors:</th>
-                            <th className="table-content">{author_li}</th>
+                            <th className="table-content">{author_li}
+                            <dl className="aff">{auth_aff_li}</dl>
+                            </th>
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">PubMed ID:</td>
@@ -193,7 +207,7 @@ class DisplayPage extends Component {
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">DOI:</td>
-                            <td className="table-content">{doi}</td>
+                            <td className="table-content"><a href={"https://doi.org/"+doi}>{doi}</a></td>
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">Keywords:</td>
