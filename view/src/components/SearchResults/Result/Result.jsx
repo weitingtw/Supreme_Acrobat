@@ -32,6 +32,8 @@ class Result extends Component {
         const {
             displayData: { id, textEntities, entities }
         } = this.props;
+        console.log("====================");
+        console.log(textEntities);
         const displayPath = `search/${id}`;
 
         return (

@@ -79,7 +79,6 @@ class DisplayPage extends Component {
     }
 
     entities = [];
-
     if (this.props.location.state) {
       ({ textEntities } = this.props.location.state);
       tokensToHighlight = textEntities.map((e) => e.label);
@@ -235,7 +234,12 @@ class DisplayPage extends Component {
                         <div className="report-section-title">
                           <h5>Abstract</h5>
                         </div>
-                        <div className="report-content">{abstract}</div>
+                        <div
+                          className="report-content"
+                          dangerouslySetInnerHTML={{
+                            __html: addHighLight(abstract, tokensToHighlight)
+                          }}
+                        />
                       </div>
                     )}
 
@@ -243,7 +247,12 @@ class DisplayPage extends Component {
                       <div className="report-section-title">
                         <h5>Case Presentation</h5>
                       </div>
-                      <div className="report-content">{text}</div>
+                      <div
+                        className="report-content"
+                        dangerouslySetInnerHTML={{
+                          __html: addHighLight(text, tokensToHighlight)
+                        }}
+                      />
                     </div>
                     {docData && (
                       <div className="report-section" id="annotated">

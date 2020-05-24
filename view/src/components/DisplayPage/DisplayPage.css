@@ -96,6 +96,10 @@
       margin: 20px 0 0 0; }
     .display-page .report-section .report-content {
       margin: 10px 0 20px 20px; }
+      .display-page .report-section .report-content .highLight {
+        background-color: rgba(244, 149, 65, 0.7);
+        padding: 1px 5px;
+        border-radius: 2px; }
   .display-page .graph-container {
     position: relative;
     width: 80%;
