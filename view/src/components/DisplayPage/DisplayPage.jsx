@@ -60,21 +60,22 @@ class DisplayPage extends Component {
 
         for (const [index, value] of keywords.entries()) {
           kwlink.push(<a href={base_link+value}>{value}</a>);
-          if (index < keywords.length - 1) kwlink.push(", ");
+          if (index < keywords.length - 1) kwlink.push("; ");
         }
+        kwlink.push(".")
       }
 
-      authors = JSON.parse(authors[0]);
       for (const [index, value] of authors.entries()) {
         if(isNaN(value['id'])){
-          author_li.push(<a href={base_link+value+"[Author]"}>{value['name']}</a>);
+          author_li.push(<a href={base_link+value['name']+"[Author]"}>{value['name']}</a>);
         }
         else {
-          author_li.push(<span><a href={base_link+value+"[Author]"}>{value['name']}</a><sup>{value['id']}</sup></span>);
+          author_li.push(<span><a href={base_link+value['name']+"[Author]"}>{value['name']}</a><sup>{value['id']}</sup></span>);
           auth_aff_li.push(<dd className="aff-item">{value['id'] +". "+ value['aff']}</dd>)
         }
         if (index < authors.length - 1) author_li.push(", ");
       }
+      author_li.push(".")
     }
 
     entities = [];
