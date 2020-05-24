@@ -105,6 +105,11 @@ $display-section-border: 2px solid rgba($blue, 0.8);
 
     .report-content {
       margin: 10px 0 20px 20px;
+      .highLight {
+        background-color: rgba($orange, 0.7);
+        padding: 1px 5px;
+        border-radius: 2px;
+      }
     }
   }
   .graph-container {

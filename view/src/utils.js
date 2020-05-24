@@ -762,17 +762,17 @@ export const combineMultiWordEntity = (entity_types, tokens) => {
         outer array is the whole article, inner array is each sentence
 
         return type: array of object
-        [{  
+        [{
             label: 'label1',
-            type: 'type1'  
+            type: 'type1'
         }, {
             label: 'label2',
-            type: 'type2' 
+            type: 'type2'
         },
-        ... 
+        ...
         {
             label: 'label3',
-            type: 'type3' 
+            type: 'type3'
         }]
 
                                                                       */
@@ -937,7 +937,26 @@ export const addHighLight = (text, tokens, className = "highLight") => {
     "without",
     "wont",
     "you",
-    "your"
+    "your",
+    ',',
+    '.',
+    ';',
+    ':',
+    '?',
+    '!',
+    '\"',
+    '\'',
+    '-',
+    '(',
+    ')',
+    "&",
+    '@',
+    '#',
+    '$',
+    '%',
+    '&',
+    '^',
+    '*'
   ];
 
   for (let t of tokens) {
@@ -946,7 +965,8 @@ export const addHighLight = (text, tokens, className = "highLight") => {
     }
     let highlight =
       " " + "<span class=" + className + ">" + t + "</span>" + " ";
-    text = text.replace(" " + t + " ", highlight);
+    var re = new RegExp(t,"g");
+    text = text.replace(re, highlight);
     console.log(text);
   }
 
@@ -962,17 +982,17 @@ export const allQueriesToTextEntities = allQueries => {
         }]
 
         return type: array of object
-        [{  
+        [{
             label: 'label1',
-            type: 'type1'  
+            type: 'type1'
         }, {
             label: 'label2',
-            type: 'type2' 
+            type: 'type2'
         },
-        ... 
+        ...
         {
             label: 'label3',
-            type: 'type3' 
+            type: 'type3'
         }]
     */
   const res = [];
