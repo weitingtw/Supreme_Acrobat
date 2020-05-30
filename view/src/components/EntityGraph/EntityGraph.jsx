@@ -1,7 +1,7 @@
 import React, { Component, createRef } from "react";
 import * as d3 from "d3";
 
-import { createGraph, Graph } from "./graph-utils";
+import { group2color, type2group, createGraph, Graph } from "./graph-utils";
 
 class EntityGraph extends Component {
   constructor(props) {
@@ -12,64 +12,8 @@ class EntityGraph extends Component {
       ? this.getSubGraph(graph, this.props.entities)
       : null;
 
-    const nodeColors = {
-      Age: "#EDC1F0", // Entities
-      Sex: "#EDC1F0",
-      Personal_background: "#EDC1F0",
-      Occupation: "#EDC1F0",
-      Weigh: "#EDC1F0",
-      Height: "#EDC1F0",
-      History: "ellipse",
-      Family_history: "#EDC1F0",
-      Family_member: "#EDC1F0",
-      Medication: "#2FCACA",
-      Lab: "#8f97ff",
-      Therapeutic_procedure: "#6495ed",
-      Diagnostic_procedure: "#9fdfff",
-      Sign_disease: "#f4eded",
-      Sign_symptom: "#DAE48B",
-      Disease_disorder: "#EB8315",
-      Activity: "#E07BAF",
-      Clinical_event: "#E07BAF",
-      Outcome: "#E07BAF",
-      Subject: "#ffd700",
-      Negation: "#ffd700",
-      Uncertainty: "#ffd700",
-      Condition: "#ffd700",
-      Quantitative_concept: "#ffd700",
-      Qualitative_concept: "#ffd700",
-      Other_entity: "#c1cdcd",
-      Other_event: "#c1cdcd",
-      Administration: "#ffd700",
-      Dosage: "#ffd700",
-      Frequency: "#ffd700",
-      Cause: "#ffd700",
-      Complication: "#ffd700",
-      Severity: "#ffd700",
-      Location: "#ffd700",
-      Result_outcome: "#ffd700",
-      Lab_value: "#A04AF0",
-      Biological_structure: "#ffd700",
-      Detail_description: "#ffd700",
-      Biological_attribute: "#ffd700",
-      Nonbiological_location: "#ffd700",
-      Detailed_description: "#ffd700",
-      Distance: "#ffd700",
-      Area: "#ffd700",
-      Volume: "#ffd700",
-      Mass: "#ffd700",
-      Color: "#ffd700",
-      Shape: "#ffd700",
-      Texture: "#ffd700",
-      Coreference: "#808000",
-      Date: "#8fee90",
-      Time: "#dbe48b",
-      Duration: "#8fee90",
-      OVERLAP: "#fff",
-    };
     this.state = {
       graph: this.props.entities ? subgraph : graph,
-      colors: nodeColors,
     };
 
     this.ref = createRef();
@@ -79,7 +23,7 @@ class EntityGraph extends Component {
   }
 
   createViz() {
-    const { graph, colors } = this.state;
+    const { graph } = this.state;
     const adjList = graph.getAdjacencyList();
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
     graph.nodes.forEach((n) => {
@@ -182,7 +126,7 @@ class EntityGraph extends Component {
         .append("circle")
         .attr("class", (d) => `${d.id} node`)
         .attr("r", (d) => d.radius)
-        .attr("fill", (d) => colors[d.type])
+        .attr("fill", (d) => group2color[type2group[d.type]])
         .attr("stroke", "#000")
         .attr("stroke-width", 0.7)
         .call(
