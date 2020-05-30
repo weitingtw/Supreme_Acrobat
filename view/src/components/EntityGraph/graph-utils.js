@@ -392,7 +392,7 @@ export const group2color = {
   "Sign/Symptom": "#DAE48B",
   "Disease/Disorder": "#EB8315",
   "Events, Activities, Outcomes": "#E07BAF",
-  Other: "#ffd700",
+  Other: "#ededed",
   Time: "#8fee90",
   Overlap: "#7da2ff",
 };
