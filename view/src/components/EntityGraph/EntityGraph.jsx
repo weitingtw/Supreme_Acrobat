@@ -95,7 +95,8 @@ class EntityGraph extends Component {
       .attr("r", 7)
       .style("fill", (d) => {
         return group2color[d];
-      });
+      })
+      .attr("stroke", "#000");
 
     legendNodes
       .selectAll("text")
