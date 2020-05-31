@@ -2,6 +2,7 @@ import React, { Component, createRef } from "react";
 import * as d3 from "d3";
 
 import { group2color, type2group, createGraph, Graph } from "./graph-utils";
+import "./EntityGraph.css";
 
 class EntityGraph extends Component {
   constructor(props) {
@@ -12,27 +13,118 @@ class EntityGraph extends Component {
       ? this.getSubGraph(graph, this.props.entities)
       : null;
 
+    let nodeGroups = subgraph
+      ? this.getNodeGroups(subgraph.nodes)
+      : this.getNodeGroups(graph.nodes);
+
     this.state = {
       graph: this.props.entities ? subgraph : graph,
+      nodeGroups: nodeGroups,
     };
 
     this.ref = createRef();
+    this.legendRef = createRef();
   }
   componentDidMount() {
     this.createViz();
+    this.createLegend();
+  }
+
+  createLegend() {
+    let { viewBoxWidth, viewBoxHeight } = this.props;
+    let keys = [...this.state.nodeGroups].sort();
+    let edges = ["Modify", "Overlap", "Other"];
+
+    let width = Math.min(
+      250,
+      55 + 8 * Math.max(...keys.map((key) => key.length))
+    );
+    console.log("keys" + keys);
+
+    let legendRef = this.legendRef.current;
+    let legend = d3.select(legendRef);
+    let legendSVG = legend
+      .append("svg")
+      .attr("width", width)
+      .attr("height", viewBoxHeight);
+
+    let legendEdges = legendSVG.append("g");
+    let legendNodes = legendSVG.append("g");
+
+    legendEdges
+      .selectAll("line")
+      .data(edges)
+      .enter()
+      .append("line")
+      .attr("x1", 20 - 7)
+      .attr("x2", 20 + 7)
+      .attr("y1", (d, i) => {
+        return 20 + i * 25;
+      })
+      .attr("y2", (d, i) => {
+        return 20 + i * 25;
+      })
+      .attr("stroke", (d) => (d === "Overlap" ? "#7da2ff" : "#555"))
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", (d) => (d === "Modify" ? "3, 3" : "none"));
+
+    legendEdges
+      .selectAll("line-text")
+      .data(edges)
+      .enter()
+      .append("text")
+      .attr("x", 40)
+      .attr("y", (d, i) => {
+        return 20 + i * 25;
+      })
+      .text((d) => {
+        return d;
+      })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle");
+
+    legendNodes
+      .selectAll("circle")
+      .data(keys)
+      .enter()
+      .append("circle")
+      .attr("cx", 20)
+      .attr("cy", (d, i) => {
+        return 95 + i * 25;
+      })
+      .attr("r", 7)
+      .style("fill", (d) => {
+        return group2color[d];
+      });
+
+    legendNodes
+      .selectAll("text")
+      .data(keys)
+      .enter()
+      .append("text")
+      .attr("x", 40)
+      .attr("y", (d, i) => {
+        return 95 + i * 25;
+      })
+      .text((d) => {
+        return d;
+      })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle");
   }
 
   createViz() {
     const { graph } = this.state;
+    let { viewBoxWidth, viewBoxHeight } = this.props;
+
     const adjList = graph.getAdjacencyList();
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
     graph.nodes.forEach((n) => {
       n.radius = n.type === "OVERLAP" ? 2 : radiusScaler(n.indegree);
     });
+
     let ref = this.ref.current;
     let viz = d3.select(ref);
-
-    let { viewBoxWidth, viewBoxHeight } = this.props;
 
     let simulation = d3
       .forceSimulation()
@@ -377,6 +469,10 @@ class EntityGraph extends Component {
     return new Graph(subGraphNodes, subGraphEdges, pmid);
   };
 
+  getNodeGroups = (graph) => {
+    return new Set(graph.map((node) => type2group[node.type]));
+  };
+
   degreeScaler(data, range) {
     const degreeExtent = d3.extent(data.nodes, (d) => d.indegree);
 
@@ -384,7 +480,12 @@ class EntityGraph extends Component {
   }
 
   render() {
-    return <div class="viz" ref={this.ref} />;
+    return (
+      <div class="viz-container">
+        <div class="viz" ref={this.ref} />
+        <div class="legend" ref={this.legendRef}></div>
+      </div>
+    );
   }
 }
 
