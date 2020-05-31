@@ -111,6 +111,22 @@ export const createGraph = (graphData) => {
   });
 
   /**
+   * Find start and end overlap
+   */
+  let startOverlap;
+  let endOverlap;
+  for (let [nodeID, overlapID] of Object.entries(nodeIDToOverLapID)) {
+    let startIdx = nodeIDToTextIndex[nodeID][0];
+    let endIdx = nodeIDToTextIndex[nodeID][1];
+    if (!startOverlap || startIdx < startOverlap.index) {
+      startOverlap = { id: overlapID, index: startIdx };
+    }
+    if (!endOverlap || endIdx > endOverlap.index) {
+      endOverlap = { id: overlapID, index: endIdx };
+    }
+  }
+
+  /**
    * Create edges and nodes from entity-entity relations
    */
   const nodeSet = new Set();
@@ -166,9 +182,9 @@ export const createGraph = (graphData) => {
         if (!nodeSet.has(overlapID)) {
           let nOverlaps = graphData.equivs.length - 1;
           let text = undefined;
-          if (overlapID == "OV0") {
+          if (overlapID == startOverlap.id) {
             text = "START";
-          } else if (overlapID == "OV" + nOverlaps) {
+          } else if (overlapID == endOverlap.id) {
             text = "END";
           }
           nodes.push({
@@ -221,9 +237,9 @@ export const createGraph = (graphData) => {
         if (!nodeSet.has(overlapID)) {
           let nOverlaps = graphData.equivs.length - 1;
           let text = undefined;
-          if (overlapID == "OV0") {
+          if (overlapID == startOverlap.id) {
             text = "START";
-          } else if (overlapID == "OV" + nOverlaps) {
+          } else if (overlapID == endOverlap.id) {
             text = "END";
           }
 

@@ -31,7 +31,6 @@ class EntityGraph extends Component {
   }
 
   createLegend() {
-    let { viewBoxWidth, viewBoxHeight } = this.props;
     let keys = [...this.state.nodeGroups].sort();
     let edges = ["Modify", "Overlap"];
 
