@@ -314,7 +314,9 @@ class EntityGraph extends Component {
 
       function handleMouseMove(d) {
         let content = `<span>${
-          d.type != "OVERLAP" ? `${d.text} (${d.type})` : `Overlap (${d.id})`
+          d.type != "OVERLAP"
+            ? `${d.text} (${d.type.replace("_", " ")})`
+            : `Overlap (${d.id})`
         }</span>`;
 
         if (d.attribute) {
