@@ -41,12 +41,14 @@ class EntityGraph extends Component {
     );
     console.log("keys" + keys);
 
+    let height = keys.length * 25 + 20 + 50;
+
     let legendRef = this.legendRef.current;
     let legend = d3.select(legendRef);
     let legendSVG = legend
       .append("svg")
       .attr("width", width)
-      .attr("height", viewBoxHeight);
+      .attr("height", height);
 
     let legendEdges = legendSVG.append("g");
     let legendNodes = legendSVG.append("g");

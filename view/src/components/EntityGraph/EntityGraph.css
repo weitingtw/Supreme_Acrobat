@@ -1,2 +1,2 @@
-.viz-container{display:flex}.viz{flex:1}.legend{flex:1}
+.viz-container{display:flex}.viz{flex:1}.viz svg:hover{cursor:grab}.viz svg:active{cursor:grabbing}.legend{flex:1}
 /*# sourceMappingURL=EntityGraph.css.map */
