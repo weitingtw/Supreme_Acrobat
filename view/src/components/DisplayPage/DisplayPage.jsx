@@ -64,9 +64,11 @@ class DisplayPage extends Component {
       ({ textEntities } = this.props.location.state);
       tokensToHighlight = textEntities.map((e) => e.label);
       // Entities
-      for (var i = 0; i < this.props.location.state.entities.length; i++) {
-        for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
-          entities.push(this.props.location.state.entities[i][j]);
+      if(this.props.location.state.entities){
+        for (var i = 0; i < this.props.location.state.entities.length; i++) {
+          for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+            entities.push(this.props.location.state.entities[i][j]);
+          }
         }
       }
       entities = [...new Set(entities)];

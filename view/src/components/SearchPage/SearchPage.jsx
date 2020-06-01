@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
+import { Redirect } from "react-router-dom";
+import * as QueryString from "query-string"
 import TopBar from "../TopBar/TopBar";
-import SearchResults from '../SearchResults/SearchResults';
 import LoginModal from '../LoginModal/LoginModal';
+import SearchResults from '../SearchResults/SearchResults';
 import axios from 'axios';
 import './SearchPage.css';
 import { combineMultiWordEntity, allQueriesToTextEntities } from '../../utils';
 import { getHost } from '../../utils';
 import RelationSearchBar from '../RelationSearchBar/RelationSearchBar';
 import 'antd/dist/antd.css';
-import {Card, Layout, Form, Button, Row, Input} from 'antd';
+import {Layout, Button, Row, Input} from 'antd';
 const { Header, Content } = Layout;
 
-
+// var storage=window.localStorage;
 
 class SearchPage extends Component {
     state = {
-        results: [],                // search results
+        results: [],               // search results
+        urlquery: "",
         textEntities: [],           // predicted entities
         queryText: '',               // query plain text
         allQueries: [
@@ -24,7 +27,96 @@ class SearchPage extends Component {
             //relations: ['BEFORE']
             //}
         ],
+        redirect: false,
     }
+
+    componentWillMount(){
+      console.log('componentDidMount is called!');
+      console.log(this.props.location);
+      const {search} = this.props.location;
+      const {urlquery} = this.props.location.search;
+      this.setState({});
+      const params = QueryString.parse(this.props.location.search);
+
+      if (params.length > 0){
+        console.log('i am called');
+        console.log(params);
+        const textEntities = JSON.parse(params['entities']);
+        const queryText = params['query'];
+        const allQueries = JSON.parse(params['relationQuery']);
+        this.setState({ textEntities, queryText, allQueries });
+
+        const queryObj = {
+            entities: textEntities,
+            query: queryText,
+            relationQuery: allQueries
+        }
+        console.log('fetch data before!', queryObj);
+
+        axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
+            .then(res => {
+                // search results
+                const results = res.data.data.map(info => {
+                    console.log(info.type);
+                    if (info.type == "searchNode") {
+                        return {
+                            id: info._source.pmID,
+                            entities: info._source.entities,
+                            previewText: info._source.content
+                        }
+                    } else if (info.type == "relation") {
+                        return {
+                            id: info.pmID,
+                            entities: info.entities,
+                            previewText: "info._source.content info._source.content info._source.content info._source.content info._source.content"
+                        }
+                    }
+                })
+                this.setState({ results })
+            })
+            .catch(err => console.log(err));
+      }
+    }
+
+    // shouldComponentUpdate(nextProps, nextState){
+    //
+    //   let ans = nextState.urlquery !== this.state.urlquery;
+    //   console.log('component update?' + ans);
+    //   return ans;
+    // }
+
+  //   componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.urlquery !== this.state.urlquery) {
+  //         const { textEntities, queryText, allQueries } = this.state;
+  //         const queryObj = {
+  //             entities: textEntities,
+  //             query: queryText,
+  //             relationQuery: allQueries
+  //         }
+  //         axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
+  //             .then(res => {
+  //                 // search results
+  //                 const results = res.data.data.map(info => {
+  //                     console.log(info.type);
+  //                     if (info.type == "searchNode") {
+  //                         return {
+  //                             id: info._source.pmID,
+  //                             entities: info._source.entities,
+  //                             previewText: info._source.content
+  //                         }
+  //                     } else if (info.type == "relation") {
+  //                         return {
+  //                             id: info.pmID,
+  //                             entities: info.entities,
+  //                             previewText: "info._source.content info._source.content info._source.content info._source.content info._source.content"
+  //                         }
+  //                     }
+  //                 })
+  //                 this.setState({ results })
+  //             })
+  //             .catch(err => console.log(err));
+  //   }
+  // }
 
     handleTyping = async (queryText) => {
         const _isLetter = c => /^[a-zA-Z()]$/.test(c);
@@ -84,7 +176,9 @@ class SearchPage extends Component {
             query: queryText,
             relationQuery: allQueries
         }
-        console.log('basic search: ', queryObj);
+        let urlquery = '/search?entities=' + JSON.stringify(textEntities)+'&query='+queryText+'&relationQuery='+JSON.stringify(allQueries);
+        this.setState({urlquery});
+        // this.props.history.push(urlquery);
 
         axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
             .then(res => {
@@ -241,7 +335,8 @@ class SearchPage extends Component {
                       // )
                     }
 
-                     {results.length > 0 &&
+                     {
+                       results.length > 0 &&
                         <div id='search-result-container'>
                             <SearchResults
                                 results={results}

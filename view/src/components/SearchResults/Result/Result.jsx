@@ -17,12 +17,14 @@ class Result extends Component {
         const {
             displayData: { previewText, id, textEntities, entities }
         } = this.props;
+        console.log('in result.jsx');
+        this.setState({ previewText: previewText })
         axios.post(getHost() + "/api/getCaseReportById", { id })
             .then(res => {
                 console.log(res, "res");
-                const text = (res.data.data[0].text).substring(0, 350) + '...';
-                console.log(text)
-                this.setState({ previewText: text })
+                // const text = (res.data.data[0].text).substring(0, 350) + '...';
+                // console.log(text)
+                // this.setState({ previewText: text })
             })
             .catch(err => console.log(err));
     }
@@ -41,7 +43,9 @@ class Result extends Component {
                     hoverable
                     title='title'>
                     <FontAwesomeIcon icon={['fab', 'bitcoin']} />
-                      <Link to={{
+                      <Link
+                        target="_blank"
+                        to={{
                           pathname: displayPath,
                           state: {
                               textEntities,
