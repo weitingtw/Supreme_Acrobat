@@ -27,7 +27,7 @@ class SearchPage extends Component {
             //relations: ['BEFORE']
             //}
         ],
-        redirect: false,
+        // redirect: false,
     }
 
     componentWillMount(){
@@ -35,10 +35,12 @@ class SearchPage extends Component {
       console.log(this.props.location);
       const {search} = this.props.location;
       const {urlquery} = this.props.location.search;
-      this.setState({});
+      // this.setState({});
       const params = QueryString.parse(this.props.location.search);
+      console.log(params);
+      console.log(params.length);
 
-      if (params.length > 0){
+      if (Object.keys(params).length > 0){
         console.log('i am called');
         console.log(params);
         const textEntities = JSON.parse(params['entities']);
@@ -170,6 +172,7 @@ class SearchPage extends Component {
     }
     // this one is being used
     handleSearch3 = () => {
+        console.log("handle search called!");
         const { textEntities, queryText, allQueries } = this.state;
         const queryObj = {
             entities: textEntities,
@@ -178,8 +181,8 @@ class SearchPage extends Component {
         }
         let urlquery = '/search?entities=' + JSON.stringify(textEntities)+'&query='+queryText+'&relationQuery='+JSON.stringify(allQueries);
         this.setState({urlquery});
-        // this.props.history.push(urlquery);
-
+        this.props.history.push(urlquery);
+        // window.location.reload();
         axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
             .then(res => {
                 // search results

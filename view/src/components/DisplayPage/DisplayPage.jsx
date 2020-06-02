@@ -24,6 +24,8 @@ class DisplayPage extends Component {
       .post(getHost() + "/api/getCaseReportById", { id })
       .then((res) => {
         const data = res.data.data[0];
+        console.log("gettttt dataaaaa");
+        console.log(data);
         this.setState({ docData: data });
       })
       .catch((err) => console.log(err));
