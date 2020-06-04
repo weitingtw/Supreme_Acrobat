@@ -47,7 +47,6 @@ class SearchPage extends Component {
         const queryText = params['query'];
         const allQueries = JSON.parse(params['relationQuery']);
         this.setState({ textEntities, queryText, allQueries });
-
         const queryObj = {
             entities: textEntities,
             query: queryText,
@@ -79,46 +78,6 @@ class SearchPage extends Component {
             .catch(err => console.log(err));
       }
     }
-
-    // shouldComponentUpdate(nextProps, nextState){
-    //
-    //   let ans = nextState.urlquery !== this.state.urlquery;
-    //   console.log('component update?' + ans);
-    //   return ans;
-    // }
-
-  //   componentDidUpdate(prevProps, prevState) {
-  //   if (prevState.urlquery !== this.state.urlquery) {
-  //         const { textEntities, queryText, allQueries } = this.state;
-  //         const queryObj = {
-  //             entities: textEntities,
-  //             query: queryText,
-  //             relationQuery: allQueries
-  //         }
-  //         axios.post(getHost() + "/api/searchNodesWithRelations", queryObj)
-  //             .then(res => {
-  //                 // search results
-  //                 const results = res.data.data.map(info => {
-  //                     console.log(info.type);
-  //                     if (info.type == "searchNode") {
-  //                         return {
-  //                             id: info._source.pmID,
-  //                             entities: info._source.entities,
-  //                             previewText: info._source.content
-  //                         }
-  //                     } else if (info.type == "relation") {
-  //                         return {
-  //                             id: info.pmID,
-  //                             entities: info.entities,
-  //                             previewText: "info._source.content info._source.content info._source.content info._source.content info._source.content"
-  //                         }
-  //                     }
-  //                 })
-  //                 this.setState({ results })
-  //             })
-  //             .catch(err => console.log(err));
-  //   }
-  // }
 
     handleTyping = async (queryText) => {
         const _isLetter = c => /^[a-zA-Z()]$/.test(c);

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import SearchBar from "../SearchBar/SearchBar";
 import QueryBuilder from '../QueryBuilder/QueryBuilder';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import './TopBar.css';
-import {Form, Button, Row, Input} from 'antd';
-const Search = Input.Search;
 
 /*
     Component that contains the search bar and
@@ -54,7 +53,10 @@ class TopBar extends Component {
                     />
                 </div>
 
-                <a id="search-bar-advanced" onClick={this.toggle}>{this.state.expand_name}</a>
+                <a id="search-bar-advanced" onClick={this.toggle}>
+                  {this.state.expand_name}
+                  {this.state.expand ? <UpOutlined />:<DownOutlined /> }
+                </a>
 
                 {this.state.expand && <div id='query-builder-container'>
                     <QueryBuilder

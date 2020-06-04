@@ -10,7 +10,8 @@ import {Card} from 'antd';
 
 class Result extends Component {
     state = {
-        previewText: ''
+        previewText: '',
+        title: '',
     }
 
     componentWillMount() {
@@ -21,10 +22,12 @@ class Result extends Component {
         this.setState({ previewText: previewText })
         axios.post(getHost() + "/api/getCaseReportById", { id })
             .then(res => {
-                console.log(res, "res");
-                // const text = (res.data.data[0].text).substring(0, 350) + '...';
+                // const data = res.data.data[0];
+                // const text = (data.text).substring(0, 350) + '...';
+                // const title = data.title
                 // console.log(text)
                 // this.setState({ previewText: text })
+                // this.setState({ title: title })
             })
             .catch(err => console.log(err));
     }
