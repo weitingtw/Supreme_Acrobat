@@ -45,6 +45,7 @@ class DisplayPage extends Component {
       keywords,
       abstract;
     const base_link = "https://pubmed.ncbi.nlm.nih.gov/?term=";
+    const keyword_link = "/getKeyword/"
     const kwlink = [];
     const author_li = [];
     const auth_aff_li = [];
@@ -52,26 +53,26 @@ class DisplayPage extends Component {
     if (docData) {
       ({ text, title, authors, doi, keywords, abstract } = docData);
       //console.log(keywords);
-      if (keywords[0]=="none") {
+      if (keywords[0] == "none") {
         kwlink.push(<span>none.</span>);
       }
       else {
         keywords = keywords[0].split(';');
 
         for (const [index, value] of keywords.entries()) {
-          kwlink.push(<a href={base_link+value}>{value}</a>);
+          kwlink.push(<a href={keyword_link + value}>{value}</a>);
           if (index < keywords.length - 1) kwlink.push("; ");
         }
         kwlink.push(".")
       }
 
       for (const [index, value] of authors.entries()) {
-        if(isNaN(value['id'])){
-          author_li.push(<a href={base_link+value['name']+"[Author]"}>{value['name']}</a>);
+        if (isNaN(value['id'])) {
+          author_li.push(<a href={base_link + value['name'] + "[Author]"}>{value['name']}</a>);
         }
         else {
-          author_li.push(<span><a href={base_link+value['name']+"[Author]"}>{value['name']}</a><sup>{value['id']}</sup></span>);
-          auth_aff_li.push(<dd className="aff-item">{value['id'] +". "+ value['aff']}</dd>)
+          author_li.push(<span><a href={base_link + value['name'] + "[Author]"}>{value['name']}</a><sup>{value['id']}</sup></span>);
+          auth_aff_li.push(<dd className="aff-item">{value['id'] + ". " + value['aff']}</dd>)
         }
         if (index < authors.length - 1) author_li.push(", ");
       }
@@ -198,16 +199,16 @@ class DisplayPage extends Component {
                           <tr className="table-row">
                             <th className="table-title">Authors:</th>
                             <th className="table-content">{author_li}
-                            <dl className="aff">{auth_aff_li}</dl>
+                              <dl className="aff">{auth_aff_li}</dl>
                             </th>
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">PubMed ID:</td>
-                            <td className="table-content"><a href={base_link+id}>{id}</a></td>
+                            <td className="table-content"><a href={base_link + id}>{id}</a></td>
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">DOI:</td>
-                            <td className="table-content"><a href={"https://doi.org/"+doi}>{doi}</a></td>
+                            <td className="table-content"><a href={"https://doi.org/" + doi}>{doi}</a></td>
                           </tr>
                           <tr className="table-row">
                             <td className="table-title">Keywords:</td>

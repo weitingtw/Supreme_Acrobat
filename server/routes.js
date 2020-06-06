@@ -17,6 +17,7 @@ var writeResponse = require("./helpers/response").writeResponse;
 var Graph = require("./controllers/graph_controller");
 var uuidv1 = require("uuid/v1");
 const esclient = require("./config/esClient");
+const Keyword = require("./models/mongo/keyword");
 
 // var HomeController = require('./controllers/home_controller.js');
 var fs = require("fs");
@@ -867,6 +868,22 @@ module.exports = function (app) {
           }
         });
       }
+    });
+  });
+
+  /* --------------- Keyword ----------------*/
+
+  router.post("/getKeyword", (req, res) => {
+    const { keyword } = req.body;
+    // console.log(req,'?????');
+    // console.log("get case report by id API")
+    // console.log(req.body);
+    // console.log(searchKey);
+
+    // var oid = new mongo.ObjectID(id)
+    Keyword.find({ keyword: keyword }, (err, keyword_data) => {
+      if (err) return res.send(err);
+      return res.json({ success: true, data: keyword_data[0]["pmIDs"] });
     });
   });
 
