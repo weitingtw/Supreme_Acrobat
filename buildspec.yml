@@ -4,6 +4,9 @@ phases:
   install:
     runtime-versions:
       docker: 18
+    commands:
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
+      - timeout -t 15 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -17,7 +20,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t 757859084253.dkr.ecr.us-west-2.amazonaws.com/acrobat-repo:latest .
+      - docker build -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
