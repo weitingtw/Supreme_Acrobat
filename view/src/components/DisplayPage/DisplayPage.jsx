@@ -236,8 +236,8 @@ class DisplayPage extends Component {
                             <EntityGraph
                               graphData={docData}
                               entities={entities}
-                              viewBoxWidth={200}
-                              viewBoxHeight={200}
+                              viewBoxWidth={400}
+                              viewBoxHeight={400}
                             />
                           </div>
                         </React.Fragment>
