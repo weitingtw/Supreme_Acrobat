@@ -118,6 +118,7 @@ class EntityGraph extends Component {
   createViz() {
     const { graph } = this.state;
     let { viewBoxWidth, viewBoxHeight } = this.props;
+    let activeNode = null;
 
     const adjList = graph.getAdjacencyList();
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
@@ -314,36 +315,42 @@ class EntityGraph extends Component {
       }
 
       function handleMouseMove(d) {
-        let content = `<span>${
-          d.type != "OVERLAP"
-            ? `${d.text} (${d.type.replace("_", " ")})`
-            : `Overlap (${d.id})`
-        }</span>`;
+        // update tooltip contents only if different node active
+        if (activeNode !== d) {
+          activeNode = d;
 
-        if (d.attribute) {
-          content += `<br/><span>${d.attribute.type}: ${d.attribute.desc}</span>`;
-        }
+          let content = `<span>${
+            d.type != "OVERLAP"
+              ? `${d.text} (${d.type.replace("_", " ")})`
+              : `Overlap (${d.id})`
+          }</span>`;
 
-        let hasModifiers = false;
-
-        adjList[d.id].forEach((neighborID) => {
-          const neighbor = graph.nodes.find((node) => node.id === neighborID);
-          const edge = graph.edges.find(
-            (edge) => edge.source === neighbor && edge.target === d
-          );
-          if (edge) {
-            if (!hasModifiers) {
-              hasModifiers = true;
-              content += "<hr/>";
-            }
-            content += `<span>${neighbor.text} (${
-              edge.type || edge.label
-            })</span><br/>`;
+          if (d.attribute) {
+            content += `<br/><span>${d.attribute.type}: ${d.attribute.desc}</span>`;
           }
-        });
 
+          let hasModifiers = false;
+
+          adjList[d.id].forEach((neighborID) => {
+            const neighbor = graph.nodes.find((node) => node.id === neighborID);
+            const edge = graph.edges.find(
+              (edge) => edge.source === neighbor && edge.target === d
+            );
+            if (edge) {
+              if (!hasModifiers) {
+                hasModifiers = true;
+                content += "<hr/>";
+              }
+              content += `<span>${neighbor.text} (${
+                edge.type || edge.label
+              })</span><br/>`;
+            }
+          });
+
+          tooltip.html(content);
+        }
+        // update position always
         tooltip
-          .html(content)
           .style("left", d3.mouse(ref)[0] + 10 + "px")
           .style("top", d3.mouse(ref)[1] + "px");
       }
