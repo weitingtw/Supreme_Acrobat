@@ -28,6 +28,10 @@ server {
 	location /search/ {
         proxy_pass      http://localhost:80/;
     }
+
+	location /getKeyword/ {
+		proxy_pass      http://localhost:80/;
+	}
 	location / {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
