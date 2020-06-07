@@ -124,7 +124,7 @@ class EntityGraph extends Component {
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
     const arrowPosScaler = this.degreeScaler(graph, [17, 24]);
     graph.nodes.forEach((n) => {
-      n.radius = n.type === "OVERLAP" ? 2 : radiusScaler(n.indegree);
+      n.radius = n.type === "OVERLAP" ? 4 : radiusScaler(n.indegree);
       n.arrPos = arrowPosScaler(n.indegree);
     });
 
@@ -139,7 +139,7 @@ class EntityGraph extends Component {
         d3
           .forceLink(graph.edges)
           .distance((d) => {
-            return 15;
+            return 25;
           })
           .strength(1)
       )
