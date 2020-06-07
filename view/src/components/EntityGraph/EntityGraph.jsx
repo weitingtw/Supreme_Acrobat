@@ -271,42 +271,49 @@ class EntityGraph extends Component {
             return (d.source.y + d.target.y) / 2;
           });
 
-        // edge
-        //   .attr("x1", (d) => d.source.x)
-        //   .attr("y1", (d) => d.source.y)
-        //   .attr("x2", (d) => d.target.x)
-        //   .attr("y2", (d) => d.target.y);
         edge
           .attr("x1", (d) => scaleEdges(d).x1)
           .attr("y1", (d) => scaleEdges(d).y1)
           .attr("x2", (d) => scaleEdges(d).x2)
-          .attr("y2", (d) => scaleEdges(d).y2);
+          .attr("y2", (d) => {
+            // check if must recompute. Should never resolve to true
+            if (!d.scaled) {
+              console.log("recompute edge scaling");
+            }
+            let y2 = scaleEdges(d).y2;
+            return y2;
+          });
 
         nodeText.attr("x", (d) => d.x).attr("y", (d) => d.y + 2);
 
         node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+
+        // reset scaled for next tick
+        edge.each((d) => {
+          d.scaled = null;
+        });
       }
 
       function scaleEdges(d) {
-        let x1 = d.source.x;
-        let y1 = d.source.y;
-        let x2 = d.target.x;
-        let y2 = d.target.y;
-        let dx = x2 - x1;
-        let dy = y2 - y1;
+        if (d.scaled) {
+          return d.scaled;
+        }
+
+        let dx = d.target.x - d.source.x;
+        let dy = d.target.y - d.source.y;
         let l = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         let rs = d.source.radius;
         let rt = d.target.radius;
-        let sScale = rs / l;
-        let tScale = rt / l;
 
-        return {
-          x1: x1 + dx * sScale,
-          y1: y1 + dy * sScale,
-          x2: x2 - dx * tScale,
-          y2: y2 - dy * tScale,
+        let scaledCoordinates = {
+          x1: d.source.x + (dx * rs) / l,
+          y1: d.source.y + (dy * rs) / l,
+          x2: d.target.x - (dx * rt) / l,
+          y2: d.target.y - (dy * rt) / l,
         };
+        d.scaled = scaledCoordinates;
+        return scaledCoordinates;
       }
 
       function zoomed() {
