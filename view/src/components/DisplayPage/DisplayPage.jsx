@@ -55,12 +55,15 @@ class DisplayPage extends Component {
       //console.log(keywords);
       if (keywords[0] == "none") {
         kwlink.push(<span>none.</span>);
-      } else {
-        keywords = keywords[0].split(";");
+      }
+      else {
+        if (keywords[0]) {
+          keywords = keywords[0].split(';');
 
-        for (const [index, value] of keywords.entries()) {
-          kwlink.push(<a href={keyword_link + value}>{value}</a>);
-          if (index < keywords.length - 1) kwlink.push("; ");
+          for (const [index, value] of keywords.entries()) {
+            kwlink.push(<a href={keyword_link + value}>{value}</a>);
+            if (index < keywords.length - 1) kwlink.push("; ");
+          }
         }
         kwlink.push(".");
       }
