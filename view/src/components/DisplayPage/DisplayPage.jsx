@@ -60,10 +60,9 @@ class DisplayPage extends Component {
       //console.log(keywords);
       if (keywords[0] == "none") {
         kwlink.push(<span>none.</span>);
-      }
-      else {
+      } else {
         if (keywords[0]) {
-          keywords = keywords[0].split(';');
+          keywords = keywords[0].split(";");
 
           for (const [index, value] of keywords.entries()) {
             kwlink.push(<a href={keyword_link + value}>{value}</a>);
@@ -94,7 +93,6 @@ class DisplayPage extends Component {
         if (index < authors.length - 1) author_li.push(", ");
       }
       author_li.push(".");
-
     }
     console.log("title: " + title);
     console.log("keywords: " + keywords);
@@ -111,7 +109,11 @@ class DisplayPage extends Component {
       // Entities
       if (this.props.location.state.entities) {
         for (var i = 0; i < this.props.location.state.entities.length; i++) {
-          for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+          for (
+            var j = 0;
+            j < this.props.location.state.entities[i].length;
+            j++
+          ) {
             entities.push(this.props.location.state.entities[i][j]);
           }
         }
@@ -248,18 +250,20 @@ class DisplayPage extends Component {
                           </tr>
                         </table>
                       </div>
-                      <div className="report-info-block">
-                        <React.Fragment>
-                          <div className="subgraph-container">
-                            <EntityGraph
-                              graphData={docData}
-                              entities={entities}
-                              viewBoxWidth={400}
-                              viewBoxHeight={400}
-                            />
-                          </div>
-                        </React.Fragment>
-                      </div>
+                      {entities && entities.length > 0 && (
+                        <div className="report-info-block">
+                          <React.Fragment>
+                            <div className="subgraph-container">
+                              <EntityGraph
+                                graphData={docData}
+                                entities={entities}
+                                viewBoxWidth={400}
+                                viewBoxHeight={400}
+                              />
+                            </div>
+                          </React.Fragment>
+                        </div>
+                      )}
                     </div>
 
                     {abstract && (
