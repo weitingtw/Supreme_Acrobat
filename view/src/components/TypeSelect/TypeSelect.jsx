@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './TypeSelect.css';
 
 
-/* ----- 
-    component that display entity type and 
-    normalization suggestions drop down select 
+/* -----
+    component that display entity type and
+    normalization suggestions drop down select
                                             ----- */
 class TypeSelect extends Component {
     state = {
@@ -16,6 +16,8 @@ class TypeSelect extends Component {
     }
 
     handleSelectType = key => {
+        console.log('in type select');
+        console.log(key);
         this.props.handleEntitySelect(key);
         // this.props.handleSelect();
     }
@@ -47,21 +49,23 @@ class TypeSelect extends Component {
         return (
             <div className='type-select' >
                 <span className='drop-down-container'>
-                    <DropDown 
+                    <DropDown
+                        dropdownsize='175'
                         handleSelect={ this.handleSelectType }
                         dropDownData={ typeDropDownData }
                         current={ typeName }
                     />
                 </span>
                 <span className='drop-down-container'>
-                    <DropDown 
+                    <DropDown
+                        dropdownsize='90'
                         handleSelect={ this.handleSelectNorm }
                         dropDownData={ normDropDownData }
                         current={ this.state.currentNorm }
                     />
                 </span>
-                <FontAwesomeIcon 
-                    icon={['far', 'times-circle']} 
+                <FontAwesomeIcon
+                    icon={['far', 'times-circle']}
                     onClick={() => console.log('close!')}
                 />
             </div>

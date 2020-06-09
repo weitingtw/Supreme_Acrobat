@@ -25,6 +25,8 @@ class DisplayPage extends Component {
       .post(getHost() + "/api/getCaseReportById", { id })
       .then((res) => {
         const data = res.data.data[0];
+        console.log("gettttt dataaaaa");
+        console.log(data);
         this.setState({ docData: data });
       })
       .catch((err) => console.log(err));
@@ -33,8 +35,11 @@ class DisplayPage extends Component {
   render() {
     const { id } = this.props.match.params;
     const { docData } = this.state;
-    console.log("docs~");
+    //let title = "A cold sympotom in a 57-year old patient";
+    let pub_date = "2019-03-24";
+    console.log("docdata");
     console.log(docData);
+
     let text, // whole plain text of the case report
       entities, // entities for graph
       tokensToHighlight, // array of tokens to highlight
@@ -89,16 +94,26 @@ class DisplayPage extends Component {
         if (index < authors.length - 1) author_li.push(", ");
       }
       author_li.push(".");
+
     }
+    console.log("title: " + title);
+    console.log("keywords: " + keywords);
+    // const kwlink = [];
+    // for (const [index, value] of keywords.entries()) {
+    //   kwlink.push(<a href="/search">{value}</a>);
+    //   kwlink.push(", ");
+    // }
 
     entities = [];
     if (this.props.location.state) {
       ({ textEntities } = this.props.location.state);
       tokensToHighlight = textEntities.map((e) => e.label);
       // Entities
-      for (var i = 0; i < this.props.location.state.entities.length; i++) {
-        for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
-          entities.push(this.props.location.state.entities[i][j]);
+      if (this.props.location.state.entities) {
+        for (var i = 0; i < this.props.location.state.entities.length; i++) {
+          for (var j = 0; j < this.props.location.state.entities[i].length; j++) {
+            entities.push(this.props.location.state.entities[i][j]);
+          }
         }
       }
       entities = [...new Set(entities)];

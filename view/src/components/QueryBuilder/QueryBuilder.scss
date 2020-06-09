@@ -4,9 +4,7 @@
 #queryBuilder {
     position: relative;
     width: 100%;
-    font-size: 120%;
-    text-align: left;
-    margin-top: 10px;
+    float: left;
 
     #relation-container {
         // text-align: center;
@@ -23,4 +21,17 @@
         }
 
     }
+}
+#entity-query{
+  display: block;
+  text-align: center;
+  vertical-align: middle;
+
+  #entity-query-title{
+    font-size: 120%;
+  }
+}
+#show_type {
+  margin-left: 20px;
+  margin-right: 20px;
 }

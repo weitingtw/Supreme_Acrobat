@@ -12,10 +12,10 @@ class QueryItem extends Component {
         return (
             <div className='query-item' >
                 <div className='item-word'>
-                    { word } 
+                    { word }
                 </div>
                 <FontAwesomeIcon icon={['fas', 'arrow-alt-right']} />
-                <TypeSelect 
+                <TypeSelect
                     typeName={ type }
                     handleEntitySelect={ handleEntitySelect }
                 />

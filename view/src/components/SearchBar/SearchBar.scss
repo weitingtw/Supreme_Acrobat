@@ -11,9 +11,8 @@
         width: $search-bar-width;
         height: 100%;
         display: inline-block;
-        float: left;
         position: relative;
-        width: 80%;
+        width: 100%;
         margin:0;
 
         #searchText {
@@ -51,8 +50,3 @@
         @extend .switch-mode-button-style;
     }
 }
-
-
-
-
-

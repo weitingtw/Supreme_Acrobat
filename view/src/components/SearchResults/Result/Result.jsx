@@ -5,23 +5,29 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './Result.css';
 import axios from 'axios'
 import { getHost } from '../../../utils';
+import {Card} from 'antd';
 
 
 class Result extends Component {
     state = {
-        previewText: ''
+        previewText: '',
+        title: '',
     }
 
     componentWillMount() {
         const {
             displayData: { previewText, id, textEntities, entities }
         } = this.props;
+        console.log('in result.jsx');
+        this.setState({ previewText: previewText })
         axios.post(getHost() + "/api/getCaseReportById", { id })
             .then(res => {
-                console.log(res, "res");
-                const text = (res.data.data[0].text).substring(0, 350) + '...';
-                console.log(text)
-                this.setState({ previewText: text })
+                // const data = res.data.data[0];
+                // const text = (data.text).substring(0, 350) + '...';
+                // const title = data.title
+                // console.log(text)
+                // this.setState({ previewText: text })
+                // this.setState({ title: title })
             })
             .catch(err => console.log(err));
     }
@@ -38,18 +44,20 @@ class Result extends Component {
 
         return (
             <div className='result' onClick={this.handleClick}>
-                <div>
+                  <Card className=''
+                    hoverable
+                    title='title'>
                     <FontAwesomeIcon icon={['fab', 'bitcoin']} />
-                    <span className='search-result-text'>
-                        <Link to={{
-                            pathname: displayPath,
-                            state: {
-                                textEntities,
-                                entities
-                            }
-                        }}>{previewText}</Link>
-                    </span>
-                </div>
+                      <Link
+                        target="_blank"
+                        to={{
+                          pathname: displayPath,
+                          state: {
+                              textEntities,
+                              entities
+                          }
+                      }}>{previewText}</Link>
+                  </Card>
             </div>);
     }
 }
