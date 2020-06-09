@@ -86,7 +86,7 @@ class SearchPage extends Component {
         }
         this.state.timeout = setTimeout(() => {
             this.late_search(queryText);
-        }, 2000);
+        }, 1000);
     }
 
     late_search = (queryText) => {
