@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './Result.css';
 import axios from 'axios'
 import { getHost } from '../../../utils';
-import {Card} from 'antd';
+import { Card } from 'antd';
 
 
 class Result extends Component {
@@ -18,22 +18,23 @@ class Result extends Component {
         const {
             displayData: { previewText, id, textEntities, entities }
         } = this.props;
-        console.log('in result.jsx');
+        console.log(this.props);
         this.setState({ previewText: previewText })
         axios.post(getHost() + "/api/getCaseReportById", { id })
             .then(res => {
-                // const data = res.data.data[0];
-                // const text = (data.text).substring(0, 350) + '...';
-                // const title = data.title
-                // console.log(text)
-                // this.setState({ previewText: text })
-                // this.setState({ title: title })
+                const data = res.data.data[0];
+                const text = (data.text).substring(0, 350) + '...';
+                const title = data.title
+                console.log(text)
+                console.log(title)
+                this.setState({ previewText: text })
+                this.setState({ title: title })
             })
             .catch(err => console.log(err));
     }
 
     render() {
-        const { previewText } = this.state;
+        const { previewText, title } = this.state;
         console.log(previewText)
         const {
             displayData: { id, textEntities, entities }
@@ -42,21 +43,22 @@ class Result extends Component {
         console.log(entities);
         console.log("let's see props data");
         console.log(this.props);
-        const displayPath = `search/${id}`;
+        const displayPath = `/search/${id}`;
+        console.log(title)
 
         return (
             <div className='result' onClick={this.handleClick}>
-                  <Card className=''
+                <Card className=''
                     hoverable
-                    title='title'>
+                    title={title}>
                     <FontAwesomeIcon icon={['fab', 'bitcoin']} />
-                      <Link
+                    <Link
                         target="_blank"
                         to={{
-                          pathname: displayPath,
-                          search: "searchEntities=" + JSON.stringify(textEntities) + "&entities=" + JSON.stringify(entities),
-                      }}>{previewText}</Link>
-                  </Card>
+                            pathname: displayPath,
+                            search: "searchEntities=" + JSON.stringify(textEntities) + "&entities=" + JSON.stringify(entities),
+                        }}>{previewText}</Link>
+                </Card>
             </div>);
     }
 }

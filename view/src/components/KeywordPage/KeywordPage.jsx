@@ -6,6 +6,7 @@ import LoginModal from "../LoginModal/LoginModal";
 import { PacmanLoader } from "react-spinners";
 import Sidebar from "react-sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Result from '../SearchResults/Result/Result';
 
 class KeywordPage extends Component {
     state = {
@@ -112,7 +113,9 @@ class KeywordPage extends Component {
                     List of pmIDs related to {keyword}
                     </div>
                     <div style={styles.pmID_block}>
-                        {pmID_List && pmID_List.map((pmID, index) => <a style={styles.pmID_link} href={"/search/" + pmID}>{pmID}</a>)}
+                        {pmID_List && pmID_List.map((pmID, index) => <Result
+                            displayData={{ id: pmID, previewText: "previewText", textEntities: [], entities: [] }}
+                        />)}
                     </div>
                 </Sidebar>)}
             {!pmID_List && (

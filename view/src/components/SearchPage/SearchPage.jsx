@@ -153,13 +153,13 @@ class SearchPage extends Component {
                     console.log(info.type);
                     if (info.type == "searchNode") {
                         return {
-                            id: info._source.pmID,
+                            id: parseInt(info._source.pmID),
                             entities: info._source.entities,
                             previewText: info._source.content
                         }
                     } else if (info.type == "relation") {
                         return {
-                            id: info.pmID,
+                            id: parseInt(info.pmID),
                             entities: info.entities,
                             previewText: "info._source.content info._source.content info._source.content info._source.content info._source.content"
                         }
