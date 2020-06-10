@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
-import * as QueryString from "query-string"
+import * as QueryString from "query-string";
 
 import Sidebar from "react-sidebar";
 import ucla_logo from "../../static/ucla.png";
@@ -63,7 +63,6 @@ class DisplayPage extends Component {
         kwlink.push(<span>none.</span>);
       } else {
         if (keywords[0]) {
-
           for (const [index, value] of keywords.entries()) {
             kwlink.push(<a href={keyword_link + value}>{value}</a>);
             if (index < keywords.length - 1) kwlink.push("; ");
@@ -107,17 +106,13 @@ class DisplayPage extends Component {
 
       const entityQuery = QueryString.parse(this.props.location.search);
       console.log(entityQuery);
-      const searchEntities = JSON.parse(entityQuery['searchEntities']);
-      const graphEntities = JSON.parse(entityQuery['entities']);
+      const searchEntities = JSON.parse(entityQuery["searchEntities"]);
+      const graphEntities = JSON.parse(entityQuery["entities"]);
       tokensToHighlight = searchEntities.map((e) => e.label);
       // Entities
       if (graphEntities) {
         for (var i = 0; i < graphEntities.length; i++) {
-          for (
-            var j = 0;
-            j < graphEntities[i].length;
-            j++
-          ) {
+          for (var j = 0; j < graphEntities[i].length; j++) {
             entities.push(graphEntities[i][j]);
           }
         }
@@ -261,8 +256,8 @@ class DisplayPage extends Component {
                               <EntityGraph
                                 graphData={docData}
                                 entities={entities}
-                                viewBoxWidth={400}
-                                viewBoxHeight={400}
+                                viewBoxWidth={250}
+                                viewBoxHeight={250}
                               />
                             </div>
                           </React.Fragment>
