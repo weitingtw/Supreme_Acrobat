@@ -3,6 +3,8 @@ import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DropDown from "../DropDown/DropDown";
 import SearchResults from '../SearchResults/SearchResults';
+import { Button, Input } from 'antd';
+import { MonitorOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { allQueriesToTextEntities } from '../../utils';
 import './RelationSearchBar.css';
 import { getHost } from '../../utils';
@@ -108,6 +110,14 @@ class RelationSearchBar extends Component {
         */
         return (
             <div id='relationSearchBar'>
+                <div id='relation-title'>Relation Setting:</div>
+                <Button
+                  shape="round"
+                  icon={<MonitorOutlined style={{verticalAlign: 'text-bottom'}} />}
+                  onClick={this.props.handleRelationSearch}
+                  >
+                  Parse Relations
+                </Button>
                 {allQueries.map((oneQuery, i) =>
                     <RelationSearch
                         queries={oneQuery.queries}
@@ -118,21 +128,17 @@ class RelationSearchBar extends Component {
                         handleKeyDown={this.props.handleKeyDown}
                     />
                 )}
-                <div>
-                    <button
-                        className="button"
-                        onClick={this.props.handleAddRow}
-                    >
-                        <FontAwesomeIcon icon={['fas', 'plus']} />
-                        {' Row'}
-                    </button>
-                    <button
-                        className="button"
-                        onClick={this.props.handleDeleteRow}
-                    >
-                        <FontAwesomeIcon icon={['fas', 'minus']} />
-                        {' Row'}
-                    </button>
+                <div id="add-minus-button-div">
+                    <Button
+                      shape="round"
+                      icon={<PlusOutlined style={{verticalAlign: 'text-bottom'}} />}
+                      onClick={this.props.handleAddRow}
+                      >Row</Button>
+                    <Button
+                      shape="round"
+                      icon={<MinusOutlined style={{verticalAlign: 'text-bottom'}} />}
+                      onClick={this.props.handleDeleteRow}
+                      >Row</Button>
                 </div>
 
             </div>
@@ -158,20 +164,17 @@ class RelationSearch extends Component {
         const inputComponent = queries.map((word, i) => {
             if (i === queries.length - 1) {
                 return (<div className='one_relation' key={i}>
-                    <input
-                        value={word}
-                        type="text"
-                        className="searchText"
-                        onChange={handleTyping(i)}
-                        onKeyDown={handleKeyDown}
-                    />
+                <Input
+                    style={{width: '100px', marginTop: '5px'}}
+                    value={word}
+                    onChange={handleTyping(i)}
+                    onKeyDown={handleKeyDown}/>
                 </div>)
             } else {
                 return (<div className='one_relation' key={i}>
-                    <input
+                    <Input
+                        style={{width: '100px'}}
                         value={word}
-                        type="text"
-                        className="searchText"
                         onChange={handleTyping(i)}
                         onKeyDown={handleKeyDown}
                     />
@@ -187,12 +190,11 @@ class RelationSearch extends Component {
         })
         return (<div className='one_query'>
             {inputComponent}
-            <button
-                className="button"
-                onClick={this.handleAddColumn}
-            >
-                <FontAwesomeIcon icon={['fas', 'plus']} />
-            </button>
+            <Button
+              shape="round"
+              icon={<PlusOutlined style={{verticalAlign: 'text-bottom'}} />}
+              onClick={this.handleAddColumn}
+              />
         </div>);
     }
 }

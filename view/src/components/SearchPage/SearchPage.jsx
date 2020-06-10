@@ -8,7 +8,6 @@ import axios from 'axios';
 import './SearchPage.css';
 import { combineMultiWordEntity, allQueriesToTextEntities } from '../../utils';
 import { getHost } from '../../utils';
-import RelationSearchBar from '../RelationSearchBar/RelationSearchBar';
 import 'antd/dist/antd.css';
 import { Layout, Button, Row, Input } from 'antd';
 const { Header, Content } = Layout;
@@ -277,16 +276,9 @@ class SearchPage extends Component {
                                 handleSearch={this.handleSearch3}
                                 handleAdvancedSearch={this.handleAdvancedSearch}
                                 handleTyping={this.handleTyping}
-                            />
-                            <button
-                                type="submit"
-                                id="relationSearchButton"
-                                onClick={this.handleRelationSearch}
-                            >Parse Relations</button>
-                            <RelationSearchBar
-                                textEntities={textEntities}
+                                handleRelationSearch={this.handleRelationSearch}
                                 allQueries={this.state.allQueries}
-                                handleTyping={this.handleTyping2}
+                                handleTypingRelation={this.handleTyping2}
                                 handleSelect={this.handleSelect2}
                                 handleKeyDown={this.handleKeyDown2}
                                 handleAddColumn={this.handleAddColumn2}
@@ -294,13 +286,6 @@ class SearchPage extends Component {
                                 handleDeleteRow={this.handleDeleteRow2}
                             />
                         </div>
-                        {
-                            // results.length > 0 && (
-                            //   <div id='search-result-container'>
-                            //     {resultList}
-                            //   </div>
-                            // )
-                        }
 
                         {
                             results.length > 0 &&
