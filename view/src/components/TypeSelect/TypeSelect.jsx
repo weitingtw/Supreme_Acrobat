@@ -50,7 +50,7 @@ class TypeSelect extends Component {
             <div className='type-select' >
                 <span className='drop-down-container'>
                     <DropDown
-                        dropdownsize='175'
+                        dropdownsize='185'
                         handleSelect={ this.handleSelectType }
                         dropDownData={ typeDropDownData }
                         current={ typeName }

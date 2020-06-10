@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SearchBar from "../SearchBar/SearchBar";
+import RelationSearchBar from '../RelationSearchBar/RelationSearchBar';
 import QueryBuilder from '../QueryBuilder/QueryBuilder';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
@@ -55,7 +56,7 @@ class TopBar extends Component {
 
                 <a id="search-bar-advanced" onClick={this.toggle}>
                   {this.state.expand_name}
-                  {this.state.expand ? <UpOutlined />:<DownOutlined /> }
+                  {this.state.expand ? <UpOutlined style={{verticalAlign: 'text-bottom'}} />:<DownOutlined style={{verticalAlign: 'text-bottom'}} /> }
                 </a>
 
                 {this.state.expand && <div id='query-builder-container'>
@@ -63,6 +64,20 @@ class TopBar extends Component {
                         queries={queries}
                         entities={textEntities}
                         handleEntitySelect={this.handleEntitySelect}
+                    />
+                </div>}
+
+                {this.state.expand && <div id='relation-container'>
+                    <RelationSearchBar
+                        textEntities={textEntities}
+                        handleRelationSearch={this.props.handleRelationSearch}
+                        allQueries={this.props.allQueries}
+                        handleTyping={this.props.handleTypingRelation}
+                        handleSelect={this.props.handleSelect}
+                        handleKeyDown={this.props.handleKeyDown}
+                        handleAddColumn={this.props.handleAddColumn}
+                        handleAddRow={this.props.handleAddRow}
+                        handleDeleteRow={this.props.handleDeleteRow}
                     />
                 </div>}
             </div>
