@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
+import * as QueryString from "query-string"
 
 import Sidebar from "react-sidebar";
 import ucla_logo from "../../static/ucla.png";
@@ -57,12 +58,11 @@ class DisplayPage extends Component {
 
     if (docData) {
       ({ text, title, authors, doi, keywords, abstract } = docData);
-      //console.log(keywords);
+      console.log(keywords);
       if (keywords[0] == "none") {
         kwlink.push(<span>none.</span>);
       } else {
         if (keywords[0]) {
-          keywords = keywords[0].split(";");
 
           for (const [index, value] of keywords.entries()) {
             kwlink.push(<a href={keyword_link + value}>{value}</a>);
@@ -101,20 +101,24 @@ class DisplayPage extends Component {
     //   kwlink.push(<a href="/search">{value}</a>);
     //   kwlink.push(", ");
     // }
-
     entities = [];
-    if (this.props.location.state) {
-      ({ textEntities } = this.props.location.state);
-      tokensToHighlight = textEntities.map((e) => e.label);
+    if (this.props.location.search) {
+      console.log("hey we have states!");
+
+      const entityQuery = QueryString.parse(this.props.location.search);
+      console.log(entityQuery);
+      const searchEntities = JSON.parse(entityQuery['searchEntities']);
+      const graphEntities = JSON.parse(entityQuery['entities']);
+      tokensToHighlight = searchEntities.map((e) => e.label);
       // Entities
-      if (this.props.location.state.entities) {
-        for (var i = 0; i < this.props.location.state.entities.length; i++) {
+      if (graphEntities) {
+        for (var i = 0; i < graphEntities.length; i++) {
           for (
             var j = 0;
-            j < this.props.location.state.entities[i].length;
+            j < graphEntities[i].length;
             j++
           ) {
-            entities.push(this.props.location.state.entities[i][j]);
+            entities.push(graphEntities[i][j]);
           }
         }
       }

@@ -15,6 +15,8 @@ class SearchResults extends Component {
                 {
                     results.length <= 0 ? '' : results.map(eachData => {
                         eachData.textEntities = textEntities;
+                        console.log('show some each data');
+                        console.log(eachData);
                         return <Result
                             displayData={eachData}
                             key={eachData.id}
