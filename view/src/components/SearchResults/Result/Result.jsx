@@ -39,7 +39,9 @@ class Result extends Component {
             displayData: { id, textEntities, entities }
         } = this.props;
         console.log("====================");
-        console.log(textEntities);
+        console.log(entities);
+        console.log("let's see props data");
+        console.log(this.props);
         const displayPath = `search/${id}`;
 
         return (
@@ -52,10 +54,7 @@ class Result extends Component {
                         target="_blank"
                         to={{
                           pathname: displayPath,
-                          state: {
-                              textEntities,
-                              entities
-                          }
+                          search: "searchEntities=" + JSON.stringify(textEntities) + "&entities=" + JSON.stringify(entities),
                       }}>{previewText}</Link>
                   </Card>
             </div>);
