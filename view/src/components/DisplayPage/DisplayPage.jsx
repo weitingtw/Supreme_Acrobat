@@ -107,7 +107,10 @@ class DisplayPage extends Component {
       const entityQuery = QueryString.parse(this.props.location.search);
       console.log(entityQuery);
       const searchEntities = JSON.parse(entityQuery["searchEntities"]);
-      const graphEntities = JSON.parse(entityQuery["entities"]);
+      let graphEntities;
+      if (entityQuery["entities"] !== "undefined") {
+        graphEntities = JSON.parse(entityQuery["entities"]);
+      }
       tokensToHighlight = searchEntities.map((e) => e.label);
       // Entities
       if (graphEntities) {
