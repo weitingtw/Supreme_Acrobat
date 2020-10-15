@@ -1,11 +1,11 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { fal } from "@fortawesome/pro-light-svg-icons";
-import { far } from "@fortawesome/pro-regular-svg-icons";
-import { fas } from "@fortawesome/pro-solid-svg-icons";
+//import { fal } from "@fortawesome/pro-light-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 
 export const buildFontAwesomeLib = () => {
-  library.add(fal, far, fas, fab);
+  library.add(far, far, fas, fab);
 };
 
 export const buildGraphFromGraphData = graphData => {
@@ -965,7 +965,7 @@ export const addHighLight = (text, tokens, className = "highLight") => {
     }
     let highlight =
       " " + "<span class=" + className + ">" + t + "</span>" + " ";
-    var re = new RegExp(t,"g");
+    var re = new RegExp(t, "g");
     text = text.replace(re, highlight);
     console.log(text);
   }
