@@ -35,6 +35,10 @@ RUN /bin/bash -c  "./install.sh"
 RUN rm /etc/nginx/sites-enabled/default
 RUN mv default /etc/nginx/sites-enabled/default
 
+RUN wget https://github.com/kermitt2/grobid/zipball/master
+RUN unzip master
+RUN ./master/gradlew clean install
+
 EXPOSE 80
 EXPOSE 3001
 EXPOSE 5001
