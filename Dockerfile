@@ -43,7 +43,7 @@ RUN mv default /etc/nginx/sites-enabled/default
 
 RUN wget https://github.com/kermitt2/grobid/archive/0.6.1.zip
 RUN unzip 0.6.1
-RUN mv ./kermitt* master2
+RUN mv ./grobid* master2
 RUN ./master2/gradlew tasks
 RUN ./master2/gradlew clean install
 
