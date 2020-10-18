@@ -35,7 +35,7 @@ RUN /bin/bash -c  "./install.sh"
 RUN rm /etc/nginx/sites-enabled/default
 RUN mv default /etc/nginx/sites-enabled/default
 
-RUN apt install default-jre
+RUN apt-get install default-jre
 RUN wget https://github.com/kermitt2/grobid/zipball/master
 RUN unzip master
 RUN mv ./kermitt* master2
