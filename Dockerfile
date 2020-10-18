@@ -15,8 +15,7 @@ RUN \
     add-apt-repository -y ppa:nginx/stable && \
     apt-get install -y nginx && \
     rm -rf /var/lib/apt/lists/* && \
-    chown -R www-data:www-data /var/lib/nginx \
-    apt-get install default-jdk
+    chown -R www-data:www-data /var/lib/nginx
 
 COPY --from=build-deps /usr/src/app/build /var/www/html
 
@@ -36,6 +35,7 @@ RUN /bin/bash -c  "./install.sh"
 RUN rm /etc/nginx/sites-enabled/default
 RUN mv default /etc/nginx/sites-enabled/default
 
+RUN apt install default-jre
 RUN wget https://github.com/kermitt2/grobid/zipball/master
 RUN unzip master
 RUN mv ./kermitt* master2
