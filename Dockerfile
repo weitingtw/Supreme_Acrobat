@@ -19,7 +19,7 @@ RUN \
     rm -rf /var/lib/apt/lists/* && \
     chown -R www-data:www-data /var/lib/nginx
 
-RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
 RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 RUN apt-get update && sudo apt-get install adoptopenjdk-8-hotspot
 
