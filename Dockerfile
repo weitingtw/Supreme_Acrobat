@@ -19,9 +19,9 @@ RUN \
     rm -rf /var/lib/apt/lists/* && \
     chown -R www-data:www-data /var/lib/nginx
 
-RUN add-apt-repository ppa:openjdk-r/ppa
-RUN apt-get update
-RUN apt-get install openjdk-8-jdk
+RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+RUN apt-get update && sudo apt-get install adoptopenjdk-8-hotspot
 
 COPY --from=build-deps /usr/src/app/build /var/www/html
 
