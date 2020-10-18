@@ -37,8 +37,8 @@ RUN mv default /etc/nginx/sites-enabled/default
 
 RUN wget https://github.com/kermitt2/grobid/zipball/master
 RUN unzip master
-RUN mv ./kermitt* master
-RUN ./master/gradlew clean install
+RUN mv ./kermitt* master2
+RUN ./master2/gradlew clean install
 
 EXPOSE 80
 EXPOSE 3001
