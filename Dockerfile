@@ -8,9 +8,9 @@ RUN npm run build
 
 FROM nikolaik/python-nodejs:python3.7-nodejs10
 
-RUN sudo add-apt-repository ppa:webupd8team/java
-RUN sudo apt-get update
-RUN sudo apt-get install oracle-java8-installer
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get update
+RUN apt-get install oracle-java8-installer
 
 ## nginx
 RUN apt-get update
