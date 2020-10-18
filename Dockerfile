@@ -21,7 +21,7 @@ RUN \
 
 RUN add-apt-repository ppa:webupd8team/java
 #RUN apt-get update
-RUN apt-get install oracle-java8-installer
+RUN apt-get install openjdk-8-jdk
 
 COPY --from=build-deps /usr/src/app/build /var/www/html
 
