@@ -21,7 +21,7 @@ RUN \
 
 RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
 RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-RUN add-apt-repository -r ppa:nginx/stable && apt-get update && apt-get install adoptopenjdk-8-hotspot
+RUN add-apt-repository -r ppa:nginx/stable && apt-get update && apt-get install -y adoptopenjdk-8-hotspot
 
 COPY --from=build-deps /usr/src/app/build /var/www/html
 
