@@ -35,6 +35,7 @@ RUN /bin/bash -c  "./install.sh"
 RUN rm /etc/nginx/sites-enabled/default
 RUN mv default /etc/nginx/sites-enabled/default
 
+RUN apt-get update
 RUN apt-get install default-jdk
 RUN wget https://github.com/kermitt2/grobid/zipball/master
 RUN unzip master
