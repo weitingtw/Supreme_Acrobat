@@ -46,6 +46,7 @@ RUN unzip 0.6.1
 RUN pwd
 RUN mv ./grobid* master2
 RUN cd master2
+RUN ls
 RUN ./gradlew clean install
 RUN cd ..
 
