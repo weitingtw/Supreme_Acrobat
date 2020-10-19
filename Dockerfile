@@ -45,10 +45,10 @@ RUN wget https://github.com/kermitt2/grobid/archive/0.6.1.zip
 RUN unzip 0.6.1
 RUN pwd
 RUN mv ./grobid* master2
-RUN 'cd master2'
+WORKDIR /usr/src/app/master2
 RUN ls
 RUN ./gradlew clean install
-RUN 'cd ..''
+WORKDIR /usr/src/app
 
 EXPOSE 80
 EXPOSE 3001
