@@ -274,7 +274,6 @@ class SubmitModalContent extends Component {
 
             }
         }
-      }
       //console.log(contentList.join(''));
       this.setState({content: contentList.join('')});
       this.formRef.current.setFieldsValue({
