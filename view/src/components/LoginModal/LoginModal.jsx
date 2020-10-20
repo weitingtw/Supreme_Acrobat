@@ -144,6 +144,7 @@ class ModalContent extends Component {
 class SubmitModalContent extends Component {
     formRef = React.createRef();
     state = {
+        loading: false,
         file: "",
         filename: "Choose File",
         uploadedFile: {},
@@ -169,10 +170,9 @@ class SubmitModalContent extends Component {
 
     // upload file to grobid
     onSubmitFile = async e => {
-      console.log("here!!!!");
+      this.startLoading();
 
       e.preventDefault();
-      alert("clicked");
       const formData = new FormData();
       formData.append('input', this.state.file);
       console.log("file appended");
@@ -279,6 +279,11 @@ class SubmitModalContent extends Component {
           keywords: this.state.keywords,
           content: this.state.content,
       });
+      this.setState({loading: false});
+    }
+
+    startLoading = () => {
+      this.setState({loading: true});
     }
 
     onChangeContent = e => {
@@ -332,15 +337,20 @@ class SubmitModalContent extends Component {
               name="pdfUploadForm"
               >
               <Form.Item
-                label="PDF Upload">
-                <input
-                  type="file"
-                  onChange={this.onChangeFile} />
-                <Button
-                  type="primary"
-                  onClick={this.onSubmitFile}>
-                  Parse
-                </Button>
+              label="Upload">
+                <div className="pdfSubmit">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    style={{width: '260px'}}
+                    onChange={this.onChangeFile} />
+                  <Button
+                    type="primary"
+                    onClick={this.onSubmitFile}
+                    loading={this.state.loading}>
+                    Parse
+                  </Button>
+                </div>
               </Form.Item>
               <Form.Item
                   label="Title"
@@ -374,7 +384,7 @@ class SubmitModalContent extends Component {
                   name="content"
                   rules={[{ required: true, message: 'Content is required!' }]}
                 >
-                  <Input.TextArea placeholder="Content" onChange={this.onChangeContent}/>
+                  <Input.TextArea rows={10} placeholder="Content" onChange={this.onChangeContent}/>
                 </Form.Item>
                 {SubmitButton}
               </Form>)
