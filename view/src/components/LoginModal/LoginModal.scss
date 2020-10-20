@@ -1,5 +1,12 @@
 @import "../shared";
 
+.modal-inner-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 #login-modal {
     .button {
         font-size: 150%;
