@@ -313,10 +313,10 @@ class SubmitModalContent extends Component {
 
         const layout = {
           labelCol: {
-            span: 6,
+            span: 4,
           },
           wrapperCol: {
-            span: 26,
+            span: 20,
           },
         };
 
@@ -342,7 +342,6 @@ class SubmitModalContent extends Component {
                   <input
                     type="file"
                     accept=".pdf"
-                    style={{width: '260px'}}
                     onChange={this.onChangeFile} />
                   <Button
                     type="primary"
