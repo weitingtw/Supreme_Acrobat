@@ -8,6 +8,8 @@ RUN npm run build
 
 FROM nikolaik/python-nodejs:python3.7-nodejs10
 
+
+
 ## nginx
 RUN apt-get update
 RUN apt-get install software-properties-common -y
@@ -16,6 +18,10 @@ RUN \
     apt-get install -y nginx && \
     rm -rf /var/lib/apt/lists/* && \
     chown -R www-data:www-data /var/lib/nginx
+
+RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
+RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+RUN add-apt-repository -r ppa:nginx/stable && apt-get update && apt-get install -y adoptopenjdk-8-hotspot
 
 COPY --from=build-deps /usr/src/app/build /var/www/html
 
@@ -34,6 +40,15 @@ COPY . .
 RUN /bin/bash -c  "./install.sh"
 RUN rm /etc/nginx/sites-enabled/default
 RUN mv default /etc/nginx/sites-enabled/default
+
+RUN wget https://github.com/kermitt2/grobid/archive/0.6.1.zip
+RUN unzip 0.6.1
+RUN pwd
+RUN mv ./grobid* master2
+WORKDIR /usr/src/app/master2
+RUN ls
+RUN ./gradlew clean install
+WORKDIR /usr/src/app
 
 EXPOSE 80
 EXPOSE 3001

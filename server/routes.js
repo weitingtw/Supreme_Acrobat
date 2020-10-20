@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const Data = require("./models/mongo/data");
 const CaseReport = require("./models/mongo/case_report");
+const PendingCaseReport = require("./models/mongo/pending_case_report");
 const searchModule = require("./controllers/search_controller.js");
 const mongo = require("mongodb");
 const CaseReport2 = require("./models/mongo/case_report2");
@@ -705,6 +706,338 @@ module.exports = function (app) {
     }
 
     caseReport.save(err => {
+      if (err) return res.json({ success: false, error: err });
+      return res.json({ success: true });
+    });
+  });
+
+  // get all pending case reports
+  router.get("/getPendingCaseReport", (req, res) => {
+    PendingCaseReport.find((err, data) => {
+      if (err) return res.json({ success: false, error: err });
+      return res.json({ success: true, data: data });
+    });
+  });
+
+  // putPendingCaseReport
+  router.post("/putPendingCaseReport", (req, res) => {
+    if (!req.body.email || !req.body.password) {
+      return res.json({
+        success: false,
+        error: "INVALID INPUTS"
+      });
+    }
+    const { pmid, txt, ann } = req.body;
+    let pendingCaseReport = new PendingCaseReport();
+
+    console.log("caseReport api messge");
+    // console.log(pmid);
+    pendingCaseReport.pmID = parseInt(pmid);
+    pendingCaseReport.text = txt;
+    pendingCaseReport.entities = [];
+    pendingCaseReport.attributes = [];
+    pendingCaseReport.relations = [];
+    pendingCaseReport.triggers = [];
+    pendingCaseReport.events = [];
+    pendingCaseReport.comments = [];
+    pendingCaseReport.equivs = [];
+    pendingCaseReport.action = "getDocument";
+    pendingCaseReport.source_files = ["ann", "txt"];
+    pendingCaseReport.graph_index_data_before = [];
+    pendingCaseReport.graph_text_data_before = [];
+
+    if (typeof req.body.ann == "undefined") {
+      return res.json({ success: false, error: "ann input is not defined" });
+    }
+
+    let lines = ann.split(/\r?\n/);
+    var i;
+    for (i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      let infos = line.split("\t");
+      var type = infos[0];
+
+      // entity or trigger-event
+      if (type.charAt(0) == "T") {
+        // if not followed by event, then this is entity
+        if (i == lines.length - 1 || lines[i + 1].charAt(0) != "E") {
+          // add entity to caseReport.entities
+          let entityID = infos[0];
+          let entityContent = infos[1].split(" ");
+          pendingCaseReport.entities.push([
+            entityID,
+            entityContent[0],
+            [[parseInt(entityContent[1]), parseInt(entityContent[2])]]
+          ]);
+        }
+        // else this is trigger for event
+        else {
+          // add trigger to caseReport.entities
+          let triggerID = infos[0];
+          let triggerContent = infos[1].split(" ");
+          pendingCaseReport.triggers.push([
+            triggerID,
+            triggerContent[0],
+            [[parseInt(triggerContent[1]), parseInt(triggerContent[2])]]
+          ]);
+        }
+      }
+      // relation
+      else if (type.charAt(0) == "R") {
+        let relationID = infos[0];
+        let relationContent = infos[1].split(" ");
+        pendingCaseReport.relations.push([
+          relationID,
+          relationContent[0],
+          [
+            ["Arg1", relationContent[1].split(":")[1]],
+            ["Arg2", relationContent[2].split(":")[1]]
+          ]
+        ]);
+      }
+      // event
+      else if (type.charAt(0) == "E") {
+        // add to caseReports.events
+        let eventID = infos[0];
+        pendingCaseReport.events.push([eventID, infos[1].split(":")[1].trim(), []]);
+      }
+      // attribute
+      else if (type.charAt(0) == "A") {
+        let attributeID = infos[0];
+        let attirbuteContent = infos[1].split(" ");
+        pendingCaseReport.attributes.push([
+          attributeID,
+          attirbuteContent[0],
+          attirbuteContent[1],
+          attirbuteContent[2]
+        ]);
+      }
+      // comment
+      else if (type.charAt(0) == "#") {
+        let commentContent = infos[1].split(" ");
+        pendingCaseReport.comments.push([
+          commentContent[1],
+          commentContent[0],
+          infos[2]
+        ]);
+      }
+      // overlap
+      else if (type.charAt(0) == "*") {
+        let overlapContent = infos[1].split(" ");
+        let overlapData = [];
+        overlapData.push("*");
+        var j;
+        for (j = 0; j < overlapContent.length; j++) {
+          overlapData.push(overlapContent[j]);
+        }
+        pendingCaseReport.equivs.push(overlapData);
+      }
+
+      //     var nID2index = new Map();
+      //     for (var j = 0; j < caseReport.entities.length; j++) {      // map nodes to text from entities
+      //         const nodeID = caseReport.entities[j][0];
+      //         const nodeTextSIndex = caseReport.entities[j][2][0][0];
+      //         const nodeTextEIndex = caseReport.entities[j][2][0][1];
+      //         // const nodeText = caseReport.text.substring(nodeTextSIndex,nodeTextEIndex);
+      //         nID2index.set(nodeID, [nodeTextSIndex, nodeTextEIndex]);
+      //     }
+      //     for (var j = 0; j < caseReport.triggers.length; j++) {      // map nodes to text from triggers
+      //         const nodeID = caseReport.triggers[j][0];
+      //         const nodeTextSIndex = caseReport.triggers[j][2][0][0];
+      //         const nodeTextEIndex = caseReport.triggers[j][2][0][1];
+      //         // const nodeText = caseReport.text.substring(nodeTextSIndex,nodeTextEIndex);
+      //         nID2index.set(nodeID, [nodeTextSIndex, nodeTextEIndex]);
+      //     }
+
+      //     var eID2nID = new Map();
+      //     for (var j = 0; j < caseReport.events.length; j++) {
+      //         const eventID = caseReport.events[j][0];
+      //         const nodeID = caseReport.events[j][1];
+      //         eID2nID.set(eventID, nodeID);
+      //     }
+
+      //     for (var j = 0; j < caseReport.relations.length; j++) {
+      //         const event_label = caseReport.relations[j][1];
+      //         if (event_label!='BEFORE') {
+      //             continue;
+      //         }
+      //         const eventID_1 = caseReport.relations[j][2][0][1];
+      //         const eventID_2 = caseReport.relations[j][2][1][1];
+      //         const nodeID_1 = eID2nID.has(eventID_1) ? eID2nID.get(eventID_1) : eventID_1;
+      //         const nodeID_2 = eID2nID.has(eventID_2) ? eID2nID.get(eventID_2) : eventID_2;
+      //         const n1start = nID2index.get(nodeID_1)[0];
+      //         const n1end = nID2index.get(nodeID_1)[1];
+      //         const n2start = nID2index.get(nodeID_2)[0];
+      //         const n2end = nID2index.get(nodeID_2)[1];
+
+      //         caseReport.graph_index_data_before.push([n1start, n1end, nodeID_1, n2start, n2end, nodeID_2]);
+      //         caseReport.graph_text_data_before += caseReport.text.substring(n1start, n1end) + ' ' + caseReport.text.substring(n2start, n2end) + '\n';
+      //     }
+    }
+
+    pendingCaseReport.save(err => {
+      if (err) return res.json({ success: false, error: err });
+      return res.json({ success: true });
+    });
+  });
+
+  // putCaseReport
+  router.post("/putPendingCaseReport", (req, res) => {
+    if (!req.body.email || !req.body.password) {
+      return res.json({
+        success: false,
+        error: "INVALID INPUTS"
+      });
+    }
+    const { pmid, txt, ann } = req.body;
+    let pendingCaseReport = new PendingCaseReport();
+
+    console.log("caseReport api messge");
+    // console.log(pmid);
+    pendingCaseReport.pmID = parseInt(pmid);
+    pendingCaseReport.text = txt;
+    pendingCaseReport.entities = [];
+    pendingCaseReport.attributes = [];
+    pendingCaseReport.relations = [];
+    pendingCaseReport.triggers = [];
+    pendingCaseReport.events = [];
+    pendingCaseReport.comments = [];
+    pendingCaseReport.equivs = [];
+    pendingCaseReport.action = "getDocument";
+    pendingCaseReport.source_files = ["ann", "txt"];
+    pendingCaseReport.graph_index_data_before = [];
+    pendingCaseReport.graph_text_data_before = [];
+
+    if (typeof req.body.ann == "undefined") {
+      return res.json({ success: false, error: "ann input is not defined" });
+    }
+
+    let lines = ann.split(/\r?\n/);
+    var i;
+    for (i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      let infos = line.split("\t");
+      var type = infos[0];
+
+      // entity or trigger-event
+      if (type.charAt(0) == "T") {
+        // if not followed by event, then this is entity
+        if (i == lines.length - 1 || lines[i + 1].charAt(0) != "E") {
+          // add entity to caseReport.entities
+          let entityID = infos[0];
+          let entityContent = infos[1].split(" ");
+          pendingCaseReport.entities.push([
+            entityID,
+            entityContent[0],
+            [[parseInt(entityContent[1]), parseInt(entityContent[2])]]
+          ]);
+        }
+        // else this is trigger for event
+        else {
+          // add trigger to caseReport.entities
+          let triggerID = infos[0];
+          let triggerContent = infos[1].split(" ");
+          pendingCaseReport.triggers.push([
+            triggerID,
+            triggerContent[0],
+            [[parseInt(triggerContent[1]), parseInt(triggerContent[2])]]
+          ]);
+        }
+      }
+      // relation
+      else if (type.charAt(0) == "R") {
+        let relationID = infos[0];
+        let relationContent = infos[1].split(" ");
+        pendingCaseReport.relations.push([
+          relationID,
+          relationContent[0],
+          [
+            ["Arg1", relationContent[1].split(":")[1]],
+            ["Arg2", relationContent[2].split(":")[1]]
+          ]
+        ]);
+      }
+      // event
+      else if (type.charAt(0) == "E") {
+        // add to caseReports.events
+        let eventID = infos[0];
+        pendingCaseReport.events.push([eventID, infos[1].split(":")[1].trim(), []]);
+      }
+      // attribute
+      else if (type.charAt(0) == "A") {
+        let attributeID = infos[0];
+        let attirbuteContent = infos[1].split(" ");
+        pendingCaseReport.attributes.push([
+          attributeID,
+          attirbuteContent[0],
+          attirbuteContent[1],
+          attirbuteContent[2]
+        ]);
+      }
+      // comment
+      else if (type.charAt(0) == "#") {
+        let commentContent = infos[1].split(" ");
+        pendingCaseReport.comments.push([
+          commentContent[1],
+          commentContent[0],
+          infos[2]
+        ]);
+      }
+      // overlap
+      else if (type.charAt(0) == "*") {
+        let overlapContent = infos[1].split(" ");
+        let overlapData = [];
+        overlapData.push("*");
+        var j;
+        for (j = 0; j < overlapContent.length; j++) {
+          overlapData.push(overlapContent[j]);
+        }
+        pendingCaseReport.equivs.push(overlapData);
+      }
+
+      //     var nID2index = new Map();
+      //     for (var j = 0; j < caseReport.entities.length; j++) {      // map nodes to text from entities
+      //         const nodeID = caseReport.entities[j][0];
+      //         const nodeTextSIndex = caseReport.entities[j][2][0][0];
+      //         const nodeTextEIndex = caseReport.entities[j][2][0][1];
+      //         // const nodeText = caseReport.text.substring(nodeTextSIndex,nodeTextEIndex);
+      //         nID2index.set(nodeID, [nodeTextSIndex, nodeTextEIndex]);
+      //     }
+      //     for (var j = 0; j < caseReport.triggers.length; j++) {      // map nodes to text from triggers
+      //         const nodeID = caseReport.triggers[j][0];
+      //         const nodeTextSIndex = caseReport.triggers[j][2][0][0];
+      //         const nodeTextEIndex = caseReport.triggers[j][2][0][1];
+      //         // const nodeText = caseReport.text.substring(nodeTextSIndex,nodeTextEIndex);
+      //         nID2index.set(nodeID, [nodeTextSIndex, nodeTextEIndex]);
+      //     }
+
+      //     var eID2nID = new Map();
+      //     for (var j = 0; j < caseReport.events.length; j++) {
+      //         const eventID = caseReport.events[j][0];
+      //         const nodeID = caseReport.events[j][1];
+      //         eID2nID.set(eventID, nodeID);
+      //     }
+
+      //     for (var j = 0; j < caseReport.relations.length; j++) {
+      //         const event_label = caseReport.relations[j][1];
+      //         if (event_label!='BEFORE') {
+      //             continue;
+      //         }
+      //         const eventID_1 = caseReport.relations[j][2][0][1];
+      //         const eventID_2 = caseReport.relations[j][2][1][1];
+      //         const nodeID_1 = eID2nID.has(eventID_1) ? eID2nID.get(eventID_1) : eventID_1;
+      //         const nodeID_2 = eID2nID.has(eventID_2) ? eID2nID.get(eventID_2) : eventID_2;
+      //         const n1start = nID2index.get(nodeID_1)[0];
+      //         const n1end = nID2index.get(nodeID_1)[1];
+      //         const n2start = nID2index.get(nodeID_2)[0];
+      //         const n2end = nID2index.get(nodeID_2)[1];
+
+      //         caseReport.graph_index_data_before.push([n1start, n1end, nodeID_1, n2start, n2end, nodeID_2]);
+      //         caseReport.graph_text_data_before += caseReport.text.substring(n1start, n1end) + ' ' + caseReport.text.substring(n2start, n2end) + '\n';
+      //     }
+    }
+
+    pendingCaseReport.save(err => {
       if (err) return res.json({ success: false, error: err });
       return res.json({ success: true });
     });

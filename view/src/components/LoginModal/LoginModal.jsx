@@ -140,7 +140,11 @@ class ModalContent extends Component {
     }
 }
 
-
+class PendingModalContent extends Component {
+    render() {
+        return <div> There's no pending report</div>
+    }
+}
 class SubmitModalContent extends Component {
     formRef = React.createRef();
     state = {
@@ -194,80 +198,81 @@ class SubmitModalContent extends Component {
     };
 
     processXML = data => {
-      console.log("in process xml");
-      var xml = data;
-      //extract title
-      var title = xml.getElementsByTagName("title")[0].innerHTML;
-      this.setState({ title: title });
-      console.log(this.state.title);
-      //extract keywords
-      var terms = xml.getElementsByTagName("term");
-      const kwarr = [];
-      for(let i = 0; i < terms.length; i++){
-        kwarr.push(terms[i].innerHTML);
-      }
-      this.setState({ keywords: kwarr});
-      //extract authors
-      var author = xml.querySelectorAll("fileDesc author");
-      const authorList = [];
-      for(let i = 0; i < author.length; i++){
-        let name = "";
-        const fore = author[i].getElementsByTagName('forename');
-        const sur = author[i].getElementsByTagName('surname');
-        for(let j = 0; j < fore.length; j++){
-          name = name + fore[j].innerHTML + " ";
+        console.log("in process xml");
+        var xml = data;
+        //extract title
+        var title = xml.getElementsByTagName("title")[0].innerHTML;
+        this.setState({ title: title });
+        console.log(this.state.title);
+        //extract keywords
+        var terms = xml.getElementsByTagName("term");
+        const kwarr = [];
+        for (let i = 0; i < terms.length; i++) {
+            kwarr.push(terms[i].innerHTML);
         }
-        for(let j = 0; j < sur.length; j++){
-          name = name + sur[j].innerHTML;
-        }
-        authorList.push(name);
-      }
-
-      this.setState({ authors: authorList});
-      console.log(this.authors);
-
-      const contentList = [];
-
-      //extract abstract
-      // var abstract = xml.querySelectorAll("abstract div");
-      // for(let i = 0; i < abstract.length; i++){
-      //   for(let j = 0; j < abstract[i].children.length; j++){
-      //     if(abstract[i].children[j].tagName.toLowerCase() === "head"){
-      //       contentList.push("\n");
-      //       contentList.push(abstract[i].children[j].innerHTML);
-      //       contentList.push("\n");
-      //     }
-      //     if(abstract[i].children[j].tagName.toLowerCase() === "p"){
-      //       var elements = abstract[i].children[j].getElementsByTagName('ref');
-      //       // remove all <a> elements
-      //       while (elements[0]){
-      //         elements[0].parentNode.removeChild(elements[0])
-      //       }
-      //       contentList.push(abstract[i].children[j].innerHTML);
-      //     }
-      //   }
-      // }
-
-      //extract contents
-      var content = xml.querySelectorAll("body div");
-
-      for(let i = 0; i < content.length; i++){ // iterate through each div under body tag
-        for(let j = 0; j < content[i].children.length; j++){// iterate through each tag under each div
-          if(content[i].children[j].tagName.toLowerCase() === "head" && content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1){
-            // extract content
-            while(j < content[i].children.length){
-              if(content[i].children[j].tagName.toLowerCase() === "p"){
-                var tmp = content[i].children[j].getElementsByTagName('ref');
-                // remove all <a> elements
-                while (tmp[0]){
-                  tmp[0].parentNode.removeChild(tmp[0])
-                }
-                contentList.push(content[i].children[j].innerHTML);
-              }
-              j++;
+        this.setState({ keywords: kwarr });
+        //extract authors
+        var author = xml.querySelectorAll("fileDesc author");
+        const authorList = [];
+        for (let i = 0; i < author.length; i++) {
+            let name = "";
+            const fore = author[i].getElementsByTagName('forename');
+            const sur = author[i].getElementsByTagName('surname');
+            for (let j = 0; j < fore.length; j++) {
+                name = name + fore[j].innerHTML + " ";
             }
-          }
+            for (let j = 0; j < sur.length; j++) {
+                name = name + sur[j].innerHTML;
+            }
+            authorList.push(name);
+        }
 
+        this.setState({ authors: authorList });
+        console.log(this.authors);
+
+        const contentList = [];
+
+        //extract abstract
+        // var abstract = xml.querySelectorAll("abstract div");
+        // for(let i = 0; i < abstract.length; i++){
+        //   for(let j = 0; j < abstract[i].children.length; j++){
+        //     if(abstract[i].children[j].tagName.toLowerCase() === "head"){
+        //       contentList.push("\n");
+        //       contentList.push(abstract[i].children[j].innerHTML);
+        //       contentList.push("\n");
+        //     }
+        //     if(abstract[i].children[j].tagName.toLowerCase() === "p"){
+        //       var elements = abstract[i].children[j].getElementsByTagName('ref');
+        //       // remove all <a> elements
+        //       while (elements[0]){
+        //         elements[0].parentNode.removeChild(elements[0])
+        //       }
+        //       contentList.push(abstract[i].children[j].innerHTML);
+        //     }
+        //   }
+        // }
+
+        //extract contents
+        var content = xml.querySelectorAll("body div");
+
+        for (let i = 0; i < content.length; i++) { // iterate through each div under body tag
+            for (let j = 0; j < content[i].children.length; j++) {// iterate through each tag under each div
+                if (content[i].children[j].tagName.toLowerCase() === "head" && content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
+                    // extract content
+                    while (j < content[i].children.length) {
+                        if (content[i].children[j].tagName.toLowerCase() === "p") {
+                            var tmp = content[i].children[j].getElementsByTagName('ref');
+                            // remove all <a> elements
+                            while (tmp[0]) {
+                                tmp[0].parentNode.removeChild(tmp[0])
+                            }
+                            contentList.push(content[i].children[j].innerHTML);
+                        }
+                        j++;
+                    }
+                }
+
+            }
         }
       }
       //console.log(contentList.join(''));
@@ -282,10 +287,10 @@ class SubmitModalContent extends Component {
     }
 
     onChangeContent = e => {
-      this.setState({content: e.target.value});
+        this.setState({ content: e.target.value });
     }
     onChangeTitle = e => {
-      this.setState({title: e.target.value});
+        this.setState({ title: e.target.value });
     }
     onChangeKeywords = e => {
       this.setState({keywords: e.target.value.split(',')});
@@ -384,7 +389,8 @@ class SubmitModalContent extends Component {
 class LoginModal extends Component {
     state = {
         login_visible: false,
-        submit_visible: false
+        submit_visible: false,
+        pending_visible: false
     }
 
     openSubmitModal = () => {
@@ -393,6 +399,14 @@ class LoginModal extends Component {
 
     closeSubmitModal = () => {
         this.setState({ submit_visible: false })
+    }
+
+    openPendingModal = () => {
+        this.setState({ pending_visible: true });
+    }
+
+    closePendingModal = () => {
+        this.setState({ pending_visible: false })
     }
 
     openModal = () => {
@@ -458,7 +472,7 @@ class LoginModal extends Component {
     }
 
     render() {
-        const { login_visible, submit_visible } = this.state;
+        const { login_visible, submit_visible, pending_visible } = this.state;
 
         let hasUser = false;
         let user = localStorage.getItem('user');
@@ -479,6 +493,11 @@ class LoginModal extends Component {
                     <FontAwesomeIcon icon={['far', 'arrow-alt-circle-up']} />
                     Submit
                 </Button>
+
+                <button onClick={this.openPendingModal}>
+                    <FontAwesomeIcon icon={['far', 'arrow-alt-circle-down']} />
+                    Pending
+                </button>
 
                 |
                 <Button onClick={this.handleSignOut}>
@@ -519,6 +538,17 @@ class LoginModal extends Component {
                     <h4>Submit New Case Report</h4>
                     <SubmitModalContent
                         handleSubmit={this.handleSubmit}
+                    />
+                </Modal>
+                <Modal
+                    visible={pending_visible}
+                    width="600"
+                    height="500"
+                    effect="fadeInDown"
+                    onClickAway={this.closePendingModal}
+                >
+                    <PendingModalContent
+                        handleCloseModal={this.closePendingModal}
                     />
                 </Modal>
             </div>
