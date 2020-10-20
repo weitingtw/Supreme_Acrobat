@@ -170,26 +170,31 @@ class SubmitModalContent extends Component {
 
     // upload file to grobid
     onSubmitFile = async e => {
-      this.startLoading();
+      if(!this.state.file){
+        alert("please select the file!");
+      }
+      else{
+        this.startLoading();
 
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append('input', this.state.file);
-      console.log("file appended");
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('input', this.state.file);
+        console.log("file appended");
 
-      // upload file to grobid
-      try {
-        const res = await axios.post('http://localhost:8070/api/processFulltextDocument', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        console.log(res.data);
-        this.setState({ message: 'File Uploaded' });
-        console.log("state updated");
-        this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
-      } catch (err) {
-        console.log(err);
+        // upload file to grobid
+        try {
+          const res = await axios.post('http://localhost:8070/api/processFulltextDocument', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          console.log(res.data);
+          this.setState({ message: 'File Uploaded' });
+          console.log("state updated");
+          this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
 
@@ -342,6 +347,7 @@ class SubmitModalContent extends Component {
                   <input
                     type="file"
                     accept=".pdf"
+                    style={{width: '305px', overflow: 'hidden',textOverflow: 'ellipsis'}}
                     onChange={this.onChangeFile} />
                   <Button
                     type="primary"
