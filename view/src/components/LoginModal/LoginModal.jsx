@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import Modal from 'react-awesome-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Form } from 'react-bootstrap';
+import { Form, Input, Button, Upload, Modal } from 'antd';
+import { CloseCircleOutlined, UploadOutlined} from '@ant-design/icons';
 import axios from 'axios';
 import './LoginModal.css';
 import { getHost } from '../../utils';
-
 
 class ModalContent extends Component {
     state = {
@@ -43,25 +42,34 @@ class ModalContent extends Component {
     }
 
     render() {
-        const { handleCloseModal } = this.props;
         const { currentAction } = this.state;
+
+        // layout that controls the form
+        const layout = {
+          labelCol: {
+            span: 8,
+          },
+          wrapperCol: {
+            span: 20,
+          },
+        };
 
         // confirm button types
         const _SignInButton =
-            <button
+            <Button
+                type="primary"
                 onClick={this.handleSignIn}
-                className='confirm-button'
             >
                 Sign In
-            </button>
+            </Button>
 
         const _SignUpButton =
-            <button
+            <Button
+                type="primary"
                 onClick={this.handleSignUp}
-                className='confirm-button'
             >
                 Sign Up
-            </button>
+            </Button>
 
         // action switch button types
         const _SwitchToSignInButton =
@@ -74,20 +82,11 @@ class ModalContent extends Component {
 
         const _SwitchToSignUpButton =
             <div>
-                don't have an account?
+                Don't have an account?
                 <a href='#' onClick={this.switchAction}>
                     {' Sign Up'}
                 </a>
             </div>
-
-        // button to close modal
-        const CloseModalButton =
-            <button
-                id='close-button'
-                onClick={handleCloseModal
-                }>
-                <FontAwesomeIcon icon={['far', 'times']} />
-            </button>
 
         // select current button types according to current action
         let ConfirmButton, SwitchActionButton, titleText;
@@ -101,39 +100,41 @@ class ModalContent extends Component {
             titleText = 'Sign Up';
         }
 
-
         return (
             <div className='modal-inner-content'>
-                <h2>{titleText}</h2>
+                <h3>{titleText}</h3>
 
-                <Form.Group controlId="formGroupEmail">
-                    <Form.Label>
-                        <FontAwesomeIcon icon={['far', 'envelope']} />
-                        Email
-                    </Form.Label>
-                    <Form.Control
-                        type="email"
-                        placeholder="Enter email"
-                        onChange={this.handleEmailInput}
-                    />
-                </Form.Group>
-                <Form.Group controlId="formGroupPassword">
-                    <Form.Label>
-                        <FontAwesomeIcon icon={['far', 'lock-alt']} />
-                        Password
-                    </Form.Label>
-                    <Form.Control
-                        type="password"
-                        placeholder="Enter password"
-                        onChange={this.handlePasswordInput}
-                    />
-                </Form.Group>
-
+                <Form
+                  {...layout}
+                  name="signInForm"
+                >
+                  <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please enter your email!',
+                      },
+                    ]}
+                  >
+                    <Input onChange={this.handleEmailInput}/>
+                  </Form.Item>
+                  <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please enter your password!',
+                      },
+                    ]}
+                  >
+                    <Input.Password onChange={this.handlePasswordInput}/>
+                  </Form.Item>
+                </Form>
                 {ConfirmButton}
-
                 {SwitchActionButton}
-
-                {CloseModalButton}
             </div>
         );
     }
@@ -145,6 +146,7 @@ class PendingModalContent extends Component {
     }
 }
 class SubmitModalContent extends Component {
+    formRef = React.createRef();
     state = {
         file: "",
         filename: "Choose File",
@@ -152,41 +154,47 @@ class SubmitModalContent extends Component {
         message: "",
         title: "",
         authors: [],
-        keywords: [],
-        content: ""
+        keywords:[],
+        content:"",
+        doi: "",
     }
+
     // handle file change
     onChangeFile = e => {
-        if (e.target.files[0]) {
-            let fname = e.target.files[0].name;
-            fname = fname.replace(/\s/g, '');
-            this.setState({ file: e.target.files[0] });
-            this.setState({ filename: fname });
-        }
+      console.log("here");
+      console.log(e.target.files[0])
+      if(e.target.files[0]){
+        let fname = e.target.files[0].name;
+        fname = fname.replace(/\s/g, '');
+        this.setState({ file: e.target.files[0]});
+        this.setState({ filename: fname });
+      }
     };
 
     // upload file to grobid
     onSubmitFile = async e => {
-        e.preventDefault();
-        alert("clicked");
-        const formData = new FormData();
-        formData.append('input', this.state.file);
-        console.log("file appended");
+      console.log("here!!!!");
 
-        // upload file to grobid
-        try {
-            const res = await axios.post('http://localhost:8070/api/processFulltextDocument', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            console.log(res.data);
-            this.setState({ message: 'File Uploaded' });
-            console.log("state updated");
-            this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
-        } catch (err) {
-            console.log(err);
-        }
+      e.preventDefault();
+      alert("clicked");
+      const formData = new FormData();
+      formData.append('input', this.state.file);
+      console.log("file appended");
+
+      // upload file to grobid
+      try {
+        const res = await axios.post('http://localhost:8070/api/processFulltextDocument', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(res.data);
+        this.setState({ message: 'File Uploaded' });
+        console.log("state updated");
+        this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     processXML = data => {
@@ -266,8 +274,16 @@ class SubmitModalContent extends Component {
 
             }
         }
-        //console.log(contentList.join(''));
-        this.setState({ content: contentList.join('') });
+      }
+      //console.log(contentList.join(''));
+      this.setState({content: contentList.join('')});
+      this.formRef.current.setFieldsValue({
+          title: this.state.title,
+          authors: this.state.authors,
+          doi: this.state.doi,
+          keywords: this.state.keywords,
+          content: this.state.content,
+      });
     }
 
     onChangeContent = e => {
@@ -277,10 +293,13 @@ class SubmitModalContent extends Component {
         this.setState({ title: e.target.value });
     }
     onChangeKeywords = e => {
-        this.setState({ keywords: e.target.value });
+      this.setState({keywords: e.target.value.split(',')});
     }
     onChangeAuthor = e => {
-        this.setState({ authors: e.target.value });
+      this.setState({authors: e.target.value.split(',')});
+    }
+    onChangeDoi = e => {
+      this.setState({doi: e.target.value});
     }
 
     handleSubmit = () => {
@@ -288,64 +307,82 @@ class SubmitModalContent extends Component {
         //.split(',').map(item => {return item.trim();})
     }
 
-    render() {
-        const { handleCloseModal } = this.props;
 
-        const CloseModalButton =
-            <button
-                id='close-button'
-                onClick={handleCloseModal}>
-                <FontAwesomeIcon icon={['far', 'times']} />
-            </button>
+
+    render() {
+
+        const layout = {
+          labelCol: {
+            span: 6,
+          },
+          wrapperCol: {
+            span: 26,
+          },
+        };
 
         const _submitButton =
-            <button
+            <Button
+                type="primary"
                 onClick={this.handleSubmit}
                 className='confirm-button'
             >
                 Submit
-            </button>
+            </Button>
+        let SubmitButton = _submitButton;
 
-
-        return <div className='modal-inner-content'>
-            <span>Submit your Report from PDF</span>
-            <div>
-                <div className="custom-file">
-                    <input type="file" className="custom-file-input" id="customFile" onChange={this.onChangeFile} />
-                    <label className="custom-file-label" for="customFile">{this.state.filename}</label>
-                    <button type="submit" onClick={this.onSubmitFile} className="btn btn-primary">Submit</button>
-                </div>
-            </div>
-
-            <div>
-                <form>
-                    <div className="form-row formitem">
-                        <label className="col-sm-2 col-form-label" for="reportTitle">Title</label>
-                        <input type="text"
-                            className="form-control col-sm-10"
-                            value={this.state.title}
-                            onChange={this.onChangeTitle}
-                            id="reportTitle"
-                            placeholder="Title" />
-                    </div>
-                    <div className="form-row">
-                        <label className="col-sm-2 col-form-label" for="reportAuthors">Authors</label>
-                        <input type="text" value={this.state.authors} className="form-control col-sm-10" onChange={this.onChangeAuthor} id="reportAuthors" placeholder="Authors (separate using commas)" />
-                    </div>
-                    <div className="form-row">
-                        <label className="col-form-label col-sm-2" for="reportKeywords">Keywords</label>
-                        <input type="text" value={this.state.keywords} className="form-control col-sm-10" onChange={this.onChangeKeywords} id="reportKeywords" placeholder="Keywords (separate using commas)" />
-                    </div>
-                    <div className="form-row">
-                        <label className="col-form-label col-sm-2" for="reportContent">Content</label>
-                        <textarea className="form-control col-sm-10" value={this.state.content} style={{ resize: 'none' }} onChange={this.onChangeContent} id="reportContent" rows="5"></textarea>
-                    </div>
-                    <button type="submit" onSubmit={this.onSubmitReport} className="btn btn-primary">Submit Report</button>
-                </form>
-            </div>
-            {CloseModalButton}
-
-        </div >
+        return (
+              <Form
+              {...layout}
+              ref={this.formRef}
+              name="pdfUploadForm"
+              >
+              <Form.Item
+                label="PDF Upload">
+                <input
+                  type="file"
+                  onChange={this.onChangeFile} />
+                <Button
+                  type="primary"
+                  onClick={this.onSubmitFile}>
+                  Parse
+                </Button>
+              </Form.Item>
+              <Form.Item
+                  label="Title"
+                  name="title"
+                  rules={[{ required: true, message: 'Title is required!' }]}
+                  value={this.state.title}
+                >
+                  <Input placeholder="Title" onChange={this.onChangeTitle}/>
+                </Form.Item>
+                <Form.Item
+                  label="Authors"
+                  name="authors"
+                  rules={[{ required: true, message: 'Authors are required!' }]}
+                >
+                  <Input placeholder="Author (Seperate with comma)" onChange={this.onChangeAuthor}/>
+                </Form.Item>
+                <Form.Item
+                  label="DOI"
+                  name="doi"
+                >
+                  <Input placeholder="Doi" onChange={this.onChangeDoi}/>
+                </Form.Item>
+                <Form.Item
+                  label="Keywords"
+                  name="keywords"
+                >
+                  <Input placeholder="Keywords (Seperate with comma)" onChange={this.onChangeKeywords}/>
+                </Form.Item>
+                <Form.Item
+                  label="Content"
+                  name="content"
+                  rules={[{ required: true, message: 'Content is required!' }]}
+                >
+                  <Input.TextArea placeholder="Content" onChange={this.onChangeContent}/>
+                </Form.Item>
+                {SubmitButton}
+              </Form>)
     }
 }
 
@@ -445,17 +482,17 @@ class LoginModal extends Component {
         }
         console.log(user, hasUser);
 
-        const Button = hasUser ?
+        const MyButton = hasUser ?
             <div className='button'>
-                <button onClick={this.showProfile}>
+                <Button onClick={this.showProfile}>
                     <FontAwesomeIcon icon={['far', 'user-astronaut']} />
                     Profile
-                </button>
+                </Button>
 
-                <button onClick={this.openSubmitModal}>
+                <Button onClick={this.openSubmitModal}>
                     <FontAwesomeIcon icon={['far', 'arrow-alt-circle-up']} />
                     Submit
-                </button>
+                </Button>
 
                 <button onClick={this.openPendingModal}>
                     <FontAwesomeIcon icon={['far', 'arrow-alt-circle-down']} />
@@ -463,43 +500,43 @@ class LoginModal extends Component {
                 </button>
 
                 |
-                <button onClick={this.handleSignOut}>
+                <Button onClick={this.handleSignOut}>
                     Sign Out
-                </button>
+                </Button>
 
             </div>
             :
-            <button onClick={this.openModal} className='button'>
+            <Button onClick={this.openModal} className='button'>
                 <FontAwesomeIcon icon={['far', 'user-astronaut']} />
                 Login
-            </button>
+            </Button>
 
 
         return (
             <div id='login-modal'>
-                {Button}
+                {MyButton}
                 <Modal
-                    visible={login_visible}
-                    width="600"
-                    height="500"
-                    effect="fadeInDown"
-                    onClickAway={this.closeModal}
+                  visible={this.state.login_visible}
+                  onCancel={this.closeModal}
+                  footer = {null}
+                  closeIcon = {<CloseCircleOutlined />}
+                  destroyOnClose={true}
                 >
+
                     <ModalContent
-                        handleCloseModal={this.closeModal}
                         handleSignIn={this.handleSignIn}
                         handleSignUp={this.handleSignUp}
                     />
                 </Modal>
                 <Modal
-                    visible={submit_visible}
-                    width="600"
-                    height="500"
-                    effect="fadeInDown"
-                    onClickAway={this.closeSubmitModal}
+                    visible={this.state.submit_visible}
+                    onCancel={this.closeSubmitModal}
+                    footer = {null}
+                    closeIcon = {<CloseCircleOutlined />}
+                    destroyOnClose={true}
                 >
+                    <h4>Submit New Case Report</h4>
                     <SubmitModalContent
-                        handleCloseModal={this.closeSubmitModal}
                         handleSubmit={this.handleSubmit}
                     />
                 </Modal>
