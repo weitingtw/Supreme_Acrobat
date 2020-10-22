@@ -54,5 +54,6 @@ EXPOSE 80
 EXPOSE 3001
 EXPOSE 5001
 EXPOSE 5000
+EXPOSE 8070
 
 CMD [ "npm", "run", "docker" ]
