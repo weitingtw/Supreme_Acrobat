@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"cd server/ && node server.js\" \"cd view/ && npm start\" \"cd ML-API/entity/ && python3 api-server.py\" \"cd ML-API/relation/ && python3 api-server2.py\"",
-    "docker": "concurrently \"cd server/ && node server.js\" \"nginx\" \"cd ML-API/entity/ && python3 api-server.py\" \"cd ML-API/relation/ && python3 api-server2.py\" \"./master2/gradlew run\""
+    "docker": "concurrently \"cd server/ && node server.js\" \"nginx\" \"cd ML-API/entity/ && python3 api-server.py\" \"cd ML-API/relation/ && python3 api-server2.py\" \"cd master2 && ./gradlew run\""
   },
   "repository": {
     "type": "git",
