@@ -1015,3 +1015,7 @@ export const getHost = () => {
     return "";
   }
 };
+
+export const getGrobidHost = () => {
+  return "http://" + window.location.hostname + ":8070"
+}
