@@ -148,6 +148,7 @@ class PendingModalContent extends Component {
 class SubmitModalContent extends Component {
     formRef = React.createRef();
     state = {
+        loading: false,
         file: "",
         filename: "Choose File",
         uploadedFile: {},
@@ -173,10 +174,13 @@ class SubmitModalContent extends Component {
 
     // upload file to grobid
     onSubmitFile = async e => {
-        console.log("here!!!!");
+      if(!this.state.file){
+        alert("please select the file!");
+      }
+      else{
+        this.startLoading();
 
         e.preventDefault();
-        alert("clicked");
         const formData = new FormData();
         formData.append('input', this.state.file);
         console.log("file appended");
@@ -274,15 +278,21 @@ class SubmitModalContent extends Component {
 
             }
         }
-        //console.log(contentList.join(''));
-        this.setState({ content: contentList.join('') });
-        this.formRef.current.setFieldsValue({
-            title: this.state.title,
-            authors: this.state.authors,
-            doi: this.state.doi,
-            keywords: this.state.keywords,
-            content: this.state.content,
-        });
+      }
+      //console.log(contentList.join(''));
+      this.setState({content: contentList.join('')});
+      this.formRef.current.setFieldsValue({
+          title: this.state.title,
+          authors: this.state.authors,
+          doi: this.state.doi,
+          keywords: this.state.keywords,
+          content: this.state.content,
+      });
+      this.setState({loading: false});
+    }
+
+    startLoading = () => {
+      this.setState({loading: true});
     }
 
     onChangeContent = e => {
@@ -311,12 +321,12 @@ class SubmitModalContent extends Component {
     render() {
 
         const layout = {
-            labelCol: {
-                span: 6,
-            },
-            wrapperCol: {
-                span: 26,
-            },
+          labelCol: {
+            span: 4,
+          },
+          wrapperCol: {
+            span: 20,
+          },
         };
 
         const _submitButton =
@@ -330,27 +340,32 @@ class SubmitModalContent extends Component {
         let SubmitButton = _submitButton;
 
         return (
-            <Form
-                {...layout}
-                ref={this.formRef}
-                name="pdfUploadForm"
-            >
-                <Form.Item
-                    label="PDF Upload">
-                    <input
-                        type="file"
-                        onChange={this.onChangeFile} />
-                    <Button
-                        type="primary"
-                        onClick={this.onSubmitFile}>
-                        Parse
-                </Button>
-                </Form.Item>
-                <Form.Item
-                    label="Title"
-                    name="title"
-                    rules={[{ required: true, message: 'Title is required!' }]}
-                    value={this.state.title}
+              <Form
+              {...layout}
+              ref={this.formRef}
+              name="pdfUploadForm"
+              >
+              <Form.Item
+              label="Upload">
+                <div className="pdfSubmit">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    style={{width: '305px', overflow: 'hidden',textOverflow: 'ellipsis'}}
+                    onChange={this.onChangeFile} />
+                  <Button
+                    type="primary"
+                    onClick={this.onSubmitFile}
+                    loading={this.state.loading}>
+                    Parse
+                  </Button>
+                </div>
+              </Form.Item>
+              <Form.Item
+                  label="Title"
+                  name="title"
+                  rules={[{ required: true, message: 'Title is required!' }]}
+                  value={this.state.title}
                 >
                     <Input placeholder="Title" onChange={this.onChangeTitle} />
                 </Form.Item>
@@ -378,7 +393,7 @@ class SubmitModalContent extends Component {
                     name="content"
                     rules={[{ required: true, message: 'Content is required!' }]}
                 >
-                    <Input.TextArea placeholder="Content" onChange={this.onChangeContent} />
+                  <Input.TextArea rows={10} placeholder="Content" onChange={this.onChangeContent}/>
                 </Form.Item>
                 {SubmitButton}
             </Form>)
