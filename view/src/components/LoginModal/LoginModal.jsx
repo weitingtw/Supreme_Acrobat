@@ -199,6 +199,7 @@ class SubmitModalContent extends Component {
         } catch (err) {
             console.log(err);
         }
+    }
     };
 
     processXML = data => {
@@ -261,7 +262,8 @@ class SubmitModalContent extends Component {
 
         for (let i = 0; i < content.length; i++) { // iterate through each div under body tag
             for (let j = 0; j < content[i].children.length; j++) {// iterate through each tag under each div
-                if (content[i].children[j].tagName.toLowerCase() === "head" && content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
+                if (content[i].children[j].tagName.toLowerCase() === "head" &&
+                content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
                     // extract content
                     while (j < content[i].children.length) {
                         if (content[i].children[j].tagName.toLowerCase() === "p") {
@@ -278,18 +280,17 @@ class SubmitModalContent extends Component {
 
             }
         }
-      }
-      //console.log(contentList.join(''));
-      this.setState({content: contentList.join('')});
-      this.formRef.current.setFieldsValue({
-          title: this.state.title,
-          authors: this.state.authors,
-          doi: this.state.doi,
-          keywords: this.state.keywords,
-          content: this.state.content,
-      });
-      this.setState({loading: false});
-    }
+        //console.log(contentList.join(''));
+        this.setState({content: contentList.join('')});
+        this.formRef.current.setFieldsValue({
+            title: this.state.title,
+            authors: this.state.authors,
+            doi: this.state.doi,
+            keywords: this.state.keywords,
+            content: this.state.content,
+        });
+        this.setState({loading: false});
+      };
 
     startLoading = () => {
       this.setState({loading: true});
