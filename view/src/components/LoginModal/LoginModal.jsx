@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Form, Input, Button, Upload, Modal } from 'antd';
-import { CloseCircleOutlined, UploadOutlined} from '@ant-design/icons';
+import { CloseCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import './LoginModal.css';
-import { getHost } from '../../utils';
+import { getHost, getGrobidHost } from '../../utils';
 
 class ModalContent extends Component {
     state = {
@@ -46,12 +46,12 @@ class ModalContent extends Component {
 
         // layout that controls the form
         const layout = {
-          labelCol: {
-            span: 8,
-          },
-          wrapperCol: {
-            span: 20,
-          },
+            labelCol: {
+                span: 8,
+            },
+            wrapperCol: {
+                span: 20,
+            },
         };
 
         // confirm button types
@@ -105,33 +105,33 @@ class ModalContent extends Component {
                 <h3>{titleText}</h3>
 
                 <Form
-                  {...layout}
-                  name="signInForm"
+                    {...layout}
+                    name="signInForm"
                 >
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Please enter your email!',
-                      },
-                    ]}
-                  >
-                    <Input onChange={this.handleEmailInput}/>
-                  </Form.Item>
-                  <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Please enter your password!',
-                      },
-                    ]}
-                  >
-                    <Input.Password onChange={this.handlePasswordInput}/>
-                  </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your email!',
+                            },
+                        ]}
+                    >
+                        <Input onChange={this.handleEmailInput} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your password!',
+                            },
+                        ]}
+                    >
+                        <Input.Password onChange={this.handlePasswordInput} />
+                    </Form.Item>
                 </Form>
                 {ConfirmButton}
                 {SwitchActionButton}
@@ -140,7 +140,11 @@ class ModalContent extends Component {
     }
 }
 
-
+class PendingModalContent extends Component {
+    render() {
+        return <div> There's no pending report</div>
+    }
+}
 class SubmitModalContent extends Component {
     formRef = React.createRef();
     state = {
@@ -151,21 +155,21 @@ class SubmitModalContent extends Component {
         message: "",
         title: "",
         authors: [],
-        keywords:[],
-        content:"",
+        keywords: [],
+        content: "",
         doi: "",
     }
 
     // handle file change
     onChangeFile = e => {
-      console.log("here");
-      console.log(e.target.files[0])
-      if(e.target.files[0]){
-        let fname = e.target.files[0].name;
-        fname = fname.replace(/\s/g, '');
-        this.setState({ file: e.target.files[0]});
-        this.setState({ filename: fname });
-      }
+        console.log("here");
+        console.log(e.target.files[0])
+        if (e.target.files[0]) {
+            let fname = e.target.files[0].name;
+            fname = fname.replace(/\s/g, '');
+            this.setState({ file: e.target.files[0] });
+            this.setState({ filename: fname });
+        }
     };
 
     // upload file to grobid
@@ -183,96 +187,96 @@ class SubmitModalContent extends Component {
 
         // upload file to grobid
         try {
-          const res = await axios.post('http://localhost:8070/api/processFulltextDocument', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          console.log(res.data);
-          this.setState({ message: 'File Uploaded' });
-          console.log("state updated");
-          this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
+            const res = await axios.post(getGrobidHost() + '/api/processFulltextDocument', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log(res.data);
+            this.setState({ message: 'File Uploaded' });
+            console.log("state updated");
+            this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
         } catch (err) {
-          console.log(err);
+            console.log(err);
         }
-      }
     };
 
     processXML = data => {
-      console.log("in process xml");
-      var xml = data;
-      //extract title
-      var title = xml.getElementsByTagName("title")[0].innerHTML;
-      this.setState({ title: title });
-      console.log(this.state.title);
-      //extract keywords
-      var terms = xml.getElementsByTagName("term");
-      const kwarr = [];
-      for(let i = 0; i < terms.length; i++){
-        kwarr.push(terms[i].innerHTML);
-      }
-      this.setState({ keywords: kwarr});
-      //extract authors
-      var author = xml.querySelectorAll("fileDesc author");
-      const authorList = [];
-      for(let i = 0; i < author.length; i++){
-        let name = "";
-        const fore = author[i].getElementsByTagName('forename');
-        const sur = author[i].getElementsByTagName('surname');
-        for(let j = 0; j < fore.length; j++){
-          name = name + fore[j].innerHTML + " ";
+        console.log("in process xml");
+        var xml = data;
+        //extract title
+        var title = xml.getElementsByTagName("title")[0].innerHTML;
+        this.setState({ title: title });
+        console.log(this.state.title);
+        //extract keywords
+        var terms = xml.getElementsByTagName("term");
+        const kwarr = [];
+        for (let i = 0; i < terms.length; i++) {
+            kwarr.push(terms[i].innerHTML);
         }
-        for(let j = 0; j < sur.length; j++){
-          name = name + sur[j].innerHTML;
-        }
-        authorList.push(name);
-      }
-
-      this.setState({ authors: authorList});
-      console.log(this.authors);
-
-      const contentList = [];
-
-      //extract abstract
-      // var abstract = xml.querySelectorAll("abstract div");
-      // for(let i = 0; i < abstract.length; i++){
-      //   for(let j = 0; j < abstract[i].children.length; j++){
-      //     if(abstract[i].children[j].tagName.toLowerCase() === "head"){
-      //       contentList.push("\n");
-      //       contentList.push(abstract[i].children[j].innerHTML);
-      //       contentList.push("\n");
-      //     }
-      //     if(abstract[i].children[j].tagName.toLowerCase() === "p"){
-      //       var elements = abstract[i].children[j].getElementsByTagName('ref');
-      //       // remove all <a> elements
-      //       while (elements[0]){
-      //         elements[0].parentNode.removeChild(elements[0])
-      //       }
-      //       contentList.push(abstract[i].children[j].innerHTML);
-      //     }
-      //   }
-      // }
-
-      //extract contents
-      var content = xml.querySelectorAll("body div");
-
-      for(let i = 0; i < content.length; i++){ // iterate through each div under body tag
-        for(let j = 0; j < content[i].children.length; j++){// iterate through each tag under each div
-          if(content[i].children[j].tagName.toLowerCase() === "head" && content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1){
-            // extract content
-            while(j < content[i].children.length){
-              if(content[i].children[j].tagName.toLowerCase() === "p"){
-                var tmp = content[i].children[j].getElementsByTagName('ref');
-                // remove all <a> elements
-                while (tmp[0]){
-                  tmp[0].parentNode.removeChild(tmp[0])
-                }
-                contentList.push(content[i].children[j].innerHTML);
-              }
-              j++;
+        this.setState({ keywords: kwarr });
+        //extract authors
+        var author = xml.querySelectorAll("fileDesc author");
+        const authorList = [];
+        for (let i = 0; i < author.length; i++) {
+            let name = "";
+            const fore = author[i].getElementsByTagName('forename');
+            const sur = author[i].getElementsByTagName('surname');
+            for (let j = 0; j < fore.length; j++) {
+                name = name + fore[j].innerHTML + " ";
             }
-          }
+            for (let j = 0; j < sur.length; j++) {
+                name = name + sur[j].innerHTML;
+            }
+            authorList.push(name);
+        }
 
+        this.setState({ authors: authorList });
+        console.log(this.authors);
+
+        const contentList = [];
+
+        //extract abstract
+        // var abstract = xml.querySelectorAll("abstract div");
+        // for(let i = 0; i < abstract.length; i++){
+        //   for(let j = 0; j < abstract[i].children.length; j++){
+        //     if(abstract[i].children[j].tagName.toLowerCase() === "head"){
+        //       contentList.push("\n");
+        //       contentList.push(abstract[i].children[j].innerHTML);
+        //       contentList.push("\n");
+        //     }
+        //     if(abstract[i].children[j].tagName.toLowerCase() === "p"){
+        //       var elements = abstract[i].children[j].getElementsByTagName('ref');
+        //       // remove all <a> elements
+        //       while (elements[0]){
+        //         elements[0].parentNode.removeChild(elements[0])
+        //       }
+        //       contentList.push(abstract[i].children[j].innerHTML);
+        //     }
+        //   }
+        // }
+
+        //extract contents
+        var content = xml.querySelectorAll("body div");
+
+        for (let i = 0; i < content.length; i++) { // iterate through each div under body tag
+            for (let j = 0; j < content[i].children.length; j++) {// iterate through each tag under each div
+                if (content[i].children[j].tagName.toLowerCase() === "head" && content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
+                    // extract content
+                    while (j < content[i].children.length) {
+                        if (content[i].children[j].tagName.toLowerCase() === "p") {
+                            var tmp = content[i].children[j].getElementsByTagName('ref');
+                            // remove all <a> elements
+                            while (tmp[0]) {
+                                tmp[0].parentNode.removeChild(tmp[0])
+                            }
+                            contentList.push(content[i].children[j].innerHTML);
+                        }
+                        j++;
+                    }
+                }
+
+            }
         }
       }
       //console.log(contentList.join(''));
@@ -292,19 +296,19 @@ class SubmitModalContent extends Component {
     }
 
     onChangeContent = e => {
-      this.setState({content: e.target.value});
+        this.setState({ content: e.target.value });
     }
     onChangeTitle = e => {
-      this.setState({title: e.target.value});
+        this.setState({ title: e.target.value });
     }
     onChangeKeywords = e => {
-      this.setState({keywords: e.target.value.split(',')});
+        this.setState({ keywords: e.target.value.split(',') });
     }
     onChangeAuthor = e => {
-      this.setState({authors: e.target.value.split(',')});
+        this.setState({ authors: e.target.value.split(',') });
     }
     onChangeDoi = e => {
-      this.setState({doi: e.target.value});
+        this.setState({ doi: e.target.value });
     }
 
     handleSubmit = () => {
@@ -363,43 +367,44 @@ class SubmitModalContent extends Component {
                   rules={[{ required: true, message: 'Title is required!' }]}
                   value={this.state.title}
                 >
-                  <Input placeholder="Title" onChange={this.onChangeTitle}/>
+                    <Input placeholder="Title" onChange={this.onChangeTitle} />
                 </Form.Item>
                 <Form.Item
-                  label="Authors"
-                  name="authors"
-                  rules={[{ required: true, message: 'Authors are required!' }]}
+                    label="Authors"
+                    name="authors"
+                    rules={[{ required: true, message: 'Authors are required!' }]}
                 >
-                  <Input placeholder="Author (Seperate with comma)" onChange={this.onChangeAuthor}/>
+                    <Input placeholder="Author (Seperate with comma)" onChange={this.onChangeAuthor} />
                 </Form.Item>
                 <Form.Item
-                  label="DOI"
-                  name="doi"
+                    label="DOI"
+                    name="doi"
                 >
-                  <Input placeholder="Doi" onChange={this.onChangeDoi}/>
+                    <Input placeholder="Doi" onChange={this.onChangeDoi} />
                 </Form.Item>
                 <Form.Item
-                  label="Keywords"
-                  name="keywords"
+                    label="Keywords"
+                    name="keywords"
                 >
-                  <Input placeholder="Keywords (Seperate with comma)" onChange={this.onChangeKeywords}/>
+                    <Input placeholder="Keywords (Seperate with comma)" onChange={this.onChangeKeywords} />
                 </Form.Item>
                 <Form.Item
-                  label="Content"
-                  name="content"
-                  rules={[{ required: true, message: 'Content is required!' }]}
+                    label="Content"
+                    name="content"
+                    rules={[{ required: true, message: 'Content is required!' }]}
                 >
                   <Input.TextArea rows={10} placeholder="Content" onChange={this.onChangeContent}/>
                 </Form.Item>
                 {SubmitButton}
-              </Form>)
+            </Form>)
     }
 }
 
 class LoginModal extends Component {
     state = {
         login_visible: false,
-        submit_visible: false
+        submit_visible: false,
+        pending_visible: false
     }
 
     openSubmitModal = () => {
@@ -408,6 +413,14 @@ class LoginModal extends Component {
 
     closeSubmitModal = () => {
         this.setState({ submit_visible: false })
+    }
+
+    openPendingModal = () => {
+        this.setState({ pending_visible: true });
+    }
+
+    closePendingModal = () => {
+        this.setState({ pending_visible: false })
     }
 
     openModal = () => {
@@ -473,7 +486,7 @@ class LoginModal extends Component {
     }
 
     render() {
-        const { login_visible, submit_visible } = this.state;
+        const { login_visible, submit_visible, pending_visible } = this.state;
 
         let hasUser = false;
         let user = localStorage.getItem('user');
@@ -495,6 +508,11 @@ class LoginModal extends Component {
                     Submit
                 </Button>
 
+                <Button onClick={this.openPendingModal}>
+                    <FontAwesomeIcon icon={['far', 'arrow-alt-circle-down']} />
+                    Pending
+                </Button>
+
                 |
                 <Button onClick={this.handleSignOut}>
                     Sign Out
@@ -512,11 +530,11 @@ class LoginModal extends Component {
             <div id='login-modal'>
                 {MyButton}
                 <Modal
-                  visible={this.state.login_visible}
-                  onCancel={this.closeModal}
-                  footer = {null}
-                  closeIcon = {<CloseCircleOutlined />}
-                  destroyOnClose={true}
+                    visible={this.state.login_visible}
+                    onCancel={this.closeModal}
+                    footer={null}
+                    closeIcon={<CloseCircleOutlined />}
+                    destroyOnClose={true}
                 >
 
                     <ModalContent
@@ -527,13 +545,24 @@ class LoginModal extends Component {
                 <Modal
                     visible={this.state.submit_visible}
                     onCancel={this.closeSubmitModal}
-                    footer = {null}
-                    closeIcon = {<CloseCircleOutlined />}
+                    footer={null}
+                    closeIcon={<CloseCircleOutlined />}
                     destroyOnClose={true}
                 >
                     <h4>Submit New Case Report</h4>
                     <SubmitModalContent
                         handleSubmit={this.handleSubmit}
+                    />
+                </Modal>
+                <Modal
+                    visible={pending_visible}
+                    width="600"
+                    height="500"
+                    effect="fadeInDown"
+                    onCancel={this.closePendingModal}
+                >
+                    <PendingModalContent
+                        handleCloseModal={this.closePendingModal}
                     />
                 </Modal>
             </div>

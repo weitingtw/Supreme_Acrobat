@@ -22,6 +22,11 @@
             "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:757859084253:targetgroup/acrobat-5001/171e7e269b80e348",
             "containerName": "acrobat-nginx-container",
             "containerPort": 5001
+        },
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:757859084253:targetgroup/acrobat-8070/36f8b340d215c7e1",
+            "containerName": "acrobat-nginx-container",
+            "containerPort": 8070
         }
     ],
     "desiredCount": 1,
