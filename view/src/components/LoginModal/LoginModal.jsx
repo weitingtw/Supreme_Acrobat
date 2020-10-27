@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Form, Input, Button, Upload, Modal } from 'antd';
-import { CloseCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Upload, Modal, Alert } from 'antd';
+import { CloseCircleOutlined, UploadOutlined, UserOutlined, SolutionOutlined, HistoryOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import './LoginModal.css';
 import { getHost, getGrobidHost } from '../../utils';
@@ -10,7 +9,11 @@ class ModalContent extends Component {
     state = {
         currentAction: 'signin',      // either signin or signup
         email: '',
-        password: ''
+        password: '',
+        first: '',
+        last: '',
+        organization: '',
+        username: ''
     }
 
     switchAction = () => {
@@ -41,16 +44,32 @@ class ModalContent extends Component {
         this.setState({ password: e.target.value });
     }
 
+    handleFirstInput = e => {
+        this.setState({ first: e.target.value });
+    }
+
+    handleLastInput = e => {
+        this.setState({ last: e.target.value });
+    }
+
+    handleOrgInput = e => {
+        this.setState({ organization: e.target.value });
+    }
+
+    handleUsernameInput = e => {
+        this.setState({ username: e.target.value });
+    }
+
     render() {
         const { currentAction } = this.state;
 
         // layout that controls the form
         const layout = {
             labelCol: {
-                span: 8,
+                span: 9,
             },
             wrapperCol: {
-                span: 20,
+                span: 30,
             },
         };
 
@@ -104,10 +123,10 @@ class ModalContent extends Component {
             <div className='modal-inner-content'>
                 <h3>{titleText}</h3>
 
-                <Form
+                {this.state.currentAction == 'signin' && <Form
                     {...layout}
                     name="signInForm"
-                >
+                    >
                     <Form.Item
                         label="Email"
                         name="email"
@@ -132,7 +151,84 @@ class ModalContent extends Component {
                     >
                         <Input.Password onChange={this.handlePasswordInput} />
                     </Form.Item>
-                </Form>
+                </Form>}
+                {this.state.currentAction == 'signup' && <Form
+                    {...layout}
+                    name="signUpForm">
+                    <Form.Item
+                        label="UserName"
+                        name="username"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your username!',
+                            },
+                        ]}
+                    >
+                        <Input onChange={this.handleUsernameInput} />
+                    </Form.Item>
+                    <Form.Item
+                        label="First Name"
+                        name="first"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your first name!',
+                            },
+                        ]}
+                    >
+                        <Input onChange={this.handleFirstInput} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Last Name"
+                        name="last"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your last name!',
+                            },
+                        ]}
+                    >
+                        <Input onChange={this.handleLastInput} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your email!',
+                            },
+                        ]}
+                    >
+                        <Input onChange={this.handleEmailInput} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Organization"
+                        name="organization"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your organization!',
+                            },
+                        ]}
+                    >
+                        <Input onChange={this.handleOrgInput} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your password!',
+                            },
+                        ]}
+                    >
+                        <Input.Password onChange={this.handlePasswordInput} />
+                    </Form.Item>
+                </Form>}
                 {ConfirmButton}
                 {SwitchActionButton}
             </div>
@@ -158,6 +254,8 @@ class SubmitModalContent extends Component {
         keywords: [],
         content: "",
         doi: "",
+        grobidErr: false,
+        fileErr: false,
     }
 
     // handle file change
@@ -169,17 +267,21 @@ class SubmitModalContent extends Component {
             fname = fname.replace(/\s/g, '');
             this.setState({ file: e.target.files[0] });
             this.setState({ filename: fname });
+            this.setState({fileErr: false});
+        }else{
+          this.setState({ file: ""});
+          this.setState({ filename: "" });
         }
     };
 
     // upload file to grobid
     onSubmitFile = async e => {
       if(!this.state.file){
-        alert("please select the file!");
+        this.setState({fileErr: true});
       }
       else{
         this.startLoading();
-
+        this.setState({grobidErr: false});
         e.preventDefault();
         const formData = new FormData();
         formData.append('input', this.state.file);
@@ -197,9 +299,11 @@ class SubmitModalContent extends Component {
             console.log("state updated");
             this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
         } catch (err) {
+            this.setState({loading: false});
+            this.setState({grobidErr: true});
             console.log(err);
         }
-    }
+      }
     };
 
     processXML = data => {
@@ -346,6 +450,22 @@ class SubmitModalContent extends Component {
               ref={this.formRef}
               name="pdfUploadForm"
               >
+              {this.state.grobidErr && (<Alert
+                message="Parser error, please try again later."
+                type="error"
+                style={{margin:"5px"}}
+                afterClose={()=>{this.setState({grobidErr: false})}}
+                showIcon
+                closable
+              />)}
+              {this.state.fileErr && (<Alert
+                message="Pease select file!"
+                type="error"
+                style={{margin:"5px"}}
+                afterClose={()=>{this.setState({fileErr: false})}}
+                showIcon
+                closable
+              />)}
               <Form.Item
               label="Upload">
                 <div className="pdfSubmit">
@@ -499,18 +619,21 @@ class LoginModal extends Component {
 
         const MyButton = hasUser ?
             <div className='button'>
-                <Button onClick={this.showProfile}>
-                    <FontAwesomeIcon icon={['far', 'user-astronaut']} />
+                <Button
+                  onClick={this.showProfile}
+                  icon={<SolutionOutlined />}>
                     Profile
                 </Button>
 
-                <Button onClick={this.openSubmitModal}>
-                    <FontAwesomeIcon icon={['far', 'arrow-alt-circle-up']} />
+                <Button
+                  onClick={this.openSubmitModal}
+                  icon={<UploadOutlined />}>
                     Submit
                 </Button>
 
-                <Button onClick={this.openPendingModal}>
-                    <FontAwesomeIcon icon={['far', 'arrow-alt-circle-down']} />
+                <Button
+                  onClick={this.openPendingModal}
+                  icon={<HistoryOutlined />}>
                     Pending
                 </Button>
 
@@ -521,8 +644,10 @@ class LoginModal extends Component {
 
             </div>
             :
-            <Button onClick={this.openModal} className='button'>
-                <FontAwesomeIcon icon={['far', 'user-astronaut']} />
+            <Button
+              onClick={this.openModal}
+              className='button'
+              icon={<UserOutlined />}>
                 Login
             </Button>
 
@@ -535,6 +660,7 @@ class LoginModal extends Component {
                     onCancel={this.closeModal}
                     footer={null}
                     closeIcon={<CloseCircleOutlined />}
+                    width={620}
                     destroyOnClose={true}
                 >
 
