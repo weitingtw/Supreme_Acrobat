@@ -368,8 +368,11 @@ class SubmitModalContent extends Component {
         console.log("in process xml");
         var xml = data;
         //extract title
-        var title = xml.getElementsByTagName("title")[0].innerHTML;
-        this.setState({ title: title });
+        var title = xml.getElementsByTagName("title");
+        if(title){
+          this.setState({ title: title[0].innerHTML });
+        }
+
         console.log(this.state.title);
         //extract keywords
         var terms = xml.getElementsByTagName("term");
@@ -380,22 +383,31 @@ class SubmitModalContent extends Component {
         this.setState({ keywords: kwarr });
         //extract authors
         var author = xml.querySelectorAll("fileDesc author");
+        console.log(author)
         const authorList = [];
-        for (let i = 0; i < author.length; i++) {
-            let name = "";
-            const fore = author[i].getElementsByTagName('forename');
-            const sur = author[i].getElementsByTagName('surname');
-            for (let j = 0; j < fore.length; j++) {
-                name = name + fore[j].innerHTML + " ";
-            }
-            for (let j = 0; j < sur.length; j++) {
-                name = name + sur[j].innerHTML;
-            }
-            authorList.push(name);
+        if(author.length != 0){
+          for (let i = 0; i < author.length; i++) {
+              let name = "";
+              const fore = author[i].getElementsByTagName('forename');
+              const sur = author[i].getElementsByTagName('surname');
+              for (let j = 0; j < fore.length; j++) {
+                  name = name + fore[j].innerHTML + " ";
+              }
+              for (let j = 0; j < sur.length; j++) {
+                  name = name + sur[j].innerHTML;
+              }
+              authorList.push(name);
+          }
         }
-
         this.setState({ authors: authorList });
         console.log(this.authors);
+
+        // extract doi
+        var doi = xml.querySelectorAll("sourceDesc idno");
+        if(doi.length != 0){
+          this.setState({ doi: doi[0].innerHTML });
+        }
+        console.log(doi)
 
         const contentList = [];
 
