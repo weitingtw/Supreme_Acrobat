@@ -237,8 +237,65 @@ class ModalContent extends Component {
 }
 
 class PendingModalContent extends Component {
+
+    state = {
+        reports: null
+    };
+
+    componentDidMount() {
+        axios
+            .get(getHost() + "/api/getPendingCaseReport")
+            .then((res) => {
+                const data = res.data.data;
+                console.log(data)
+                this.setState({ reports: data });
+            })
+            .catch((err) => console.log(err));
+    }
+    handleApprove = pmID => {
+        axios.post(getHost() + "/api/approvePendingCaseReport", { pmID: pmID })
+            .then(res => {
+                // console.log(res.data);
+                if (res.data.success === true) {
+                    alert('approve succeeded')
+                } else {
+                    alert('approve failed!')
+                }
+                this.componentDidMount();
+            })
+            .catch((err) => console.log(err));
+    }
+
+    handleReject = pmID => {
+        axios.post(getHost() + "/api/deletePendingCaseReport", { pmID: pmID })
+            .then(res => {
+                // console.log(res.data);
+                if (res.data.success === true) {
+                    alert('reject succeeded')
+                } else {
+                    alert('reject failed!')
+                }
+                this.componentDidMount();
+            })
+            .catch((err) => console.log(err));
+    }
     render() {
-        return <div> There's no pending report</div>
+        const { reports } = this.state;
+
+        if (reports && reports.length > 0) {
+            console.log(reports)
+            const content = reports.map((report, index) => (
+                <div>
+                    <div>PMID: {report.pmID} </div>
+                    <div>Title: {report.title}</div>
+                    <button onClick={() => this.handleApprove(report.pmID)}>approve</button>
+                    <button onClick={() => this.handleReject(report.pmID)}>reject</button>
+                </div>
+            ));
+            return <div>{content}</div>
+        } else {
+            return <div> There's no pending report</div>
+        }
     }
 }
 class SubmitModalContent extends Component {
@@ -256,6 +313,7 @@ class SubmitModalContent extends Component {
         doi: "",
         grobidErr: false,
         fileErr: false,
+        pmid: ""
     }
 
     // handle file change
@@ -367,7 +425,7 @@ class SubmitModalContent extends Component {
         for (let i = 0; i < content.length; i++) { // iterate through each div under body tag
             for (let j = 0; j < content[i].children.length; j++) {// iterate through each tag under each div
                 if (content[i].children[j].tagName.toLowerCase() === "head" &&
-                content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
+                    content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
                     // extract content
                     while (j < content[i].children.length) {
                         if (content[i].children[j].tagName.toLowerCase() === "p") {
@@ -385,7 +443,7 @@ class SubmitModalContent extends Component {
             }
         }
         //console.log(contentList.join(''));
-        this.setState({content: contentList.join('')});
+        this.setState({ content: contentList.join('') });
         this.formRef.current.setFieldsValue({
             title: this.state.title,
             authors: this.state.authors,
@@ -393,11 +451,11 @@ class SubmitModalContent extends Component {
             keywords: this.state.keywords,
             content: this.state.content,
         });
-        this.setState({loading: false});
-      };
+        this.setState({ loading: false });
+    };
 
     startLoading = () => {
-      this.setState({loading: true});
+        this.setState({ loading: true });
     }
 
     onChangeContent = e => {
@@ -405,6 +463,9 @@ class SubmitModalContent extends Component {
     }
     onChangeTitle = e => {
         this.setState({ title: e.target.value });
+    }
+    onChangePmid = e => {
+        this.setState({ pmid: e.target.value });
     }
     onChangeKeywords = e => {
         this.setState({ keywords: e.target.value.split(',') });
@@ -426,12 +487,12 @@ class SubmitModalContent extends Component {
     render() {
 
         const layout = {
-          labelCol: {
-            span: 4,
-          },
-          wrapperCol: {
-            span: 20,
-          },
+            labelCol: {
+                span: 4,
+            },
+            wrapperCol: {
+                span: 20,
+            },
         };
 
         const _submitButton =
@@ -480,13 +541,21 @@ class SubmitModalContent extends Component {
                     loading={this.state.loading}>
                     Parse
                   </Button>
-                </div>
-              </Form.Item>
-              <Form.Item
-                  label="Title"
-                  name="title"
-                  rules={[{ required: true, message: 'Title is required!' }]}
-                  value={this.state.title}
+                    </div>
+                </Form.Item>
+                <Form.Item
+                    label="Pmid"
+                    name="pmid"
+                    rules={[{ required: true, message: 'pmid is required!' }]}
+                    value={this.state.pmid}
+                >
+                    <Input placeholder="Pmid" onChange={this.onChangePmid} />
+                </Form.Item>
+                <Form.Item
+                    label="Title"
+                    name="title"
+                    rules={[{ required: true, message: 'Title is required!' }]}
+                    value={this.state.title}
                 >
                     <Input placeholder="Title" onChange={this.onChangeTitle} />
                 </Form.Item>
@@ -514,7 +583,7 @@ class SubmitModalContent extends Component {
                     name="content"
                     rules={[{ required: true, message: 'Content is required!' }]}
                 >
-                  <Input.TextArea rows={10} placeholder="Content" onChange={this.onChangeContent}/>
+                    <Input.TextArea rows={10} placeholder="Content" onChange={this.onChangeContent} />
                 </Form.Item>
                 {SubmitButton}
             </Form>)
@@ -538,6 +607,7 @@ class LoginModal extends Component {
 
     openPendingModal = () => {
         this.setState({ pending_visible: true });
+
     }
 
     closePendingModal = () => {
@@ -587,8 +657,8 @@ class LoginModal extends Component {
         this.forceUpdate();
     }
 
-    handleSubmit = text => {
-        axios.post(getHost() + "/api/uploadReport", text)
+    handleSubmit = data => {
+        axios.post(getHost() + "/api/putPendingCaseReport", data)
             .then(res => {
                 console.log(res.data);
                 if (res.data.success === false) {
@@ -683,8 +753,6 @@ class LoginModal extends Component {
                 </Modal>
                 <Modal
                     visible={pending_visible}
-                    width="600"
-                    height="500"
                     effect="fadeInDown"
                     onCancel={this.closePendingModal}
                 >
