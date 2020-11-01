@@ -4,7 +4,7 @@ import axios from "axios";
 import Brat from "../Brat/Brat";
 import Graph from "../Graph/Graph";
 import { PacmanLoader } from "react-spinners";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FileTextOutlined } from '@ant-design/icons';
 import { addHighLight } from "../../utils";
 import "./DisplayPage.css";
 import { getHost } from "../../utils";
@@ -221,7 +221,7 @@ class DisplayPage extends Component {
                       </React.Fragment>
                     </div>
                     <div className="brat-intro" id="title">
-                      <FontAwesomeIcon icon={["fal", "file-alt"]} />
+                      <FileTextOutlined />
                       {title}
                     </div>
                     <div className="report-info">
