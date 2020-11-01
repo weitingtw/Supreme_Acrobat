@@ -702,9 +702,9 @@ class LoginModal extends Component {
         const MyButton = hasUser ?
             <div className='button'>
                 <Button
-                  onClick={this.showProfile}
+                  href='/user'
                   icon={<SolutionOutlined />}>
-                    Profile
+                    User Center
                 </Button>
 
                 <Button
