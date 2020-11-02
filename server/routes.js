@@ -818,7 +818,7 @@ module.exports = function (app) {
               // third element is the count
               count = parseInt(response[2])
               body = []
-              body.push({ index: { _index: 'casereport', _type: '_doc', _id: count } });
+              body.push({ index: { _index: 'casereport', _type: '_doc', _id: caseReport.pmID } });
               body.push({ pmID: caseReport.pmID, content: caseReport.text });
 
               console.log("count")
