@@ -4,6 +4,7 @@ import { CloseCircleOutlined, UploadOutlined, UserOutlined, SolutionOutlined, Hi
 import axios from 'axios';
 import './LoginModal.css';
 import { getHost, getGrobidHost } from '../../utils';
+import { LoginContext } from '../../LoginContext'
 
 class ModalContent extends Component {
     state = {
@@ -126,7 +127,7 @@ class ModalContent extends Component {
                 {this.state.currentAction == 'signin' && <Form
                     {...layout}
                     name="signInForm"
-                    >
+                >
                     <Form.Item
                         label="Email"
                         name="email"
@@ -237,7 +238,6 @@ class ModalContent extends Component {
 }
 
 class PendingModalContent extends Component {
-
     state = {
         reports: null
     };
@@ -325,43 +325,43 @@ class SubmitModalContent extends Component {
             fname = fname.replace(/\s/g, '');
             this.setState({ file: e.target.files[0] });
             this.setState({ filename: fname });
-            this.setState({fileErr: false});
-        }else{
-          this.setState({ file: ""});
-          this.setState({ filename: "" });
+            this.setState({ fileErr: false });
+        } else {
+            this.setState({ file: "" });
+            this.setState({ filename: "" });
         }
     };
 
     // upload file to grobid
     onSubmitFile = async e => {
-      if(!this.state.file){
-        this.setState({fileErr: true});
-      }
-      else{
-        this.startLoading();
-        this.setState({grobidErr: false});
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('input', this.state.file);
-        console.log("file appended");
-
-        // upload file to grobid
-        try {
-            const res = await axios.post(getGrobidHost() + '/api/processFulltextDocument', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            console.log(res.data);
-            this.setState({ message: 'File Uploaded' });
-            console.log("state updated");
-            this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
-        } catch (err) {
-            this.setState({loading: false});
-            this.setState({grobidErr: true});
-            console.log(err);
+        if (!this.state.file) {
+            this.setState({ fileErr: true });
         }
-      }
+        else {
+            this.startLoading();
+            this.setState({ grobidErr: false });
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('input', this.state.file);
+            console.log("file appended");
+
+            // upload file to grobid
+            try {
+                const res = await axios.post(getGrobidHost() + '/api/processFulltextDocument', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log(res.data);
+                this.setState({ message: 'File Uploaded' });
+                console.log("state updated");
+                this.processXML(new window.DOMParser().parseFromString(res.data, "text/xml"))
+            } catch (err) {
+                this.setState({ loading: false });
+                this.setState({ grobidErr: true });
+                console.log(err);
+            }
+        }
     };
 
     processXML = data => {
@@ -369,8 +369,8 @@ class SubmitModalContent extends Component {
         var xml = data;
         //extract title
         var title = xml.getElementsByTagName("title");
-        if(title){
-          this.setState({ title: title[0].innerHTML });
+        if (title) {
+            this.setState({ title: title[0].innerHTML });
         }
 
         console.log(this.state.title);
@@ -385,27 +385,27 @@ class SubmitModalContent extends Component {
         var author = xml.querySelectorAll("fileDesc author");
         console.log(author)
         const authorList = [];
-        if(author.length != 0){
-          for (let i = 0; i < author.length; i++) {
-              let name = "";
-              const fore = author[i].getElementsByTagName('forename');
-              const sur = author[i].getElementsByTagName('surname');
-              for (let j = 0; j < fore.length; j++) {
-                  name = name + fore[j].innerHTML + " ";
-              }
-              for (let j = 0; j < sur.length; j++) {
-                  name = name + sur[j].innerHTML;
-              }
-              authorList.push(name);
-          }
+        if (author.length != 0) {
+            for (let i = 0; i < author.length; i++) {
+                let name = "";
+                const fore = author[i].getElementsByTagName('forename');
+                const sur = author[i].getElementsByTagName('surname');
+                for (let j = 0; j < fore.length; j++) {
+                    name = name + fore[j].innerHTML + " ";
+                }
+                for (let j = 0; j < sur.length; j++) {
+                    name = name + sur[j].innerHTML;
+                }
+                authorList.push(name);
+            }
         }
         this.setState({ authors: authorList });
         console.log(this.authors);
 
         // extract doi
         var doi = xml.querySelectorAll("sourceDesc idno");
-        if(doi.length != 0){
-          this.setState({ doi: doi[0].innerHTML });
+        if (doi.length != 0) {
+            this.setState({ doi: doi[0].innerHTML });
         }
         console.log(doi)
 
@@ -518,40 +518,40 @@ class SubmitModalContent extends Component {
         let SubmitButton = _submitButton;
 
         return (
-              <Form
-              {...layout}
-              ref={this.formRef}
-              name="pdfUploadForm"
-              >
-              {this.state.grobidErr && (<Alert
-                message="Parser error, please try again later."
-                type="error"
-                style={{margin:"5px"}}
-                afterClose={()=>{this.setState({grobidErr: false})}}
-                showIcon
-                closable
-              />)}
-              {this.state.fileErr && (<Alert
-                message="Pease select file!"
-                type="error"
-                style={{margin:"5px"}}
-                afterClose={()=>{this.setState({fileErr: false})}}
-                showIcon
-                closable
-              />)}
-              <Form.Item
-              label="Upload">
-                <div className="pdfSubmit">
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    style={{width: '305px', overflow: 'hidden',textOverflow: 'ellipsis'}}
-                    onChange={this.onChangeFile} />
-                  <Button
-                    type="primary"
-                    onClick={this.onSubmitFile}
-                    loading={this.state.loading}>
-                    Parse
+            <Form
+                {...layout}
+                ref={this.formRef}
+                name="pdfUploadForm"
+            >
+                {this.state.grobidErr && (<Alert
+                    message="Parser error, please try again later."
+                    type="error"
+                    style={{ margin: "5px" }}
+                    afterClose={() => { this.setState({ grobidErr: false }) }}
+                    showIcon
+                    closable
+                />)}
+                {this.state.fileErr && (<Alert
+                    message="Pease select file!"
+                    type="error"
+                    style={{ margin: "5px" }}
+                    afterClose={() => { this.setState({ fileErr: false }) }}
+                    showIcon
+                    closable
+                />)}
+                <Form.Item
+                    label="Upload">
+                    <div className="pdfSubmit">
+                        <input
+                            type="file"
+                            accept=".pdf"
+                            style={{ width: '305px', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                            onChange={this.onChangeFile} />
+                        <Button
+                            type="primary"
+                            onClick={this.onSubmitFile}
+                            loading={this.state.loading}>
+                            Parse
                   </Button>
                     </div>
                 </Form.Item>
@@ -603,12 +603,16 @@ class SubmitModalContent extends Component {
 }
 
 class LoginModal extends Component {
+    static contextType = LoginContext;
     state = {
         login_visible: false,
         submit_visible: false,
         pending_visible: false
     }
 
+    componentDidMount = () => {
+        console.log(this.context);
+    }
     openSubmitModal = () => {
         this.setState({ submit_visible: true });
     }
@@ -640,8 +644,10 @@ class LoginModal extends Component {
             .then(res => {
                 // console.log(res.data);
                 if (res.data.success === true) {
+                    console.log(res.data);
                     const { user } = res.data;
                     localStorage.setItem('user', JSON.stringify(user));
+
                     alert('welcome!')
                 } else {
                     alert('login failed!')
@@ -702,22 +708,17 @@ class LoginModal extends Component {
         const MyButton = hasUser ?
             <div className='button'>
                 <Button
-                  href='/user'
-                  icon={<SolutionOutlined />}>
+                    href='/user'
+                    icon={<SolutionOutlined />}>
                     User Center
                 </Button>
 
                 <Button
-                  onClick={this.openSubmitModal}
-                  icon={<UploadOutlined />}>
+                    onClick={this.openSubmitModal}
+                    icon={<UploadOutlined />}>
                     Submit
                 </Button>
 
-                <Button
-                  onClick={this.openPendingModal}
-                  icon={<HistoryOutlined />}>
-                    Pending
-                </Button>
 
                 |
                 <Button onClick={this.handleSignOut}>
@@ -727,9 +728,9 @@ class LoginModal extends Component {
             </div>
             :
             <Button
-              onClick={this.openModal}
-              className='button'
-              icon={<UserOutlined />}>
+                onClick={this.openModal}
+                className='button'
+                icon={<UserOutlined />}>
                 Login
             </Button>
 

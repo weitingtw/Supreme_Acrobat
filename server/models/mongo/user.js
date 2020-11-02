@@ -13,27 +13,28 @@ const Schema = mongoose.Schema;
 *	@param {{ type: Date, default: Date.now }} date - date of the Case Report
 */
 const UserSchema = new Schema(
-  {
-    email: {
-        type: String,
-        unique: true,
-        required: true,
-        trim: true
+    {
+        email: {
+            type: String,
+            unique: true,
+            required: true,
+            trim: true
+        },
+        password: {
+            type: String,
+            required: true
+        },
+        activation: {
+            type: Boolean
+        },
+        admin: false
     },
-    password: {
-        type: String,
-        required: true
-    },
-    activation: {
-        type: Boolean
-    }
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
     var user = this;
-    bcrypt.hash(user.password, 10, function(err, hash) {
+    bcrypt.hash(user.password, 10, function (err, hash) {
         if (err) {
             return next(err);
         }

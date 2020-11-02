@@ -2,26 +2,28 @@ import React, { Component } from 'react';
 import './AdminPage.css';
 import ucla_logo from "../../static/ucla.png";
 import UserMainPage from "../UserMainPage/UserMainPage";
+import PendingReport from "../PendingReport/PendingReport";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined, HomeOutlined, SettingOutlined } from '@ant-design/icons';
+import { LoginContextProvider, LoginContext } from '../../LoginContext';
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 
-
-
 class AdminPage extends Component {
-    state = {};
+  static contextType = LoginContext;
+  state = {};
 
-    componentDidMount() {
-    }
-
-    render() {
-        return (
+  render() {
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      return <div> You have not yet logged in </div>;
+    } else {
+      return (
+        <LoginContextProvider>
           <Router>
             <Layout>
-              <Header style={{background: '#03a9f4'}}>
+              <Header style={{ background: '#03a9f4' }}>
                 <div>
                   <span className='logo_creat'>CREAT<span className='logo_e'>e</span></span>
 
@@ -38,8 +40,8 @@ class AdminPage extends Component {
                     </Menu.Item>
 
                     <SubMenu key="operations" icon={<LaptopOutlined />} title="Operations">
-                      <Menu.Item key="operation1">operation1<Link to="/user/main" /></Menu.Item>
-                      <Menu.Item key="operation2">operation2<Link to="/user/main" /></Menu.Item>
+                      <Menu.Item key="operation1">user info<Link to="/user/main" /></Menu.Item>
+                      <Menu.Item key="operation2">pending report<Link to="/user/pending" /></Menu.Item>
                     </SubMenu>
                     <SubMenu key="seeting" icon={<SettingOutlined />} title="Settings">
                       <Menu.Item key="setting1">setting1<Link to="/user/main" /></Menu.Item>
@@ -48,16 +50,18 @@ class AdminPage extends Component {
                   </Menu>
                 </Sider>
                 <Layout style={{ padding: '0 24px 24px' }}>
-                    <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
-                      <Route path="/user/main" component={UserMainPage} />
-                    </Content>
+                  <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+                    <Route path="/user/main" component={UserMainPage} />
+                    <Route path="/user/pending" component={PendingReport} />
+                  </Content>
                 </Layout>
               </Layout>
             </Layout>
           </Router>
-
-        );
+        </LoginContextProvider>
+      );
     }
+  }
 }
 
 export default AdminPage;

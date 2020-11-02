@@ -6,7 +6,7 @@ import SearchPage from "../SearchPage/SearchPage";
 import DisplayPage from "../DisplayPage/DisplayPage";
 import KeywordPage from "../KeywordPage/KeywordPage";
 import AdminPage from "../AdminPage/AdminPage";
-
+import { LoginContextProvider } from "./../../LoginContext";
 import './App.css';
 
 
@@ -15,22 +15,24 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
-        <div id='app'>
-          {/*<TitlePanel />*/}
-          <Switch>
-            <Route exact path="/" component={SearchPage} />
-            <Route exact path="/search" component={SearchPage} />
-            <Route exact path="/main" component={MainPage} />
-            <Route exact path="/search/:id" component={DisplayPage} />
-            <Route exact path="/user/" component={AdminPage} />
-            <Route exact path="/getKeyword/:keyword" component={KeywordPage} />
-            <Route exact path="/relationSearch" component={RelationSearchPage} />
-            {/*<Route exact path="/addCaseReport" component={AddCaseReport}/>*/}
-            <Route component={() => (<h1>404!!!</h1>)} />
-          </Switch>
-        </div>
-      </Router>
+      <LoginContextProvider>
+        <Router>
+          <div id='app'>
+            {/*<TitlePanel />*/}
+            <Switch>
+              <Route exact path="/" component={SearchPage} />
+              <Route exact path="/search" component={SearchPage} />
+              <Route exact path="/main" component={MainPage} />
+              <Route exact path="/search/:id" component={DisplayPage} />
+              <Route exact path="/user/" component={AdminPage} />
+              <Route exact path="/getKeyword/:keyword" component={KeywordPage} />
+              <Route exact path="/relationSearch" component={RelationSearchPage} />
+              {/*<Route exact path="/addCaseReport" component={AddCaseReport}/>*/}
+              <Route component={() => (<h1>404!!!</h1>)} />
+            </Switch>
+          </div>
+        </Router>
+      </LoginContextProvider>
     );
   }
 }
