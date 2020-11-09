@@ -24,7 +24,7 @@ class App extends Component {
               <Route exact path="/search" component={SearchPage} />
               <Route exact path="/main" component={MainPage} />
               <Route exact path="/search/:id" component={DisplayPage} />
-              <Route exact path="/user/" component={AdminPage} />
+              <Route path="/user/" component={AdminPage} />
               <Route exact path="/getKeyword/:keyword" component={KeywordPage} />
               <Route exact path="/relationSearch" component={RelationSearchPage} />
               {/*<Route exact path="/addCaseReport" component={AddCaseReport}/>*/}

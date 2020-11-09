@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { buildFontAwesomeLib } from '../../utils';
+import { Button, Modal } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import './PendingReport.css';
 import axios from 'axios';
 import { getHost, getGrobidHost } from '../../utils';
@@ -11,7 +13,8 @@ buildFontAwesomeLib();
 
 class PendingReport extends Component {
     state = {
-        reports: null
+        details_visible: false,
+        curContent: {}
     };
 
     componentDidMount() {
@@ -24,6 +27,16 @@ class PendingReport extends Component {
             })
             .catch((err) => console.log(err));
     }
+
+    openModal = (index) => {
+        this.setModalContent(index);
+        this.setState({ details_visible: true });
+    }
+
+    closeModal = () => {
+        this.setState({ details_visible: false });
+    }
+
     handleApprove = pmID => {
         axios.post(getHost() + "/api/approvePendingCaseReport", { pmID: pmID })
             .then(res => {
@@ -51,25 +64,47 @@ class PendingReport extends Component {
             })
             .catch((err) => console.log(err));
     }
+
+    setModalContent = index => {
+        this.setState({ curContent: this.state.reports[index] });
+    }
     render() {
-        console.log(localStorage.getItem('user'));
-        console.log(JSON.parse(localStorage.getItem('user')));
+
         if (!(JSON.parse(localStorage.getItem('user')).admin)) {
             return <div>You are not an administrator</div>
         }
-        const { reports } = this.state;
-
+        const { reports, details_visible, curContent } = this.state;
+        console.log(this.state);
         if (reports && reports.length > 0) {
             console.log(reports)
             const content = reports.map((report, index) => (
                 <div>
                     <div>PMID: {report.pmID} </div>
                     <div>Title: {report.title}</div>
+                    <div> <Button onClick={() => { this.openModal(index) }}>show details</Button></div>
                     <button onClick={() => this.handleApprove(report.pmID)}>approve</button>
                     <button onClick={() => this.handleReject(report.pmID)}>reject</button>
                 </div>
             ));
-            return <div>{content}</div>
+            return <div>{content}<Modal
+                visible={details_visible}
+                onCancel={this.closeModal}
+                footer={null}
+                closeIcon={<CloseCircleOutlined />}
+                width={620}
+                destroyOnClose={true}
+            >
+                <div>PMID: {curContent.pmID}</div>
+                <div>Title: {curContent.title}</div>
+
+                <div>Authors: {curContent.authors ? curContent.authors.map((author, index) => {
+                    return <span>  {" "}  {author.name}</span>
+                }) : ""}</div>
+                <div>DOI: {curContent.doi}</div>
+                <div>Keywords: {String(curContent.keywords)}</div>
+                <div>Content: {curContent.text}</div>
+
+            </Modal></div>
         } else {
             return <div> There's no pending report</div>
         }

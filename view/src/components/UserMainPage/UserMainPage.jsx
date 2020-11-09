@@ -8,11 +8,20 @@ buildFontAwesomeLib();
 
 class UserMainPage extends Component {
     state = {};
-
+    componentDidMount() {
+        let user = JSON.parse(localStorage.getItem('user'));
+        this.setState(user);
+    }
     render() {
+        const { email, first, last, org, createdAt, username } = this.state;
+
         return (
             <div id='mainPage'>
-                This is the user main page
+                <div>username: {username}</div>
+                <div>email: {email}</div>
+                <div>organization: {org}</div>
+                <div>name: {last}, {first}</div>
+                <div>registered at: {createdAt}</div>
             </div>
         );
     }
