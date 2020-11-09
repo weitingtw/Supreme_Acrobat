@@ -27,98 +27,14 @@ class EntityGraph extends Component {
   }
   componentDidMount() {
     this.createViz();
-    this.createLegend();
-  }
-
-  createLegend() {
-    let keys = [...this.state.nodeGroups].sort();
-    let edges = ["Modify", "Overlap"];
-
-    let width = Math.min(
-      250,
-      55 + 8 * Math.max(...keys.map((key) => key.length))
-    );
-    console.log("keys" + keys);
-
-    let height = keys.length * 25 + 20 + 50;
-
-    let legendRef = this.legendRef.current;
-    let legend = d3.select(legendRef);
-    let legendSVG = legend
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-    let legendEdges = legendSVG.append("g");
-    let legendNodes = legendSVG.append("g");
-
-    legendEdges
-      .selectAll("line")
-      .data(edges)
-      .enter()
-      .append("line")
-      .attr("x1", 20 - 7)
-      .attr("x2", 20 + 7)
-      .attr("y1", (d, i) => {
-        return 20 + i * 25;
-      })
-      .attr("y2", (d, i) => {
-        return 20 + i * 25;
-      })
-      .attr("stroke", (d) => (d === "Overlap" ? "#7da2ff" : "#555"))
-      .attr("stroke-width", 2.5)
-      .attr("stroke-dasharray", (d) => (d === "Modify" ? "3, 3" : "none"));
-
-    legendEdges
-      .selectAll("line-text")
-      .data(edges)
-      .enter()
-      .append("text")
-      .attr("x", 40)
-      .attr("y", (d, i) => {
-        return 20 + i * 25;
-      })
-      .text((d) => {
-        return d;
-      })
-      .attr("text-anchor", "left")
-      .style("alignment-baseline", "middle");
-
-    legendNodes
-      .selectAll("circle")
-      .data(keys)
-      .enter()
-      .append("circle")
-      .attr("cx", 20)
-      .attr("cy", (d, i) => {
-        return 70 + i * 25;
-      })
-      .attr("r", 7)
-      .style("fill", (d) => {
-        return group2color[d];
-      })
-      .attr("stroke", "#000");
-
-    legendNodes
-      .selectAll("text")
-      .data(keys)
-      .enter()
-      .append("text")
-      .attr("x", 40)
-      .attr("y", (d, i) => {
-        return 70 + i * 25;
-      })
-      .text((d) => {
-        return d;
-      })
-      .attr("text-anchor", "left")
-      .style("alignment-baseline", "middle");
   }
 
   createViz() {
     const { graph } = this.state;
     let { viewBoxWidth, viewBoxHeight } = this.props;
     let activeNode = null;
+    let nodeLegendKeys = [...this.state.nodeGroups].sort();
+    let edgeLegendKeys = ["Modify"];
 
     const adjList = graph.getAdjacencyList();
     const radiusScaler = this.degreeScaler(graph, [6, 20]);
@@ -165,7 +81,75 @@ class EntityGraph extends Component {
         .append("svg")
         .attr("width", viewBoxWidth)
         .attr("height", viewBoxHeight)
-        .attr("viewBox", `0 0 ${viewBoxWidth} ${viewBoxHeight}`);
+        .attr("viewBox", `0 0 ${viewBoxWidth} ${viewBoxHeight}`)
+        .style("width", "100%")
+        .style("height", "100%");
+
+      let legendG = svg.append("g").attr("transform", "translate(20 20)");
+
+      legendG
+        .selectAll("line")
+        .data(edgeLegendKeys)
+        .enter()
+        .append("line")
+        .attr("x1", -7)
+        .attr("x2", +7)
+        .attr("y1", (d, i) => {
+          return i * 25;
+        })
+        .attr("y2", (d, i) => {
+          return i * 25;
+        })
+        .attr("stroke", (d) => (d === "Overlap" ? "#7da2ff" : "#555"))
+        .attr("stroke-width", 2.5)
+        .attr("stroke-dasharray", (d) => (d === "Modify" ? "3, 3" : "none"));
+
+      legendG
+        .selectAll(".line-text")
+        .data(edgeLegendKeys)
+        .enter()
+        .append("text")
+        .attr("class", "line-text")
+        .attr("x", 20)
+        .attr("y", (d, i) => {
+          return i * 25;
+        })
+        .text((d) => {
+          return d;
+        })
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle");
+
+      legendG
+        .selectAll("circle")
+        .data(nodeLegendKeys)
+        .enter()
+        .append("circle")
+        .attr("cx", 0)
+        .attr("cy", (d, i) => {
+          return (edgeLegendKeys.length + i) * 25;
+        })
+        .attr("r", 7)
+        .style("fill", (d) => {
+          return group2color[d];
+        })
+        .attr("stroke", "#000");
+
+      legendG
+        .selectAll(".node-text")
+        .data(nodeLegendKeys)
+        .enter()
+        .append("text")
+        .attr("class", "node-text")
+        .attr("x", 20)
+        .attr("y", (d, i) => {
+          return (edgeLegendKeys.length + i) * 25;
+        })
+        .text((d) => {
+          return d;
+        })
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle");
 
       svg
         .append("defs")
@@ -528,12 +512,7 @@ class EntityGraph extends Component {
   }
 
   render() {
-    return (
-      <div class="viz-container">
-        <div class="viz" ref={this.ref} />
-        <div class="legend" ref={this.legendRef}></div>
-      </div>
-    );
+    return <div class="viz" ref={this.ref} />;
   }
 }
 

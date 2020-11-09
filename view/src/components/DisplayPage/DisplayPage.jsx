@@ -259,7 +259,7 @@ class DisplayPage extends Component {
                               <EntityGraph
                                 graphData={docData}
                                 entities={entities}
-                                viewBoxWidth={250}
+                                viewBoxWidth={400}
                                 viewBoxHeight={250}
                               />
                             </div>
