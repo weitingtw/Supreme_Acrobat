@@ -954,6 +954,10 @@ module.exports = function (app) {
     let user = {};
     user.email = req.body.email;
     user.password = req.body.password;
+    user.last = req.body.last;
+    user.first = req.body.first;
+    user.org = req.body.organization;
+    user.username = req.body.username;
     user.activation = false;
     User.create(user, function (err, user) {
       console.log(err);

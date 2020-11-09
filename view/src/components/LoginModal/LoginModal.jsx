@@ -119,7 +119,7 @@ class ModalContent extends Component {
             SwitchActionButton = _SwitchToSignInButton;
             titleText = 'Sign Up';
         }
-
+        console.log(this.state);
         return (
             <div className='modal-inner-content'>
                 <h3>{titleText}</h3>

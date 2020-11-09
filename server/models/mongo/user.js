@@ -27,6 +27,18 @@ const UserSchema = new Schema(
         activation: {
             type: Boolean
         },
+        last: {
+            type: String,
+        },
+        first: {
+            type: String,
+        },
+        org: {
+            type: String,
+        },
+        username: {
+            type: String,
+        },
         admin: false
     },
     { timestamps: true }
