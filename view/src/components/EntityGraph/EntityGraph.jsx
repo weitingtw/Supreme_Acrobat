@@ -194,7 +194,7 @@ class EntityGraph extends Component {
         .enter()
         .append("text")
         .text((d) => d.label)
-        .attr("font-size", 6)
+        .attr("font-size", 9)
         .attr("text-anchor", "middle")
         .style("pointer-events", "none");
 
@@ -227,7 +227,7 @@ class EntityGraph extends Component {
         .enter()
         .append("text")
         .text((d) => d.text)
-        .attr("font-size", (d) => (d.type === "OVERLAP" ? 14 : 6))
+        .attr("font-size", (d) => (d.type === "OVERLAP" ? 16 : 9))
         .attr("font-weight", (d) => (d.type === "OVERLAP" ? 700 : null))
         .attr("text-anchor", "middle")
         .style("text-transform", "capitalize")
