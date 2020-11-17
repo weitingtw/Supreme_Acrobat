@@ -46,6 +46,15 @@ class TypeSelect extends Component {
         ];
         const normDropDownData = ['norm_1', 'norm_2', 'norm_3'];
 
+        // <span className='drop-down-container'>
+        //     <DropDown
+        //         dropdownsize='90'
+        //         handleSelect={ this.handleSelectNorm }
+        //         dropDownData={ normDropDownData }
+        //         current={ this.state.currentNorm }
+        //     />
+        // </span>
+
         return (
             <div className='type-select' >
                 <span className='drop-down-container'>
@@ -56,14 +65,7 @@ class TypeSelect extends Component {
                         current={ typeName }
                     />
                 </span>
-                <span className='drop-down-container'>
-                    <DropDown
-                        dropdownsize='90'
-                        handleSelect={ this.handleSelectNorm }
-                        dropDownData={ normDropDownData }
-                        current={ this.state.currentNorm }
-                    />
-                </span>
+
                 <FontAwesomeIcon
                     icon={['far', 'times-circle']}
                     onClick={() => console.log('close!')}
