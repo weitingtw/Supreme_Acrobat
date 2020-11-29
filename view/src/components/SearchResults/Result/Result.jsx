@@ -48,17 +48,19 @@ class Result extends Component {
 
         return (
             <div className='result' onClick={this.handleClick}>
+              <Link
+                target="_blank"
+                to={{
+                    pathname: displayPath,
+                    search: "searchEntities=" + JSON.stringify(textEntities) + "&entities=" + JSON.stringify(entities),
+                }}>
                 <Card className=''
                     hoverable
                     title={title}>
-                    <FontAwesomeIcon icon={['fab', 'bitcoin']} />
-                    <Link
-                        target="_blank"
-                        to={{
-                            pathname: displayPath,
-                            search: "searchEntities=" + JSON.stringify(textEntities) + "&entities=" + JSON.stringify(entities),
-                        }}>{previewText}</Link>
+
+                    <p><FontAwesomeIcon icon={['fab', 'bitcoin']} />{previewText}</p>
                 </Card>
+              </Link>
             </div>);
     }
 }

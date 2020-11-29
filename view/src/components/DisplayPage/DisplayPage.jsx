@@ -47,7 +47,7 @@ class DisplayPage extends Component {
       textEntities, // plain text highlight entities
       title,
       authors,
-      doi,
+      doi="",
       keywords,
       abstract;
     const base_link = "https://pubmed.ncbi.nlm.nih.gov/?term=";
@@ -58,10 +58,8 @@ class DisplayPage extends Component {
 
     if (docData) {
       ({ text, title, authors, doi, keywords, abstract } = docData);
-      console.log(keywords);
-      if (keywords[0] == "none") {
-        kwlink.push(<span>none.</span>);
-      } else {
+      console.log(keywords == "");
+      if (!(keywords == "" || keywords[0] === "none" || keywords === "[]" || keywords === undefined)) {
         if (keywords[0]) {
           for (const [index, value] of keywords.entries()) {
             kwlink.push(<a href={keyword_link + value}>{value}</a>);
@@ -94,12 +92,9 @@ class DisplayPage extends Component {
       author_li.push(".");
     }
     console.log("title: " + title);
-    console.log("keywords: " + keywords);
-    // const kwlink = [];
-    // for (const [index, value] of keywords.entries()) {
-    //   kwlink.push(<a href="/search">{value}</a>);
-    //   kwlink.push(", ");
-    // }
+    console.log("keywords: ");
+    console.log(kwlink);
+
     entities = [];
     if (this.props.location.search) {
       console.log("hey we have states!");
@@ -111,7 +106,7 @@ class DisplayPage extends Component {
       if (entityQuery["entities"] !== "undefined") {
         graphEntities = JSON.parse(entityQuery["entities"]);
       }
-      tokensToHighlight = searchEntities.map((e) => e.label);
+      tokensToHighlight = searchEntities.filter(x => x.type !== 'O').map((e) => e.label);
       // Entities
       if (graphEntities) {
         for (var i = 0; i < graphEntities.length; i++) {
@@ -227,29 +222,29 @@ class DisplayPage extends Component {
                     <div className="report-info">
                       <div className="report-info-block">
                         <table className="">
-                          <tr className="table-row">
+                          {author_li.length > 0 && <tr className="table-row">
                             <th className="table-title">Authors:</th>
                             <th className="table-content">
                               {author_li}
                               <dl className="aff">{auth_aff_li}</dl>
                             </th>
-                          </tr>
+                          </tr>}
                           <tr className="table-row">
                             <td className="table-title">PubMed ID:</td>
                             <td className="table-content">
                               <a href={base_link + id}>{id}</a>
                             </td>
                           </tr>
-                          <tr className="table-row">
+                          {doi != "" && <tr className="table-row">
                             <td className="table-title">DOI:</td>
                             <td className="table-content">
                               <a href={"https://doi.org/" + doi}>{doi}</a>
                             </td>
-                          </tr>
-                          <tr className="table-row">
+                          </tr>}
+                          {kwlink.length > 0 && <tr className="table-row">
                             <td className="table-title">Keywords:</td>
                             <td className="table-content">{kwlink}</td>
-                          </tr>
+                          </tr>}
                         </table>
                       </div>
                       {entities && entities.length > 0 && (
