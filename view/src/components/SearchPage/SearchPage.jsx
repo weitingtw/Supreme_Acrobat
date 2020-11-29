@@ -142,7 +142,8 @@ class SearchPage extends Component {
             query: queryText,
             relationQuery: allQueries
         }
-        let urlquery = '/search?entities=' + JSON.stringify(textEntities) + '&query=' + queryText + '&relationQuery=' + JSON.stringify(allQueries);
+        let non_o_entity = textEntities.filter(x => x.type !== 'O');
+        let urlquery = '/search?query=' + queryText +'&entities=' + JSON.stringify(non_o_entity) +  '&relationQuery=' + JSON.stringify(allQueries);
         this.setState({ urlquery });
         this.props.history.push(urlquery);
         // window.location.reload();
