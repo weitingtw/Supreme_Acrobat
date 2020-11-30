@@ -3,6 +3,7 @@
 FROM node as build-deps
 WORKDIR /usr/src/app
 COPY view .
+RUN npm config set update-notifier false
 RUN npm install
 RUN npm run build
 
