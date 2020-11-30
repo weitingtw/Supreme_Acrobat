@@ -35,7 +35,7 @@ class SearchResults extends Component {
     console.log(results);
     return (
       <div id="searchResults">
-        <p>{`Showing pages ${this.state.offset + 1}-${Math.min(
+        <p>{`Showing results ${this.state.offset + 1}-${Math.min(
           this.state.offset + this.state.perPage,
           results.length
         )} of ${results.length}`}</p>
