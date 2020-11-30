@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
-  "proxy": "http://localhost:3001",
+  "proxy": "http://0.0.0.0:3001/",
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
     "@fortawesome/fontawesome-free": "^5.7.1",
@@ -31,6 +31,7 @@
     "react-bootstrap": "^1.0.0-beta.6",
     "react-cytoscapejs": "^1.1.0",
     "react-dom": "^16.7.0",
+    "react-paginate": "^6.5.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.8",
     "react-sidebar": "^3.0.2",
