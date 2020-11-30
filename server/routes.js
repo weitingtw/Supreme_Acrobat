@@ -970,9 +970,16 @@ module.exports = function (app) {
           "@smtp.gmail.com:465"
         );*/
         var transport = nodemailer.createTransport(
-          "smtps://acrobatportal%40gmail.com:" +
-          encodeURIComponent("Acrobatportal1") +
-          "@smtp.gmail.com:465"
+          {
+            host: 'smtp.office365.com',
+            port: 587,
+            secure: false,
+            requireTLS: true, // only use if the server really does support TLS
+            auth: {
+              user: 'acrobatportal@outlook.com',
+              pass: 'Acrobatacrobat'
+            }
+          }
         );
         console.log("hashing email");
         var randHash = crypto
