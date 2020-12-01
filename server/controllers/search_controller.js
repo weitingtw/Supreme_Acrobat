@@ -91,6 +91,7 @@ module.exports.search2 = function (searchData, callback) {
   client.search({
     index: 'casereport',
     type: '_doc',
+    size: 1000,
     body: {
       query: {
         bool: {
