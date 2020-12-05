@@ -313,7 +313,7 @@ class SubmitModalContent extends Component {
         doi: "",
         grobidErr: false,
         fileErr: false,
-        pmid: ""
+        pmID: ""
     }
 
     // handle file change
@@ -477,7 +477,7 @@ class SubmitModalContent extends Component {
         this.setState({ title: e.target.value });
     }
     onChangePmid = e => {
-        this.setState({ pmid: e.target.value });
+        this.setState({ pmID: e.target.value });
     }
     onChangeKeywords = e => {
         this.setState({ keywords: e.target.value.split(',') });
@@ -559,7 +559,7 @@ class SubmitModalContent extends Component {
                     label="Pmid"
                     name="pmid"
                     rules={[{ required: true, message: 'pmid is required!' }]}
-                    value={this.state.pmid}
+                    value={this.state.pmID}
                 >
                     <Input placeholder="Pmid" onChange={this.onChangePmid} />
                 </Form.Item>

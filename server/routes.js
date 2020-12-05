@@ -746,7 +746,7 @@ module.exports = function (app) {
       messages,
       modifications,
       normalizations,
-      pmid, // required
+      pmID, // required
       references,
       relations,
       source_files,
@@ -758,7 +758,7 @@ module.exports = function (app) {
 
     console.log("caseReport api messge");
     // console.log(pmid);
-    pendingCaseReport.pmID = parseInt(pmid); // required
+    pendingCaseReport.pmID = typeof pmID === 'string' ? parseInt(pmID) : pmID; // required
     pendingCaseReport.text = text; // required
     pendingCaseReport.doi = doi; // required
     pendingCaseReport.title = title; // required
