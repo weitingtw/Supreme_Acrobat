@@ -48,7 +48,7 @@ module.exports = function (app) {
   router.post("/updateData", (req, res) => {
     const { id, update } = req.body;
 
-    Data.findOneAndUpdate(id, update, err => {
+    Data.findOneAndUpdate(id, update, (err) => {
       if (err) return res.json({ success: false, error: err });
       return res.json({ success: true });
     });
@@ -59,7 +59,7 @@ module.exports = function (app) {
   router.delete("/deleteData", (req, res) => {
     const { id } = req.body;
 
-    Data.findOneAndDelete(id, err => {
+    Data.findOneAndDelete(id, (err) => {
       if (err) return res.send(err);
       return res.json({ success: true });
     });
@@ -75,12 +75,12 @@ module.exports = function (app) {
     if ((!id && id !== 0) || !message) {
       return res.json({
         success: false,
-        error: "INVALID INPUTS"
+        error: "INVALID INPUTS",
       });
     }
     data.message = message;
     data.id = id;
-    data.save(err => {
+    data.save((err) => {
       if (err) return res.json({ success: false, error: err });
       return res.json({ success: true });
     });
@@ -99,7 +99,7 @@ module.exports = function (app) {
       req2.entityType = nodes[i].entityType;
       req2.pmID = pmID;
       Graph.create(client.getSession(req2), req2)
-        .then(response => {
+        .then((response) => {
           i++;
           if (i < nodes.length) {
             create(nodes, i);
@@ -112,7 +112,6 @@ module.exports = function (app) {
         .catch(next);
     };
     create(nodes, 0);
-
   });
 
   // this method adds new relationship in our database
@@ -127,7 +126,7 @@ module.exports = function (app) {
       req2.pmID = pmID;
 
       Graph.buildRelation(client.getSession(req2), req2)
-        .then(response => {
+        .then((response) => {
           console.log("response");
           console.log(response);
           i++;
@@ -148,14 +147,14 @@ module.exports = function (app) {
   // this method search nodes with a relationship in our database
   router.post("/searchRelation", (req, res, next) => {
     Graph.searchRelation(client.getSession(req), req.body)
-      .then(response => res.json({ success: true, data: response }))
+      .then((response) => res.json({ success: true, data: response }))
       .catch(next);
   });
 
   // this method search nodes with multiple relationships in our database
   router.post("/searchMultiRelations", (req, res, next) => {
     Graph.searchMultiRelations(client.getSession(req), req.body)
-      .then(response => {
+      .then((response) => {
         return res.json({ success: true, data: Object.values(response) });
       })
       .catch(next);
@@ -168,10 +167,10 @@ module.exports = function (app) {
     console.log(query);
     const pmIDSet = new Set();
     Graph.searchNodes(client.getSession(req), req.body)
-      .then(response => {
+      .then((response) => {
         var dict = response; // Get Object
         response = Object.values(dict); // Get Values
-        response.forEach(item => pmIDSet.add(item.pmID));
+        response.forEach((item) => pmIDSet.add(item.pmID));
 
         // pmIDSet stores labels
         console.log(pmIDSet, "pmIDSet");
@@ -205,17 +204,17 @@ module.exports = function (app) {
     var query = req.body.query;
     var relationQuery = req.body.relationQuery;
     console.log(query);
-    console.log(relationQuery)
+    console.log(relationQuery);
     const pmIDSet = new Set();
     Graph.searchMultiRelations(client.getSession(req), relationQuery)
-      .then(response2 => {
-        console.log("response 2")
-        console.log(response2)
+      .then((response2) => {
+        console.log("response 2");
+        console.log(response2);
         Graph.searchNodes(client.getSession(req), req.body)
-          .then(response => {
+          .then((response) => {
             var dict = response; // Get Object
             response = Object.values(dict); // Get Values
-            response.forEach(item => pmIDSet.add(item.pmID));
+            response.forEach((item) => pmIDSet.add(item.pmID));
 
             // pmIDSet stores labels
             console.log(pmIDSet, "pmIDSet");
@@ -238,7 +237,7 @@ module.exports = function (app) {
               }
               data = targetData.concat(restData);
               console.log("response2");
-              console.log(Object.values(response2))
+              console.log(Object.values(response2));
               console.log("data");
               console.log(data);
               response2 = Object.values(response2);
@@ -258,7 +257,7 @@ module.exports = function (app) {
   // this method delete nodes and relationships in our database
   router.delete("/deleteNodes", (req, res, next) => {
     Graph.removeAll(client.getSession(req))
-      .then(response => writeResponse(res, response))
+      .then((response) => writeResponse(res, response))
       .catch(next);
   });
 
@@ -287,39 +286,39 @@ module.exports = function (app) {
   /* ------------------------- Machine Learning API Routers ------------------------------ */
   router.post("/getPrediction", (req, res) => {
     const params = req.body.data;
-    var host = "http://127.0.0.1:5000"
+    var host = "http://127.0.0.1:5000";
     if (process.env.BACKEND_SERVER1) {
-      host = process.env.BACKEND_SERVER1.concat(':5000/')
+      host = process.env.BACKEND_SERVER1.concat(":5000/");
     }
 
     // console.log(params);
     axios
       .get(host, { params })
-      .then(response => {
+      .then((response) => {
         data = response.data;
         // console.log(data);
         return res.json(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   });
 
   router.post("/getRelationPrediction", (req, res) => {
     const params = req.body.data;
-    var host = "http://127.0.0.1:5001"
+    var host = "http://127.0.0.1:5001";
     if (process.env.BACKEND_SERVER2) {
-      host = process.env.BACKEND_SERVER2.concat(':5001/')
+      host = process.env.BACKEND_SERVER2.concat(":5001/");
     }
     // console.log(params);
     axios
       .get(host, { params })
-      .then(response => {
+      .then((response) => {
         data = response.data;
         console.log(data);
         return res.json(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   });
@@ -373,7 +372,7 @@ module.exports = function (app) {
     if (!req.body.email || !req.body.password) {
       return res.json({
         success: false,
-        error: "INVALID INPUTS"
+        error: "INVALID INPUTS",
       });
     }
     const { pmid, txt, ann } = req.body;
@@ -416,7 +415,7 @@ module.exports = function (app) {
           caseReport.entities.push([
             entityID,
             entityContent[0],
-            [[parseInt(entityContent[1]), parseInt(entityContent[2])]]
+            [[parseInt(entityContent[1]), parseInt(entityContent[2])]],
           ]);
         }
         // else this is trigger for event
@@ -427,7 +426,7 @@ module.exports = function (app) {
           caseReport.triggers.push([
             triggerID,
             triggerContent[0],
-            [[parseInt(triggerContent[1]), parseInt(triggerContent[2])]]
+            [[parseInt(triggerContent[1]), parseInt(triggerContent[2])]],
           ]);
         }
       }
@@ -440,8 +439,8 @@ module.exports = function (app) {
           relationContent[0],
           [
             ["Arg1", relationContent[1].split(":")[1]],
-            ["Arg2", relationContent[2].split(":")[1]]
-          ]
+            ["Arg2", relationContent[2].split(":")[1]],
+          ],
         ]);
       }
       // event
@@ -458,7 +457,7 @@ module.exports = function (app) {
           attributeID,
           attirbuteContent[0],
           attirbuteContent[1],
-          attirbuteContent[2]
+          attirbuteContent[2],
         ]);
       }
       // comment
@@ -467,7 +466,7 @@ module.exports = function (app) {
         caseReport.comments.push([
           commentContent[1],
           commentContent[0],
-          infos[2]
+          infos[2],
         ]);
       }
       // overlap
@@ -524,7 +523,7 @@ module.exports = function (app) {
       //     }
     }
 
-    caseReport.save(err => {
+    caseReport.save((err) => {
       if (err) return res.json({ success: false, error: err });
       return res.json({ success: true });
     });
@@ -535,7 +534,7 @@ module.exports = function (app) {
     if (!req.body.email || !req.body.password) {
       return res.json({
         success: false,
-        error: "INVALID INPUTS"
+        error: "INVALID INPUTS",
       });
     }
     const { txt, ann } = req.body;
@@ -577,7 +576,7 @@ module.exports = function (app) {
           caseReport.entities.push([
             entityID,
             entityContent[0],
-            [[parseInt(entityContent[1]), parseInt(entityContent[2])]]
+            [[parseInt(entityContent[1]), parseInt(entityContent[2])]],
           ]);
         }
         // else this is trigger for event
@@ -588,7 +587,7 @@ module.exports = function (app) {
           caseReport.triggers.push([
             triggerID,
             triggerContent[0],
-            [[parseInt(triggerContent[1]), parseInt(triggerContent[2])]]
+            [[parseInt(triggerContent[1]), parseInt(triggerContent[2])]],
           ]);
         }
       }
@@ -601,8 +600,8 @@ module.exports = function (app) {
           relationContent[0],
           [
             ["Arg1", relationContent[1].split(":")[1]],
-            ["Arg2", relationContent[2].split(":")[1]]
-          ]
+            ["Arg2", relationContent[2].split(":")[1]],
+          ],
         ]);
       }
       // event
@@ -619,7 +618,7 @@ module.exports = function (app) {
           attributeID,
           attirbuteContent[0],
           attirbuteContent[1],
-          attirbuteContent[2]
+          attirbuteContent[2],
         ]);
       }
       // comment
@@ -628,7 +627,7 @@ module.exports = function (app) {
         caseReport.comments.push([
           commentContent[1],
           commentContent[0],
-          infos[2]
+          infos[2],
         ]);
       }
       // overlap
@@ -696,16 +695,16 @@ module.exports = function (app) {
         nodeID_1,
         n2start,
         n2end,
-        nodeID_2
+        nodeID_2,
       ]);
       caseReport.graph_text_data_before.push(
         caseReport.text.substring(n1start, n1end) +
-        " " +
-        caseReport.text.substring(n2start, n2end)
+          " " +
+          caseReport.text.substring(n2start, n2end)
       );
     }
 
-    caseReport.save(err => {
+    caseReport.save((err) => {
       if (err) return res.json({ success: false, error: err });
       return res.json({ success: true });
     });
@@ -723,8 +722,7 @@ module.exports = function (app) {
       if (err) return res.json({ success: false, error: err });
       return res.json({ success: true });
     });
-  }
-  );
+  });
   // putPendingCaseReport
   router.post("/putPendingCaseReport", (req, res) => {
     /*if (!req.body.email || !req.body.password) {
@@ -755,7 +753,11 @@ module.exports = function (app) {
     pendingCaseReport.equivs = [];
     pendingCaseReport.action = "getDocument";
     pendingCaseReport.abstract = "";
-    pendingCaseReport.authors = authors.map(author => ({ name: author, id: "N/A", aff: "N/A" }));
+    pendingCaseReport.authors = authors.map((author) => ({
+      name: author,
+      id: "N/A",
+      aff: "N/A",
+    }));
     pendingCaseReport.keywords = keywords;
 
     pendingCaseReport.introduction = null;
@@ -764,88 +766,110 @@ module.exports = function (app) {
     pendingCaseReport.graph_index_data_before = [];
     pendingCaseReport.graph_text_data_before = [];
 
-
-    pendingCaseReport.save(err => {
+    pendingCaseReport.save((err) => {
       if (err) {
         console.log(err);
-        return res.json({ success: false, error: err })
-      };
+        return res.json({ success: false, error: err });
+      }
       return res.json({ success: true });
     });
   });
 
   router.post("/approvePendingCaseReport", (req, res) => {
-    PendingCaseReport.findOne({ pmID: req.body.pmID }, function (err, pendingCaseReport) {
-      let caseReport = new CaseReport();
+    PendingCaseReport.findOne(
+      { pmID: req.body.pmID },
+      function (err, pendingCaseReport) {
+        let caseReport = new CaseReport();
 
-      caseReport.pmID = parseInt(pendingCaseReport.pmID);
-      caseReport.text = pendingCaseReport.text;
-      caseReport.doi = pendingCaseReport.doi;
-      caseReport.title = pendingCaseReport.title;
-      caseReport.messages = [];
-      caseReport.source_files = [];
-      caseReport.modifications = [];
-      caseReport.normalizations = [];
-      caseReport.entities = [];
-      caseReport.attributes = [];
-      caseReport.relations = [];
-      caseReport.triggers = [];
-      caseReport.events = [];
-      caseReport.comments = [];
-      caseReport.equivs = [];
-      caseReport.action = "getDocument";
-      caseReport.abstract = "";
-      caseReport.authors = pendingCaseReport.authors.map(author => ({ name: author, id: "N/A", aff: "N/A" }));
-      caseReport.keywords = pendingCaseReport.keywords;
+        caseReport.pmID = parseInt(pendingCaseReport.pmID);
+        caseReport.text = pendingCaseReport.text;
+        caseReport.doi = pendingCaseReport.doi;
+        caseReport.title = pendingCaseReport.title;
+        caseReport.messages = [];
+        caseReport.source_files = [];
+        caseReport.modifications = [];
+        caseReport.normalizations = [];
+        caseReport.entities = [];
+        caseReport.attributes = [];
+        caseReport.relations = [];
+        caseReport.triggers = [];
+        caseReport.events = [];
+        caseReport.comments = [];
+        caseReport.equivs = [];
+        caseReport.action = "getDocument";
+        caseReport.abstract = "";
+        caseReport.authors = pendingCaseReport.authors.map((author) => ({
+          name: author,
+          id: "N/A",
+          aff: "N/A",
+        }));
+        caseReport.keywords = pendingCaseReport.keywords;
 
-      caseReport.introduction = null;
-      caseReport.discussion = null;
-      caseReport.references = [];
-      caseReport.graph_index_data_before = [];
-      caseReport.graph_text_data_before = [];
+        caseReport.introduction = null;
+        caseReport.discussion = null;
+        caseReport.references = [];
+        caseReport.graph_index_data_before = [];
+        caseReport.graph_text_data_before = [];
 
-      caseReport.save(err => {
-        if (err) return res.json({ success: false, error: err });
-        PendingCaseReport.findOneAndDelete({ pmID: req.body.pmID }, function (err) {
+        caseReport.save((err) => {
           if (err) return res.json({ success: false, error: err });
-          if (!err) {
-            count = 0
-            esclient.cat.count({
-              index: 'casereport'
-            }, function (err, resp) {
-              response = resp.trim().split(" ")
+          PendingCaseReport.findOneAndDelete(
+            { pmID: req.body.pmID },
+            function (err) {
+              if (err) return res.json({ success: false, error: err });
+              if (!err) {
+                count = 0;
+                esclient.cat.count(
+                  {
+                    index: "casereport",
+                  },
+                  function (err, resp) {
+                    response = resp.trim().split(" ");
 
-              // third element is the count
-              count = parseInt(response[2])
-              body = []
-              body.push({ index: { _index: 'casereport', _type: '_doc', _id: caseReport.pmID } });
-              body.push({ pmID: caseReport.pmID, content: caseReport.text });
+                    // third element is the count
+                    count = parseInt(response[2]);
+                    body = [];
+                    body.push({
+                      index: {
+                        _index: "casereport",
+                        _type: "_doc",
+                        _id: caseReport.pmID,
+                      },
+                    });
+                    body.push({
+                      pmID: caseReport.pmID,
+                      content: caseReport.text,
+                    });
 
-              console.log("count")
-              console.log(count)
+                    console.log("count");
+                    console.log(count);
 
-              esclient.bulk({
-                body: body
-              }, function (err, resp) {
-                console.log(resp)
-                if (err) {
-                  return res.json({
-                    success: false
-                  });
-                }
-                else {
-                  return res.json({
-                    success: true
-                  });
-                }
-              });
-            })
-          }
+                    esclient.bulk(
+                      {
+                        body: body,
+                      },
+                      function (err, resp) {
+                        console.log(resp);
+                        if (err) {
+                          return res.json({
+                            success: false,
+                          });
+                        } else {
+                          return res.json({
+                            success: true,
+                          });
+                        }
+                      }
+                    );
+                  }
+                );
+              }
+            }
+          );
         });
-      });
-    })
+      }
+    );
   });
-
 
   /* --------------------------------Upload Report --------------------- */
 
@@ -855,7 +879,7 @@ module.exports = function (app) {
     if (!req.body.text || req.body.text.length < 100) {
       return res.json({
         success: false,
-        error: "INVALID INPUTS"
+        error: "INVALID INPUTS",
       });
     }
     let report = {};
@@ -863,42 +887,47 @@ module.exports = function (app) {
 
     UploadedReport.create(report, function (err, data) {
       if (!err) {
-        count = 0
-        esclient.cat.count({
-          index: 'casereport'
-        }, function (err, resp) {
-          response = resp.trim().split(" ")
+        count = 0;
+        esclient.cat.count(
+          {
+            index: "casereport",
+          },
+          function (err, resp) {
+            response = resp.trim().split(" ");
 
-          // third element is the count
-          count = parseInt(response[2])
-          body = []
-          body.push({ index: { _index: 'casereport', _type: '_doc', _id: count } });
-          body.push({ id: data._id, pmID: 1, content: data.text });
+            // third element is the count
+            count = parseInt(response[2]);
+            body = [];
+            body.push({
+              index: { _index: "casereport", _type: "_doc", _id: count },
+            });
+            body.push({ id: data._id, pmID: 1, content: data.text });
 
-          console.log("count")
-          console.log(count)
+            console.log("count");
+            console.log(count);
 
-          esclient.bulk({
-            body: body
-          }, function (err, resp) {
-            console.log(resp)
-            if (err) {
-              return res.json({
-                success: false
-              });
-            }
-            else {
-              return res.json({
-                success: true
-              });
-            }
-          });
-        })
-
-
+            esclient.bulk(
+              {
+                body: body,
+              },
+              function (err, resp) {
+                console.log(resp);
+                if (err) {
+                  return res.json({
+                    success: false,
+                  });
+                } else {
+                  return res.json({
+                    success: true,
+                  });
+                }
+              }
+            );
+          }
+        );
       }
     });
-  })
+  });
 
   /* --------------------------------------- SIGNUP --------------------------------------- */
   app.use((req, res, next) => {
@@ -924,11 +953,11 @@ module.exports = function (app) {
     if (req.session.user) {
       return res.json({
         success: true,
-        user: req.session.user
+        user: req.session.user,
       });
     } else {
       return res.json({
-        success: false
+        success: false,
       });
     }
   });
@@ -947,7 +976,7 @@ module.exports = function (app) {
     if (!req.body.email || !req.body.password) {
       return res.json({
         success: false,
-        error: "INVALID INPUTS"
+        error: "INVALID INPUTS",
       });
     }
 
@@ -969,18 +998,16 @@ module.exports = function (app) {
           encodeURIComponent("jklabcdefg") +
           "@smtp.gmail.com:465"
         );*/
-        var transport = nodemailer.createTransport(
-          {
-            host: 'smtp.office365.com',
-            port: 587,
-            secure: false,
-            requireTLS: true, // only use if the server really does support TLS
-            auth: {
-              user: 'acrobatportal@outlook.com',
-              pass: 'Acrobatacrobat'
-            }
-          }
-        );
+        var transport = nodemailer.createTransport({
+          host: "smtp.office365.com",
+          port: 587,
+          secure: false,
+          requireTLS: true, // only use if the server really does support TLS
+          auth: {
+            user: "acrobatportal@outlook.com",
+            pass: "Acrobatacrobat",
+          },
+        });
         console.log("hashing email");
         var randHash = crypto
           .createHash("md5")
@@ -999,7 +1026,7 @@ module.exports = function (app) {
           html:
             "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
             link +
-            ">Click here to verify</a>"
+            ">Click here to verify</a>",
         };
         console.log(mailOptions);
         transport.sendMail(mailOptions, function (error, response) {
@@ -1011,7 +1038,7 @@ module.exports = function (app) {
             console.log("Verfication link sent to email address.");
             return res.json({
               success: true,
-              message: "Verfication link sent to email address."
+              message: "Verfication link sent to email address.",
             });
           }
         });
@@ -1062,7 +1089,7 @@ module.exports = function (app) {
             // console.log(req.session.user);
             return res.json({
               success: true,
-              user
+              user,
             });
           }
         } else {
@@ -1099,7 +1126,7 @@ module.exports = function (app) {
                   console.log("Verification deleted from DB");
                   return res.json({
                     success: true,
-                    message: "Acount acitivated"
+                    message: "Acount acitivated",
                   });
                 }
               });
