@@ -772,7 +772,7 @@ module.exports = function (app) {
     pendingCaseReport.triggers =  triggers ? triggers : [];
     pendingCaseReport.events = events ? events : [];
     pendingCaseReport.comments = comments ? comments : [];
-    pendingCaseReport.equivs = equivs ? equivs [];
+    pendingCaseReport.equivs = equivs ? equivs : [];
     pendingCaseReport.action = action ? action : "getDocument"; // default is getDocument
     pendingCaseReport.abstract = abstract ? abstract : "";
     pendingCaseReport.authors = authors.map((author) => {
