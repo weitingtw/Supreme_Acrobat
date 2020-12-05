@@ -731,38 +731,66 @@ module.exports = function (app) {
         error: "INVALID INPUTS"
       });
     }*/
-    const { pmid, content, title, authors, keywords, doi } = req.body;
+    const {
+      abstract,
+      action,
+      attributes,
+      authors, // required
+      collection,
+      comments,
+      doi, // required
+      entities,
+      equivs,
+      events,
+      keywords, // required
+      messages,
+      modifications,
+      normalizations,
+      pmid, // required
+      references,
+      relations,
+      source_files,
+      text, // required
+      title, // required
+      triggers,
+    } = req.body;
     let pendingCaseReport = new PendingCaseReport();
 
     console.log("caseReport api messge");
     // console.log(pmid);
-    pendingCaseReport.pmID = parseInt(pmid);
-    pendingCaseReport.text = content;
-    pendingCaseReport.doi = doi;
-    pendingCaseReport.title = title;
-    pendingCaseReport.messages = [];
-    pendingCaseReport.source_files = [];
-    pendingCaseReport.modifications = [];
-    pendingCaseReport.normalizations = [];
-    pendingCaseReport.entities = [];
-    pendingCaseReport.attributes = [];
-    pendingCaseReport.relations = [];
-    pendingCaseReport.triggers = [];
-    pendingCaseReport.events = [];
-    pendingCaseReport.comments = [];
-    pendingCaseReport.equivs = [];
-    pendingCaseReport.action = "getDocument";
-    pendingCaseReport.abstract = "";
-    pendingCaseReport.authors = authors.map((author) => ({
-      name: author,
-      id: "N/A",
-      aff: "N/A",
-    }));
-    pendingCaseReport.keywords = keywords;
+    pendingCaseReport.pmID = parseInt(pmid); // required
+    pendingCaseReport.text = text; // required
+    pendingCaseReport.doi = doi; // required
+    pendingCaseReport.title = title; // required
+    pendingCaseReport.messages = messages ? messages : [];
+    pendingCaseReport.source_files = source_files ? source_files : [];
+    pendingCaseReport.modifications = modifications ? modifications :[];
+    pendingCaseReport.normalizations = normalizations ? normalizations : [];
+    pendingCaseReport.entities = entities ? entities : [];
+    pendingCaseReport.attributes = attributes ? attributes : [];
+    pendingCaseReport.relations = relations ? relations : [];
+    pendingCaseReport.triggers =  triggers ? triggers : [];
+    pendingCaseReport.events = events ? events : [];
+    pendingCaseReport.comments = comments ? comments : [];
+    pendingCaseReport.equivs = equivs ? equivs [];
+    pendingCaseReport.action = action ? action : "getDocument"; // default is getDocument
+    pendingCaseReport.abstract = abstract ? abstract : "";
+    pendingCaseReport.authors = authors.map((author) => {
+      if (typeof author === 'string' || author instanceof String) {
+        return {
+          name : author,
+          id: "N/A",
+          aff: "N/A",
+        }
+      } else {
+        return author;
+      }
+    }); // required
+    pendingCaseReport.keywords = keywords; // required
 
     pendingCaseReport.introduction = null;
     pendingCaseReport.discussion = null;
-    pendingCaseReport.references = [];
+    pendingCaseReport.references = references ? references : [];
     pendingCaseReport.graph_index_data_before = [];
     pendingCaseReport.graph_text_data_before = [];
 
