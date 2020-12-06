@@ -28,6 +28,12 @@ class SearchResults extends Component {
       currentPage: selectedPage,
       offset: offset,
     });
+    window.scroll({
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth'
+    });
+    
   };
 
   render() {
@@ -39,6 +45,17 @@ class SearchResults extends Component {
           this.state.offset + this.state.perPage,
           results.length
         )} of ${results.length}`}</p>
+
+        {results.length <= 0
+          ? ""
+          : results
+              .slice(this.state.offset, this.state.offset + this.state.perPage)
+              .map((eachData) => {
+                eachData.textEntities = textEntities;
+                console.log("show some each data");
+                console.log(eachData);
+                return <Result displayData={eachData} key={eachData.id} />;
+              })}
         <ReactPaginate
           previousLabel={"prev"}
           nextLabel={"next"}
@@ -53,16 +70,6 @@ class SearchResults extends Component {
           activeClassName={"active"}
         />
 
-        {results.length <= 0
-          ? ""
-          : results
-              .slice(this.state.offset, this.state.offset + this.state.perPage)
-              .map((eachData) => {
-                eachData.textEntities = textEntities;
-                console.log("show some each data");
-                console.log(eachData);
-                return <Result displayData={eachData} key={eachData.id} />;
-              })}
       </div>
     );
   }
