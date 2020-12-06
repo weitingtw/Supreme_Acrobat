@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import axios from 'axios';
 
+import { Layout, Button, Row, Input } from 'antd';
 import { getHost } from '../../utils';
 
 import PropTypes from "prop-types";
 import "./Brat.css";
+
 
 import collData from "./collData";
 // import defaultDocData from './defaultDocData';
@@ -56,29 +58,29 @@ class Brat extends Component {
     // console.log(docData);
   };
 
-  //   redraw = () => {
-  //     if (window.brat != null) {
-  //       window.brat.dispatcher.post("requestRenderData", [this.state.docData]);
-  //       window.brat.dispatcher.post("current", [
-  //         this.collData,
-  //         this.state.docData,
-  //         {},
-  //       ]);
-  //     }
-  //   };
+    redraw = () => {
+      if (window.brat != null) {
+        window.brat.dispatcher.post("requestRenderData", [this.state.docData]);
+        window.brat.dispatcher.post("current", [
+          this.collData,
+          this.state.docData,
+          {},
+        ]);
+      }
+    };
 
   render() {
     return (
       <div className="brat">
-        <span className="button submit-report" onClick={this.handleSubmit}>
-          submit case report
-        </span>
+        <div className="button-container" >
+          <button className="button submit-report" onClick={this.handleSubmit}>Submit Changes</button>
+        </div>
+        <div id="brat-editor" />
 
         {/* <span className="button" onClick={this.redraw}>
           redraw
         </span> */}
 
-        <div id="brat-editor" />
       </div>
     );
   }
