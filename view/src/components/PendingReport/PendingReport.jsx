@@ -28,6 +28,18 @@ class PendingReport extends Component {
             .catch((err) => console.log(err));
     }
 
+    handleAdmin = () => {
+        axios.post(getHost() + "/api/putAuthorization", { email: JSON.parse(localStorage.getItem('user')).email })
+            .then(res => {
+                console.log(res.data);
+                if (res.data.success === false) {
+                    alert('request failed')
+                } else {
+                    alert('request succeeded')
+                }
+            })
+    }
+
     openModal = (index) => {
         this.setModalContent(index);
         this.setState({ details_visible: true });
@@ -71,7 +83,7 @@ class PendingReport extends Component {
     render() {
 
         if (!(JSON.parse(localStorage.getItem('user')).admin)) {
-            return <div>You are not an administrator</div>
+            return <div>You are not an administrator, Click <button onClick={this.handleAdmin}>here</button> to request for admin access</div>
         }
         const { reports, details_visible, curContent } = this.state;
         console.log(this.state);

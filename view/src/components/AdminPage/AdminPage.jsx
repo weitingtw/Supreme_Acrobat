@@ -3,6 +3,8 @@ import './AdminPage.css';
 import ucla_logo from "../../static/ucla.png";
 import UserMainPage from "../UserMainPage/UserMainPage";
 import PendingReport from "../PendingReport/PendingReport";
+import Authorization from "../Authorization/Authorization";
+
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined, HomeOutlined, SettingOutlined } from '@ant-design/icons';
@@ -42,6 +44,7 @@ class AdminPage extends Component {
                     <SubMenu key="operations" icon={<LaptopOutlined />} title="Operations">
                       <Menu.Item key="operation1">user info<Link to="/user/main" /></Menu.Item>
                       <Menu.Item key="operation2">pending report<Link to="/user/pending" /></Menu.Item>
+                      {JSON.parse(localStorage.getItem('user')).admin ? <Menu.Item key="operation3">admin<Link to="/user/admin" /></Menu.Item> : null}
                     </SubMenu>
                     <SubMenu key="seeting" icon={<SettingOutlined />} title="Settings">
                       <Menu.Item key="setting1">setting1<Link to="/user/main" /></Menu.Item>
@@ -53,6 +56,7 @@ class AdminPage extends Component {
                   <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
                     <Route path="/user/main" component={UserMainPage} />
                     <Route path="/user/pending" component={PendingReport} />
+                    {JSON.parse(localStorage.getItem('user')).admin ? <Route path="/user/admin" component={Authorization} /> : null}
                   </Content>
                 </Layout>
               </Layout>

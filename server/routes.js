@@ -3,6 +3,7 @@ const axios = require("axios");
 const Data = require("./models/mongo/data");
 const CaseReport = require("./models/mongo/case_report");
 const PendingCaseReport = require("./models/mongo/pending_case_report");
+const Authorization = require("./models/mongo/authorization");
 const searchModule = require("./controllers/search_controller.js");
 const mongo = require("mongodb");
 const CaseReport2 = require("./models/mongo/case_report2");
@@ -725,6 +726,8 @@ module.exports = function (app) {
     });
   }
   );
+
+
   // putPendingCaseReport
   router.post("/putPendingCaseReport", (req, res) => {
     /*if (!req.body.email || !req.body.password) {
@@ -770,6 +773,48 @@ module.exports = function (app) {
         console.log(err);
         return res.json({ success: false, error: err })
       };
+      return res.json({ success: true });
+    });
+  });
+
+  router.get("/getAuthorization", (req, res) => {
+    Authorization.find((err, data) => {
+      if (err) return res.json({ success: false, error: err });
+      console.log(data);
+      return res.json({ success: true, data: data });
+    });
+  });
+  router.post("/deleteAuthorization", (req, res) => {
+    Authorization.findOneAndDelete({ email: req.body.email }, function (err) {
+      if (err) return res.json({ success: false, error: err });
+      return res.json({ success: true });
+    });
+  }
+  );
+
+  router.post("/putAuthorization", (req, res) => {
+    const { email } = req.body;
+    let authorization = new Authorization();
+    authorization.email = email;
+    console.log(email);
+    authorization.save(err => {
+      if (err) {
+        console.log(err);
+        return res.json({ success: false, error: err })
+      };
+      return res.json({ success: true });
+    });
+  });
+
+  router.post("/approveAuthorization", (req, res) => {
+    Authorization.findOneAndDelete({ email: req.body.email }, function (err, authorization) {
+      if (err) return res.json({ success: false, error: err });
+      const email = authorization.email;
+      User.findOne({ email: email }).then(function (user, err) {
+        if (err) return res.json({ success: false, error: err });
+        user.admin = true;
+        user.save();
+      });
       return res.json({ success: true });
     });
   });
@@ -933,6 +978,7 @@ module.exports = function (app) {
     }
   });
 
+
   // app.route('/api/createUser')
   //     .get(sessionChecker, (req, res) => {
   //         console.log('in sessionChecker');
@@ -959,6 +1005,7 @@ module.exports = function (app) {
     user.org = req.body.organization;
     user.username = req.body.username;
     user.activation = false;
+    user.admin = false;
     User.create(user, function (err, user) {
       console.log(err);
       if (err) {
