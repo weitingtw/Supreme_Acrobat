@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import axios from 'axios';
 
-import { Layout, Button, Row, Input } from 'antd';
+import { Layout, Button, Modal, Row, Input } from 'antd';
+import {ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+
 import { getHost } from '../../utils';
 
 import PropTypes from "prop-types";
@@ -27,6 +29,8 @@ const options = {
 class Brat extends Component {
   state = {
     docData: this.props.docData,
+    confirmation_visible: false,
+
   };
   collData = collData;
 
@@ -41,7 +45,7 @@ class Brat extends Component {
   }
 
   handleSubmit = () => {
-    console.log(this.state.docData);
+    // console.log(this.state.docData);
     const data = this.state.docData;
 
     axios.post(getHost() + "/api/putPendingCaseReport", data)
@@ -51,9 +55,9 @@ class Brat extends Component {
             alert('upload failed')
         } else {
             alert('upload succeeded')
+            this.closeModal();
         }
     })
-
     // this should be the same? docData was passed by reference to brat!!
     // console.log(docData);
   };
@@ -69,22 +73,49 @@ class Brat extends Component {
       }
     };
 
+    openModal = () => {
+      this.setState({ confirmation_visible: true });
+    }
+  
+    closeModal = () => {
+      this.setState({ confirmation_visible: false });
+  
+    }
+
   render() {
     return (
       <div className="brat">
         <div className="button-container" >
-          <button className="button submit-report" onClick={this.handleSubmit}>Submit Changes</button>
+          <Button onClick={this.openModal}>Submit Changes</Button>
         </div>
         <div id="brat-editor" />
 
         {/* <span className="button" onClick={this.redraw}>
           redraw
         </span> */}
+        <Modal
+                          visible={this.state.confirmation_visible}
+                          onOk={this.handleSubmit}
+                          onCancel={this.closeModal}
+                          footer={null}
+                          closeIcon={<CloseCircleOutlined />}
+                          destroyOnClose={false}
+          
+        >
+          <p className='modal-header'>Confirm</p>
+          <p>Are you sure you want to submit the changes for review?</p>
+          <div className='modal-button-container'>
+            <Button onClick={this.closeModal}>No</Button>
+            <Button type="primary" onClick={this.handleSubmit}>Yes</Button>
+          </div>
+
+        </Modal>
 
       </div>
     );
   }
 }
+
 
 Brat.propTypes = {
   docData: PropTypes.object.isRequired,
