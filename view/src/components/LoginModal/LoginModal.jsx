@@ -284,7 +284,7 @@ class PendingModalContent extends Component {
 
         if (reports && reports.length > 0) {
             console.log(reports)
-            const content = reports.map((report, index) => (
+            const text = reports.map((report, index) => (
                 <div>
                     <div>PMID: {report.pmID} </div>
                     <div>Title: {report.title}</div>
@@ -292,7 +292,7 @@ class PendingModalContent extends Component {
                     <button onClick={() => this.handleReject(report.pmID)}>reject</button>
                 </div>
             ));
-            return <div>{content}</div>
+            return <div>{text}</div>
         } else {
             return <div> There's no pending report</div>
         }
@@ -309,11 +309,11 @@ class SubmitModalContent extends Component {
         title: "",
         authors: [],
         keywords: [],
-        content: "",
+        text: "",
         doi: "",
         grobidErr: false,
         fileErr: false,
-        pmid: ""
+        pmID: ""
     }
 
     // handle file change
@@ -409,16 +409,16 @@ class SubmitModalContent extends Component {
         }
         console.log(doi)
 
-        const contentList = [];
+        const textList = [];
 
         //extract abstract
         // var abstract = xml.querySelectorAll("abstract div");
         // for(let i = 0; i < abstract.length; i++){
         //   for(let j = 0; j < abstract[i].children.length; j++){
         //     if(abstract[i].children[j].tagName.toLowerCase() === "head"){
-        //       contentList.push("\n");
-        //       contentList.push(abstract[i].children[j].innerHTML);
-        //       contentList.push("\n");
+        //       textList.push("\n");
+        //       textList.push(abstract[i].children[j].innerHTML);
+        //       textList.push("\n");
         //     }
         //     if(abstract[i].children[j].tagName.toLowerCase() === "p"){
         //       var elements = abstract[i].children[j].getElementsByTagName('ref');
@@ -426,27 +426,27 @@ class SubmitModalContent extends Component {
         //       while (elements[0]){
         //         elements[0].parentNode.removeChild(elements[0])
         //       }
-        //       contentList.push(abstract[i].children[j].innerHTML);
+        //       textList.push(abstract[i].children[j].innerHTML);
         //     }
         //   }
         // }
 
         //extract contents
-        var content = xml.querySelectorAll("body div");
+        var text = xml.querySelectorAll("body div");
 
-        for (let i = 0; i < content.length; i++) { // iterate through each div under body tag
-            for (let j = 0; j < content[i].children.length; j++) {// iterate through each tag under each div
-                if (content[i].children[j].tagName.toLowerCase() === "head" &&
-                    content[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
+        for (let i = 0; i < text.length; i++) { // iterate through each div under body tag
+            for (let j = 0; j < text[i].children.length; j++) {// iterate through each tag under each div
+                if (text[i].children[j].tagName.toLowerCase() === "head" &&
+                    text[i].children[j].innerHTML.toLowerCase().indexOf("case") != -1) {
                     // extract content
-                    while (j < content[i].children.length) {
-                        if (content[i].children[j].tagName.toLowerCase() === "p") {
-                            var tmp = content[i].children[j].getElementsByTagName('ref');
+                    while (j < text[i].children.length) {
+                        if (text[i].children[j].tagName.toLowerCase() === "p") {
+                            var tmp = text[i].children[j].getElementsByTagName('ref');
                             // remove all <a> elements
                             while (tmp[0]) {
                                 tmp[0].parentNode.removeChild(tmp[0])
                             }
-                            contentList.push(content[i].children[j].innerHTML);
+                            textList.push(text[i].children[j].innerHTML);
                         }
                         j++;
                     }
@@ -454,14 +454,14 @@ class SubmitModalContent extends Component {
 
             }
         }
-        //console.log(contentList.join(''));
-        this.setState({ content: contentList.join('') });
+        //console.log(textList.join(''));
+        this.setState({ text: textList.join('') });
         this.formRef.current.setFieldsValue({
             title: this.state.title,
             authors: this.state.authors,
             doi: this.state.doi,
             keywords: this.state.keywords,
-            content: this.state.content,
+            text: this.state.text,
         });
         this.setState({ loading: false });
     };
@@ -471,13 +471,13 @@ class SubmitModalContent extends Component {
     }
 
     onChangeContent = e => {
-        this.setState({ content: e.target.value });
+        this.setState({ text: e.target.value });
     }
     onChangeTitle = e => {
         this.setState({ title: e.target.value });
     }
     onChangePmid = e => {
-        this.setState({ pmid: e.target.value });
+        this.setState({ pmID: e.target.value });
     }
     onChangeKeywords = e => {
         this.setState({ keywords: e.target.value.split(',') });
@@ -559,7 +559,7 @@ class SubmitModalContent extends Component {
                     label="Pmid"
                     name="pmid"
                     rules={[{ required: true, message: 'pmid is required!' }]}
-                    value={this.state.pmid}
+                    value={this.state.pmID}
                 >
                     <Input placeholder="Pmid" onChange={this.onChangePmid} />
                 </Form.Item>
