@@ -12,7 +12,8 @@ const API_PORT = 3001;
 const app = express();
 
 // this is our MongoDB database
-const dbRoute = "mongodb://shunhahaha:z132465798@ds123050.mlab.com:23050/hahaha";
+//const dbRoute = "mongodb://shunhahaha:z132465798@ds123050.mlab.com:23050/hahaha";
+const dbRoute = 'mongodb+srv://shunhahaha:z132465798@acrobat.gj5a9.mongodb.net/hahaha?retryWrites=true&w=majority'
 
 // connects our back end code with the database
 mongoose.connect(
@@ -34,14 +35,14 @@ app.use(bodyParser.json());
 app.use(logger("dev"));
 app.use(cors());
 app.use(session({
-        key: 'user_sid',
-        secret: 'somerandonstuffs',
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            expires: 600000
-        }
-    }));
+  key: 'user_sid',
+  secret: 'somerandonstuffs',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    expires: 600000
+  }
+}));
 app.use(cookieParser());
 app.use(fileUpload());
 //*********************************************************************************
