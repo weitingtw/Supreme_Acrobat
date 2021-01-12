@@ -2,6 +2,7 @@ import flask
 
 from flask import request
 from flask_restful import Api, Resource
+from flask_cors import CORS
 
 from pprint import pprint
 import numpy as np
@@ -65,6 +66,7 @@ if __name__ == '__main__':
     model.to(device)
 
     app = flask.Flask(__name__)
+    CORS(app)
     api = Api(app)
     api.add_resource(Predict, '/', resource_class_kwargs={'model': model})
     app.run(host="0.0.0.0",debug=True, port=5001)

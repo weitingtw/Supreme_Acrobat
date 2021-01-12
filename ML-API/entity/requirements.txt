@@ -2,3 +2,4 @@ flask
 flask_restful
 flair==0.4.0
 nltk
+flask_cors

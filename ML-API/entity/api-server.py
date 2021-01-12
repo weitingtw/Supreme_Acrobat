@@ -3,6 +3,7 @@ import flask
 from flask import request
 from flask_restful import Api, Resource
 from nltk import word_tokenize
+from flask_cors import CORS
 
 from flair.data import Sentence
 from flair.models import SequenceTagger
@@ -60,6 +61,7 @@ if __name__ == '__main__':
     model = SequenceTagger.load_from_file('best-model.pt')
     
     app = flask.Flask(__name__)
+    CORS(app)
     api = Api(app)
     api.add_resource(Predict, '/', resource_class_kwargs={'model': model})
     app.run(host="0.0.0.0",debug=True, port=5000)
