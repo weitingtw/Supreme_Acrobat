@@ -33,7 +33,7 @@ class SearchBar extends Component {
 
     render() {
         console.log('search kw is');
-        console.log(this.props.queryText);
+        console.log(this.states.query);
         return (
             <div id='search-section'>
                 <div id='searchBar'>
