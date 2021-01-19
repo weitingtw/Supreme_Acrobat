@@ -52,9 +52,10 @@ class Predict(Resource):
             'tokens': all_tokens,
             'entity_types': all_entities
         }
-
+        response = flask.jsonify(response)
+        response.headers.add('Access-Control-Allow-Origin', '*')
         # sending our response object back as json
-        return flask.jsonify(response)
+        return response
 
 
 if __name__ == '__main__':
