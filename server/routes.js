@@ -288,9 +288,9 @@ module.exports = function (app) {
   router.post("/getPrediction", (req, res) => {
     const params = req.body.data;
     var host = "http://127.0.0.1:5000";
-    if (process.env.BACKEND_SERVER1) {
+    /*if (process.env.BACKEND_SERVER1) {
       host = process.env.BACKEND_SERVER1.concat(":5000/");
-    }
+    }*/
 
     // console.log(params);
     axios
@@ -308,9 +308,9 @@ module.exports = function (app) {
   router.post("/getRelationPrediction", (req, res) => {
     const params = req.body.data;
     var host = "http://127.0.0.1:5001";
-    if (process.env.BACKEND_SERVER2) {
+    /*if (process.env.BACKEND_SERVER2) {
       host = process.env.BACKEND_SERVER2.concat(":5001/");
-    }
+    }*/
     // console.log(params);
     axios
       .get(host, { params })
@@ -700,8 +700,8 @@ module.exports = function (app) {
       ]);
       caseReport.graph_text_data_before.push(
         caseReport.text.substring(n1start, n1end) +
-          " " +
-          caseReport.text.substring(n2start, n2end)
+        " " +
+        caseReport.text.substring(n2start, n2end)
       );
     }
 

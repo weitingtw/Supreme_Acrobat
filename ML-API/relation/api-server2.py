@@ -67,7 +67,7 @@ if __name__ == '__main__':
     model.to(device)
 
     app = flask.Flask(__name__)
-    CORS(app)
+    CORS(app, allow_headers=['Content-Type', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Access-Control-Allow-Methods'])
     api = Api(app)
     api.add_resource(Predict, '/', resource_class_kwargs={'model': model})
     app.run(host="0.0.0.0",debug=True, port=5001)
