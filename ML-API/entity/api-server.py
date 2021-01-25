@@ -21,6 +21,7 @@ class Predict(Resource):
         self.model = model
 
     def get(self):
+        """
         # prepare the query
         params = request.args
         query = params['query']
@@ -52,6 +53,8 @@ class Predict(Resource):
             'tokens': all_tokens,
             'entity_types': all_entities
         }
+        """
+        response = {'hello': 'world'}
         response = flask.jsonify(response)
         response.headers.add('Access-Control-Allow-Origin', '*')
         # sending our response object back as json
