@@ -89,184 +89,26 @@ class SearchPage extends Component {
     }
 
     late_search = (queryText) => {
-        // original search
-
-        // axios.post(getHost() + "/api/getPrediction", {
-        //     data: { query: queryText }
-        // })
-        //     .then(response => {
-        //         const { data: { entity_types, tokens } } = response;
-        //         const textEntities = combineMultiWordEntity(entity_types, tokens);
-        //         console.log(textEntities)
-        //         // update state to save current entity tokens
-        //         this.setState({
-        //             textEntities,
-        //             queryText
-        //         }, () => {
-        //             console.log(this.state);
-        //         });
-        //     })
-        //     .catch(error => { console.log(error); });
-        //
-        const stopwords = [
-          "a",
-          "about",
-          "after",
-          "all",
-          "also",
-          "always",
-          "am",
-          "an",
-          "and",
-          "any",
-          "are",
-          "at",
-          "be",
-          "been",
-          "being",
-          "but",
-          "by",
-          "came",
-          "can",
-          "cant",
-          "come",
-          "could",
-          "did",
-          "didnt",
-          "do",
-          "does",
-          "doesnt",
-          "doing",
-          "dont",
-          "else",
-          "for",
-          "from",
-          "get",
-          "give",
-          "goes",
-          "going",
-          "had",
-          "happen",
-          "has",
-          "have",
-          "having",
-          "how",
-          "i",
-          "if",
-          "ill",
-          "im",
-          "in",
-          "into",
-          "is",
-          "isnt",
-          "it",
-          "its",
-          "ive",
-          "just",
-          "keep",
-          "let",
-          "like",
-          "made",
-          "make",
-          "many",
-          "may",
-          "me",
-          "mean",
-          "more",
-          "most",
-          "much",
-          "no",
-          "not",
-          "now",
-          "of",
-          "only",
-          "or",
-          "our",
-          "really",
-          "say",
-          "see",
-          "some",
-          "something",
-          "take",
-          "tell",
-          "than",
-          "that",
-          "the",
-          "their",
-          "them",
-          "then",
-          "there",
-          "they",
-          "thing",
-          "this",
-          "to",
-          "try",
-          "up",
-          "us",
-          "use",
-          "used",
-          "uses",
-          "very",
-          "want",
-          "was",
-          "way",
-          "we",
-          "what",
-          "when",
-          "where",
-          "which",
-          "who",
-          "why",
-          "will",
-          "with",
-          "without",
-          "wont",
-          "you",
-          "your",
-          ',',
-          '.',
-          ';',
-          ':',
-          '?',
-          '!',
-          '\"',
-          '\'',
-          '-',
-          '(',
-          ')',
-          "&",
-          '@',
-          '#',
-          '$',
-          '%',
-          '&',
-          '^',
-          '*'
-        ];
-        let q = queryText.trim()
-        let q_split = q.split(' ');
-        let my_entities = [];
-        for(let i = 0; i < q_split.length; i++){
-          if(stopwords.indexOf(q_split[i]) !== -1){
-            my_entities.push({
-              label: q_split[i],
-              type: "O"
+        axios.post(getHost() + "/api/getPrediction", {
+            data: { query: queryText }
+        })
+            .then(response => {
+                const { data: { entity_types, tokens } } = response;
+                const textEntities = combineMultiWordEntity(entity_types, tokens);
+                console.log(textEntities)
+                // update state to save current entity tokens
+                this.setState({
+                    textEntities,
+                    queryText
+                }, () => {
+                    console.log(this.state);
+                });
             })
-          }else{
-            my_entities.push({
-              label: q_split[i],
-              type: "Sign_symptom"
-            })
-          }
-        }
+            .catch(error => { console.log(error); });
 
-        this.setState({
-            queryText: q,
-            textEntities: my_entities
-        });
         this.setState({
             allQueries: []
-        });
+        })
     }
 
     handleSearch = () => {
