@@ -43,6 +43,8 @@ RUN rm /etc/nginx/sites-enabled/default
 RUN mv default /etc/nginx/sites-enabled/default
 RUN cd ./ML-API
 RUN python3 -m pip install -r requirements.txt
+RUN ls
+RUN pwd
 RUN cd ..
 
 RUN wget https://github.com/kermitt2/grobid/archive/0.6.1.zip
