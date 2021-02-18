@@ -54,7 +54,6 @@ class DisplayPage extends Component {
     const keyword_link = "/getKeyword/";
     const kwlink = [];
     const author_li = [];
-    const auth_aff = {};
     const auth_aff_li = [];
 
     if (docData) {
@@ -84,18 +83,11 @@ class DisplayPage extends Component {
               <sup>{value["id"]}</sup>
             </span>
           );
-          if(!auth_aff[value["id"]]){
-            auth_aff[value["id"]] = value["aff"];
-          }
-        }
-        if (index < authors.length - 1) author_li.push(", ");
-      }
-      if (Object.keys(auth_aff).length !== 0) {
-        for (let key in auth_aff) {
           auth_aff_li.push(
-            <dd className="aff-item">{key + ". " + auth_aff[key]}</dd>
+            <dd className="aff-item">{value["id"] + ". " + value["aff"]}</dd>
           );
         }
+        if (index < authors.length - 1) author_li.push(", ");
       }
       author_li.push(".");
     }
@@ -255,7 +247,7 @@ class DisplayPage extends Component {
                           </tr>}
                         </table>
                       </div>
-                      {false && entities && entities.length > 0 && (
+                      {entities && entities.length > 0 && (
                         <div className="report-info-block">
                           <React.Fragment>
                             <div className="subgraph-container">
@@ -307,7 +299,7 @@ class DisplayPage extends Component {
                       </div>
                     )}
 
-                    {false && docData && (
+                    {docData && (
                       <div className="report-section" id="relation">
                         <div calssName="report-section-title">
                           <h5>Relation Graph</h5>
@@ -323,16 +315,6 @@ class DisplayPage extends Component {
                         </React.Fragment>
                       </div>
                     )}
-
-                    {docData && (
-                      <div className="report-section" id="relation">
-                        <div calssName="report-section-title">
-                          <h5>Relation Graph</h5>
-                        </div>
-                        <span>The entity graph is currently unavailable.</span>
-                      </div>
-                    )}
-
                   </div>
                 </Sidebar>
               </div>
