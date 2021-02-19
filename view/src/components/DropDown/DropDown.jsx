@@ -20,7 +20,6 @@ class DropDown extends Component {
             <Select defaultValue={current} style={{ width: dropdownsize }} onChange={handleSelect}>
               {dropDownData.map(key => (
                   <Option
-                      eventKey={key}
                       key={key}
                       value={key}
                   >

@@ -30,6 +30,7 @@ class TypeSelect extends Component {
     render() {
         const { typeName } = this.props;
         const typeDropDownData = [
+            'O',
             'Age',
             'Sex',
             'Disease_disorder',
