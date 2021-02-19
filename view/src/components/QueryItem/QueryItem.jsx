@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TypeSelect from '../TypeSelect/TypeSelect';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { CaretRightOutlined } from '@ant-design/icons';
 import './QueryItem.css';
 
 
@@ -14,11 +14,11 @@ class QueryItem extends Component {
                 <div className='item-word'>
                     { word }
                 </div>
-                <FontAwesomeIcon icon={['fas', 'arrow-alt-right']} />
-                <TypeSelect
-                    typeName={ type }
-                    handleEntitySelect={ handleEntitySelect }
-                />
+                  <CaretRightOutlined />
+                  <TypeSelect
+                      typeName={ type }
+                      handleEntitySelect={ handleEntitySelect }
+                  />
             </div>
         );
     }

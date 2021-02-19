@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DropDown from "../DropDown/DropDown";
 import SearchResults from '../SearchResults/SearchResults';
 import { Button, Input } from 'antd';
@@ -180,6 +179,7 @@ class RelationSearch extends Component {
                     />
                     <div className='drop-down-container'>
                         <DropDown
+                            dropdownsize='165'
                             handleSelect={handleSelect(i)}
                             dropDownData={allRelations}
                             current={relations[i]}
