@@ -54,7 +54,6 @@ class DisplayPage extends Component {
     const keyword_link = "/getKeyword/";
     const kwlink = [];
     const author_li = [];
-    const auth_aff = {};
     const auth_aff_li = [];
 
     if (docData) {
@@ -84,18 +83,11 @@ class DisplayPage extends Component {
               <sup>{value["id"]}</sup>
             </span>
           );
-          if(!auth_aff[value["id"]]){
-            auth_aff[value["id"]] = value["aff"];
-          }
-        }
-        if (index < authors.length - 1) author_li.push(", ");
-      }
-      if (Object.keys(auth_aff).length !== 0) {
-        for (let key in auth_aff) {
           auth_aff_li.push(
-            <dd className="aff-item">{key + ". " + auth_aff[key]}</dd>
+            <dd className="aff-item">{value["id"] + ". " + value["aff"]}</dd>
           );
         }
+        if (index < authors.length - 1) author_li.push(", ");
       }
       author_li.push(".");
     }
