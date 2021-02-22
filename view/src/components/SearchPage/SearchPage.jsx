@@ -84,11 +84,13 @@ class SearchPage extends Component {
             clearTimeout(this.state.timeout);
         }
         this.state.timeout = setTimeout(() => {
-            this.late_search(queryText);
+          this.setState({queryText});
+          this.late_search(queryText);
         }, 1000);
     }
 
     late_search = (queryText) => {
+      console.log("start handling late search with query: " + queryText);
         axios.post(getHost() + "/api/getPrediction", {
             data: { query: queryText }
         })
