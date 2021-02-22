@@ -3,6 +3,6 @@ flask_restful
 flair==0.4.0
 nltk
 torch==1.0.0
-tqdm
 transformers
+tqdm
 flask_cors
