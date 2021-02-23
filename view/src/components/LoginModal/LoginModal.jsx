@@ -8,13 +8,13 @@ import { LoginContext } from '../../LoginContext'
 
 class ModalContent extends Component {
     state = {
-        currentAction: 'signin',      // either signin or signup
-        email: '',
-        password: '',
-        first: '',
-        last: '',
-        organization: '',
-        username: ''
+      currentAction: 'signin',      // either signin or signup
+      email: '',
+      password: '',
+      first: '',
+      last: '',
+      organization: '',
+      username: ''
     }
 
     switchAction = () => {
