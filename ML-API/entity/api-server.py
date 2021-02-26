@@ -31,7 +31,7 @@ class Predict(Resource):
         all_entities = []
         for q in query:
             sen = Sentence(q)
-            
+
             self.model.predict(sen)
             tokens = []
             entity_types = []
@@ -40,13 +40,13 @@ class Predict(Resource):
                 entity = t.tags['ner'].value
                 tokens.append(token)
                 entity_types.append(entity)
-            
+
             all_tokens.append(tokens)
             all_entities.append(entity_types)
-        
+
         # pprint(all_tokens)
         # pprint(all_entities)
-        
+
         # preparing a response object and storing the model's predictions
         response = {
             'tokens': all_tokens,
@@ -60,7 +60,7 @@ class Predict(Resource):
 
 if __name__ == '__main__':
     model = SequenceTagger.load_from_file('best-model.pt')
-    
+
     app = flask.Flask(__name__)
     CORS(app, allow_headers=['Content-Type', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Access-Control-Allow-Methods'],origins=['127.0.0.1:3001'])
     api = Api(app)
@@ -73,36 +73,37 @@ app = flask.Flask(__name__)
 @cross_origin(origin='*')
 def predict():
     params = request.args
-    query = params['query']
-    query = [tokenize(q) for q in query.split('\\n')]
+    if (params):
+        query = params['query']
+        query = [tokenize(q) for q in query.split('\\n')]
 
-    # predict
-    all_tokens = []
-    all_entities = []
-    for q in query:
-        sen = Sentence(q)
-        
-        model.predict(sen)
-        tokens = []
-        entity_types = []
-        for t in sen.tokens:
-            token = t.text
-            entity = t.tags['ner'].value
-            tokens.append(token)
-            entity_types.append(entity)
-            
-        all_tokens.append(tokens)
-        all_entities.append(entity_types)
-        
-    # preparing a response object and storing the model's predictions
-    response = {
-        'tokens': all_tokens,
-        'entity_types': all_entities
-    }
-    response = flask.jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    # sending our response object back as json
-    return response    
+        # predict
+        all_tokens = []
+        all_entities = []
+        for q in query:
+            sen = Sentence(q)
+
+            model.predict(sen)
+            tokens = []
+            entity_types = []
+            for t in sen.tokens:
+                token = t.text
+                entity = t.tags['ner'].value
+                tokens.append(token)
+                entity_types.append(entity)
+
+            all_tokens.append(tokens)
+            all_entities.append(entity_types)
+
+        # preparing a response object and storing the model's predictions
+        response = {
+            'tokens': sall_tokens,
+            'entity_types': all_entities
+        }
+        response = flask.jsonify(response)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        # sending our response object back as json
+        return response
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug=True, port=5000)
