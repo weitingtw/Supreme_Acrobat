@@ -8,4 +8,4 @@ RUN ./install.sh
 
 EXPOSE 5000
 
-CMD ["python3","api-server.py"]
+CMD ["nohup","python3","api-server.py", "&"]

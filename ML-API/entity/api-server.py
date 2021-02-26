@@ -72,6 +72,9 @@ app = flask.Flask(__name__)
 @app.route("/", methods = ['GET'])
 @cross_origin(origin='*')
 def predict():
+    print("-------NER SERVER LOGGING-------\n")
+    print("args:\n")
+    print(request.args)
     params = request.args
     if (params):
         query = params['query']

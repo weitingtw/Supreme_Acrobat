@@ -1,7 +1,9 @@
 @import "../shared";
 
 .query-item {
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .item-word {
         border: $query-item-border-style;
