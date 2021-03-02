@@ -3,9 +3,10 @@ COPY . /app
 WORKDIR /app
 
 RUN chmod +x install.sh
+RUN chmod +x gunicorn_starter.sh
 
 RUN ./install.sh
 
 EXPOSE 5000
 
-CMD ["gunicorn","-w","4","-b","0.0.0.0:5000","api-server:app"]
+ENTRYPOINT ["./gunicorn_starter.sh"]
