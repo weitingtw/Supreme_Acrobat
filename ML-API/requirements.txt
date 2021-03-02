@@ -5,3 +5,4 @@ nltk
 torch==1.0.0
 transformers==2.0.0
 flask_cors
+gunicorn
