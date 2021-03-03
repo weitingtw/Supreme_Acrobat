@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"cd server/ && node server.js\" \"cd view/ && npm start\" \"cd ML-API/entity/ && gunicorn -w 4 --threads 4 -b 0.0.0.0:5000 api-server:app --timeout 600\" \"cd ML-API/relation/ && python3 api-server2.py\"",
-    "docker": "concurrently \"cd server/ && node server.js\" \"nginx\" \"cd ML-API/entity/ && gunicorn -w 4 --threads 4 -b 0.0.0.0:5000 api-server:app --timeout 600\" \"cd ML-API/relation/ && python3 api-server2.py\" \"cd master2 && ./gradlew run\""
+    "start": "concurrently \"cd server/ && node server.js\" \"cd view/ && npm start\" \"cd ML-API/entity/ && gunicorn -w 4 --threads 4 -b 0.0.0.0:5000 api-server:app --timeout 600\" \"cd ML-API/relation/ && gunicorn -w 4 --threads 4 -b 0.0.0.0:5001 api-server2:app --timeout 600\"",
+    "docker": "concurrently \"cd server/ && node server.js\" \"nginx\" \"cd ML-API/entity/ && gunicorn -w 4 --threads 4 -b 0.0.0.0:5000 api-server:app --timeout 600\" \"cd ML-API/relation/ && gunicorn -w 4 --threads 4 -b 0.0.0.0:5001 api-server2:app --timeout 600\" \"cd master2 && ./gradlew run\""
   },
   "repository": {
     "type": "git",
