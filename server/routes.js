@@ -289,7 +289,7 @@ module.exports = function (app) {
     const params = req.body.data;
     console.log("CONNECTING TO NER");
     console.log(params);
-    var host = "http://127.0.0.1:5000";
+    var host = "http://0.0.0.0:5000";
     /*if (process.env.BACKEND_SERVER1) {
       host = process.env.BACKEND_SERVER1.concat(":5000/");
     }*/
